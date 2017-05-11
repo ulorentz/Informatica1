@@ -1,0 +1,340 @@
+\chapter{Struct} \label{struct}
+Dobbiamo rappresentare un punto materiale: cosa ci serve? Sicuramente almeno le sue coordinate cartesiane e la sua massa (se è un punto statico). Tradotto in \verb|C++|, avremo bisogno di quattro \textbf{float} o \textbf{double}, a seconda della precisione che desideriamo. Potremmo, quindi, dichiarare quattro variabili \textbf{float} o quattro \emph{array}, se abbiamo più punti materiali. Utilizzando questa via, però, perdiamo l'unitarietà del concetto ``punto materiale''. Un caso analogo potrebbe essere, ad esempio, quello delle particelle dove, oltre alle caratteristiche del punto materiale, vi è la carica, lo spin, il nome, ecc\ldots È facile trovare molte circostanze simili.
+
+In poche parole, stiamo considerando situazioni in cui vi è un ``oggetto'' descritto da più variabili. Nulla ci vieta di dichiarare le diverse variabili e di essere noi programmatori a ricordarci che compongono un oggetto più astratto, oppure, possiamo sfruttare uno strumento del \verb|C|: la \textbf{struct}.
+
+\section{Definire un nuovo tipo di dato}
+Vediamo le \textbf{struct} all'opera:
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+//Definisco la struttura punto materiale
+struct puntoMateriale{
+	float x;
+	float y;
+	float z;
+	float m;
+};
+
+int main(){
+	puntoMateriale punto1; //dichiaro una variabile di tipo puntoMateriale
+
+	//accedo agli elementi della struttura
+	punto1.x=2.1;
+	punto1.y=-7.8;
+	punto1.z=0.1;
+	punto1.m=1E12;
+	
+	...
+	...
+	
+	return 0;
+}
+\end{lstlisting}\label{struct1}
+
+Quando definiamo una struttura, stiamo in tutti i sensi creando un nuovo tipo di dato. La scrittura \lstinline|struct name{...}| definisce il tipo di dato \verb|name| (il nome che segue alla parola chiave \textbf{struct}). A questo punto, \verb|name| esisterà nel nostro codice e potrà essere usato esattamente come siamo soliti fare con i tipi di dato built-in (es. \textbf{float, int}, ecc\ldots). 
+
+Come vedi, a seguire il nome della struttura, vi è una coppia di parentesi graffe: al loro interno mettiamo tutte le variabili che vogliamo che la nostra struttura contenga (nel nostro caso, quattro \textbf{float} con i loro rispettivi nomi). Una volta chiuse le graffe, ricordati di concludere con il punto e virgola (è uno dei pochissimi casi in cui, dopo la graffa, ci vuole).
+
+Ora, il tipo di dato definito esiste e possiamo utilizzarlo nel \emph{main}, ma come? Niente di nuovo: \verb|nome| \verb|nomevariabile| (nel nostro caso \verb|puntoMateriale punto1|).
+
+\subsection{L'operatore punto (``.'')}
+La nostra variabile \verb|punto1|, però, è un po' strana: contiene quattro \textbf{float}, e noi vogliamo poterci accedere. Nell'esempio \ref{struct1} ho scritto, ad esempio, ``\verb|punto1.x|'': l'operatore ``punto'' serve ad accedere agli elementi della struttura che, nel nostro caso, sono \emph{x}, \emph{y}, \emph{z} e \emph{m}. 
+
+Che sia ben chiaro: \verb|punto1| è una variabile di tipo \verb|puntoMateriale| (definita dal programmatore all'inizio del codice); \verb|punto1.x|, invece, è a tutti gli effetti un \textbf{float} (e come tale va usato).\\
+
+Ricapitolando, una struttura è una sorta di ``collezione'' di elementi racchiusi dentro un nuovo tipo di dato definito dal programmatore. Questi elementi non devono essere dello stesso tipo. Inoltre, ognuno di essi ha il proprio nome; ad esempio, possiamo avere:
+\begin{lstlisting}
+struct example{
+	char* pointer1;
+	long num;
+	double* pointer2;
+};
+\end{lstlisting}
+Se dichiariamo nel \emph{main} ``\lstinline|example foo|'', il dato \verb|foo| è una variabile di tipo \verb|example|. Per assegnare all'elemento \verb|pointer1| un indirizzo di un \textbf{char}, scriveremo ``\lstinline|foo.pointer1=&address|''. Per accedere alla variabile puntata, il codice sarà: ``\lstinline|*(foo.pointer1)='a'| (nota le parentesi tonde: sono utili per ricordarsi che \verb|foo.pointer1| è un puntatore a \textbf{char} e che è lui a dover essere dereferenziato, non semplicemente \verb|pointer1|, che di per sé non è niente).\\
+
+A volte, potrebbe capitarti di vedere questa scrittura (fuori dal \emph{main}):
+\begin{lstlisting}
+struct example{
+	char* pointer1;
+	long num;
+	double* pointer2;
+} foo;
+\end{lstlisting}
+
+Stiamo contemporaneamente definendo il tipo di dato \verb|example| e dichiarando la variabile \verb|foo| che, essendo fuori dal \emph{main}, sarà una variabile globale.
+
+\paragraph{Attento ai nomi!}
+
+Una variabile non può avere lo stesso nome del suo tipo di dato e, così come \textbf{float float} non ha senso, anche questo è illegale:
+
+\begin{lstlisting}
+struct dato{
+	int intero;
+};
+
+int main(){
+	dato dato; //illegale!
+	return 0;	
+}
+\end{lstlisting}
+
+Al contrario, per quanto possa confondere, una variabile può avere lo stesso nome di un elemento della struttura della quale è un dato:
+
+\begin{lstlisting}
+struct dato{
+	int intero;
+};
+
+int main(){
+	dato intero; 
+	intero.intero=3; //brutto, ma lecito
+}
+\end{lstlisting}
+
+Sempre molto ingannevole, ma lecito, è quanto segue:
+\begin{lstlisting}
+struct dato{
+	char dato; //molto brutto, ma lecito
+};
+\end{lstlisting}
+
+Ma, se puoi (e puoi), evita cose di questo tipo.
+\section{Struct e array}
+Possiamo sia definire \emph{array} di \textbf{struct} che \textbf{struct} contenenti \emph{array}. Di per sé, nessuna delle due cose è complicata, ma bisogna stare un po' attenti all'uso delle parentesi quadre nei due casi. Vediamo un esempio:
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+struct vettore{
+	double vec[100];
+	unsigned short utilizzati; //quanti posti del vettore abbiamo usato
+};
+
+int main(){
+	vettore v1;
+	vettore v[10];
+	v1.vec[5]=12.2; //assegnazione al sesto elemento del array di double contenuto in v1
+	v[3].utilizzati=0; //assegnazione al membro unsigned short della quarta struct del array di struct 
+	v[1].vec[12]=1.1; //assegnazione al tredicesimo elemento del array di double contenuto nel secondo elemento del array di struct
+	return 0;
+}
+\end{lstlisting}
+
+La \textbf{struct} \verb|vettore| contiene un \emph{array} di \textbf{double} di 100 elementi. La variabile \verb|v1| è un singolo dato di tipo \verb|vettore|: per accedere al membro \verb|vec| usiamo l'operatore \emph{punto}. Dovrebbe esserti chiaro che \verb|v1.vec| è un puntatore a \textbf{double}: se vogliamo accedere agli elementi puntati, dobbiamo usare le parentesi quadre in fondo (quindi \verb|v1.vec[i]|). Un altro modo di vedere la questione è che stiamo usando l'operatore \emph{punto} per accedere al membro \emph{array} di cui dobbiamo specificare l'elemento che vogliamo.
+
+Passiamo a considerare ``\lstinline|v[3].utilizzati|'': \verb|v| è un \emph{array} di strutture; siccome vogliamo accedere ad un suo elemento le parentesi quadre vanno dopo il nome dell'\emph{array}. A questo punto, \verb|v[3]| è una singola struttura (la quarta dell'\emph{array}), per cui utilizziamo il punto per accedere all'elemento \verb|utilizzati|.
+
+L'ultimo caso è ``\lstinline|v[1].vec[12]|'': come prima, \verb|v| è un \emph{array} di strutture, per cui per accedere ad un suo elemento dobbiamo usare le parentesi quadre subito dopo. Quindi, vogliamo accedere ad un elemento di ``\verb|vec|'' il quale, a sua volta, è un \emph{array}: dobbiamo usare le parentesi quadre anche dopo di esso. 
+
+
+\section{Struct, puntatori, allocazione dinamica e memoria}
+Una volta definita una \textbf{struct}, esiste anche il tipo di dato puntatore ad essa (d'altro canto se esiste l'\emph{array}\ldots).  
+
+Non c'è nulla di nuovo, in realtà: solo una sintassi un po' particolare.
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+struct example{
+	int n;
+	float* x;
+	
+};
+
+int main(){
+	example* p=new example; //alloco una variabile di tipo example
+	float y=1.1;
+	//assegno ai membri di *p i valori
+	(*p).n=12;
+	(*p).x=&y;
+	//stampo i valori
+	cout << (*p).n << endl;
+	cout << *((*p).x) << endl;
+	
+	delete p;
+	return 0;
+}
+\end{lstlisting}\label{struct2}
+
+Come detto, niente di nuovo, solo una sintassi un bel po' ``elaborata''. In particolare, vorrei richiamare la tua attenzione sull'ultima riga: voglio stampare il valore del \textbf{float} puntato dal membro della nostra struttura. Per prima cosa, essendo una variabile dinamica, dereferenzio il puntatore \verb|p| (e quindi scrivo \verb|(*p)|): a questo punto accedo al membro \verb|x|. Ora, il mio \verb|(*p).x| è, a sua volta, un puntatore da dereferenziare, quindi serve un ulteriore asterisco, da cui la scrittura \verb|*((*p).x)|.
+\subsection{L'operatore ``->''}
+Inutile dire che la scomodità di questa sintassi è notevole. Per rendere più semplici ed esplicite le cose, è stato introdotto l'operatore ``\verb|->|'' (una sorta di freccia). Il codice dell'esempio \ref{struct2} diviene:
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+struct example{
+	int n;
+	float* x;
+};
+
+int main(){
+	example* p=new example; //alloco una variabile di tipo example
+	float y=1.1;
+	//assegno ai membri di *p i valori
+	p->n=12;
+	p->x=&y;
+	//stampo i valori
+	cout << p->n << endl;
+	cout << *(p->x) << endl;
+
+	delete p;
+	return 0;
+}
+\end{lstlisting}
+
+Quando abbiamo un puntatore ad una \textbf{struct} (o, quando le imparerai, una classe), possiamo accedere ai membri della struttura puntata utilizzando \verb|puntatore->membro| al posto del più artificioso \verb|(*puntatore).membro|.
+\paragraph{Array dinamico di struct}
+Se, invece, abbiamo un \emph{array} dinamico di \textbf{struct}, non dobbiamo usare nessuna freccia, ma solo le semplici quadre (che, come sai benissimo, fungono già loro da operatore di dereferenziazione). Il seguente codice dovrebbe essere ovvio:
+
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+struct example{
+	int n;
+	float x;
+};
+
+int main(){
+	unsigned n=10;
+	example *p=new example[n];
+	for(int i=0; i<n; ++i){
+		p[i].n=i;
+		p[i].x=0.1*i;
+	}
+	
+	delete[] p;
+	return 0;
+}
+\end{lstlisting}
+
+\subsection{L'operatore \emph{sizeof}} % TODO Non sono convinto della posizione di questa subsection
+Abbiamo la seguente struttura:
+\begin{lstlisting}
+struct example{
+	int n;
+	double x;
+	float y;
+};
+\end{lstlisting}
+E ci chiediamo: ma quanto spazio occupa in memoria?
+
+In realtà, la risposta è semplice: la somma dello spazio occupato dai suoi membri\footnote{Questo è corretto in linea teorica. Nella pratica, in realtà, \emph{non è vero}. Quella che sto per fare è una nota molto tecnica: se non ti interessa, non leggerla e dimentica quello che hai appena letto prendendo per corretto che la dimensione di una \emph{struct} sia la somma dei suoi elementi.
+
+Per motivi di efficienza della CPU, gli elementi nella memoria vanno allineati a particolari byte e dimensioni. Ad esempio, abbiamo visto che su una CPU da 64 bit, il bus di dati è da 8 byte: leggendo 8 byte per volta, è conveniente che una \emph{struct} occupi multiplo di 8 byte o un sottomultiplo (2, 4, 8, 16, ecc\ldots). Allo stesso modo, per alcuni tipi di dato, è conveniente iniziare a particolari byte. Se ipotizziamo di contare dal byte numero ``zero'', le variabili vengono allineate in multipli di: 1 byte per i \emph{char}, 2 byte per gli \emph{short}, 4 byte per gli \emph{int} e \emph{float} e 8 per i \emph{double} e \emph{long} (ad esempio, uno \emph{short} lo possiamo trovare al byte zero, al byte due, ecc; ma non al byte uno, tre, ecc). Per chiarire, una struttura contenente un \emph{int} e un \emph{char}, su un'architettura intel a 64 bit, occupa molto probabilmente otto byte e non cinque (per allinearsi al bus di 8 byte); oppure, in una \emph{struct} contenente un \emph{char} e uno \emph{short} viene inserito un byte ``fasullo'' tra i due dati per far iniziare lo \emph{short} al terzo byte (occupando, alla fine, 4 byte e non 3). Questa problematica viene detta ``data alingment'', e l'utilizzo di byte non significativi per allineare i dati è chiamato ``byte padding''. Non è facile, a priori, sapere la dimensione della \emph{struct} perché non sempre il compilatore decide di usare l'intero \emph{bus} di dati (a volte, per \emph{struct} piccole usa un sottomultiplo); al contrario, l'allineamento dei dati standard ai byte richiesti avviene sempre.
+
+Tutto questo discorso, per l'esame, dimenticatelo! Ogni volta che si chiedono dimensioni e indirizzi di \emph{struct} ci si riferisce alla regola teorica che la sua dimensione è la somma dei suoi elementi.  } (quindi 4+8+4 byte)\footnote{E una \emph{struct} vuota? \emph{struct example\{\}} quanto spazio occupa? La risposta è un byte. Secondo te perché? Potrebbe occuparne zero? E meno di un byte? Questa è, ovviamente, una particolare eccezione: la norma è che una \emph{struct} occupa lo spazio occupato dai suoi membri.}.  \\
+
+Ci sono situazioni in cui il calcolo della dimensione di una struttura potrebbe diventare un po' complicato: ad esempio, strutture dentro strutture di cui, magari, neanche conosciamo i membri. Per ovviare a queste problematiche, esiste un comodo operatore: \textbf{sizeof}\footnote{Con l'operatore \emph{sizeof}, puoi verificare il discorso della nota precedente riguardo al fatto che, a volte, la dimensione delle \emph{struct} non è equivalente alla somma dei suoi dati. Negli esempi di questo capitolo, invece, ho scelto situazioni particolari in cui la dimensione della \emph{struct} è esattamente la somma dei suoi elementi.}.
+
+\textbf{Sizeof} vuole alla sua destra una variabile, oppure, un tipo di dato; in questo secondo caso, dobbiamo racchiudere il tipo di dato tra parentesi tonde. L'operatore, quindi, restituisce la dimensione in byte di ciò che segue.
+ Vediamo \textbf{sizeof} all'opera:
+
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+struct example1{
+	float x;
+	int n;
+	double y;
+};
+
+struct example2{
+	example1 s1, s2;
+	int a,b,c;
+	char l,m;
+	short n;
+};
+
+
+int main(){
+	example2 ex;
+	example1* p=new example1;
+	
+	cout << "Dimensione del tipo di dato ''int'': " << sizeof (int) << endl;
+	cout << "Dimensione della variabile ex: " << sizeof ex << endl;
+	cout << "Dimensione della variabile puntata da p: "<< sizeof *p << endl;
+	cout << "Dimensione del tipo di dato ''example1'': " << sizeof (example1) << endl;
+	cout << "Dimensione di un puntatore a ''example1'' " << sizeof p<< endl;
+	
+	delete p;
+	return 0;
+}
+\end{lstlisting}
+
+Sul mio pc l'output è il seguente:
+\begin{shaded}
+\begin{verbatim}
+Dimensione del tipo di dato ''int'':        4
+Dimensione della variabile ex:              48
+Dimensione della variabile puntata da p:    16
+Dimensione del tipo di dato ''example1'':   16
+Dimensione di un puntatore a ''example1'':  8
+\end{verbatim}
+\end{shaded}
+
+Dove le dimensioni sono, come detto, in byte. L'unico commento che ci tengo a fare riguarda l'ultimo valore: su una macchina a 64 bit (come è il mio computer), un puntatore a qualsiasi tipo di dato avrà sempre la stessa dimensione: 8 byte (che sono, appunto, 64 bit).\\
+
+Una parte di un esercizio di un tema d'esame (25 febbraio del 2015) era:
+\begin{shaded}
+	\begin{verbatim}
+Dato questo codice:
+
+struct strumento{
+    char nome[5];
+    int tipo;
+    double fattore[2];
+};
+
+Qual è la lunghezza complessiva in byte di un elemento di tipo strumento?
+\end{verbatim}
+
+\end{shaded}
+
+Ovviamente, essendo uno scritto, non puoi usare \textbf{sizeof}. Prova a rispondere!
+\subsection{Struct e indirizzi di memoria}
+Se hai capito la sottosezione precedente, questa non dovrebbe aggiungere praticamente nulla di nuovo. Nel capitolo sulla rappresentazione in memoria, abbiamo imparato come si comportano gli indirizzi per i tipi di dato standard. E per le \textbf{struct} cosa succede? Abbiamo visto che la dimensione di una \textbf{struct} è la somma dei suoi elementi: gli indirizzi seguono in maniera naturale. Ad esempio, abbiamo un array di \textbf{struct}, ognuna delle quali occupa 16 byte.  Se il primo elemento ha come indirizzo  0x7ffe31f60ad0 per il secondo ci spostiamo di 16 byte, quindi 0x7ffe31f60ae0, per il terzo di altri 16 byte, quindi 0x7ffe31f60af0, e così via. 
+
+Se poi siamo interessati agli indirizzi degli elementi della \textbf{struct}, partendo dal suo indirizzo, ci basta spostarci degli \emph{n} byte di ogni elemento. Ad esempio, sia:
+\begin{lstlisting}
+struct foo{
+	char a,b;
+	int c;
+};
+
+int main(){
+	foo dato;
+	return 0;
+}
+\end{lstlisting}
+Se l'indirizzo di \verb|dato| è 0x7ffe14f62b10, per avere \verb|dato.a| ci spostiamo di 2 byte, quindi 0x7ffe14f62b12, lo stesso per \verb|data.b|, quindi 0x7ffe14f62b14, e di altri 4 byte per \verb|data.c|, quindi 0x7ffe14f62b18.\\
+
+Per esercitarti, prova a risolvere il seguente esercizio di un tema d'esame (Gennaio 2017): 
+\begin{shaded}
+Data la struttura:\\
+\begin{verbatim}
+struct punto{
+    double x;
+    double y;
+};
+\end{verbatim}
+
+
+
+dire che cosa significa la dichiarazione\\
+punto v[10];\\
+
+Se l'indirizzo di v[0] è un valore esadecimale che termina con a3cd, scrivere le parti finali degli indirizzi di:
+v[2] e v[4]
+\end{shaded}
+\begin{small}
+\section{Il C++ e gli oggetti}
+All'inizio di questo capitolo, se ci hai fatto caso, ho scritto che le \textbf{struct} sono una caratteristica del \verb|C|. Un vero ``oggetto'', oltre ad essere caratterizzato da delle variabili, è caratterizzato da delle \emph{proprietà} che nella programmazione si sintetizzano in ``funzioni''. Le particelle, oltre che avere una posizione, una massa, una carica, una velocità, un nome, possono interagire tra di loro, influenzarsi, annichilarsi, ecc\ldots Nel \verb|C| tutte questa caratteristiche andrebbero implementate con codice esterno alla struttura, il \verb|C++|, invece, ha introdotto il concetto di ``oggetto'' dotato di proprietà interne e non esterne: è nata la \emph{classe} (il codice che implementa le proprietà è dentro la classe e non all'esterno, la classe diviene un oggetto nella sua interezza). Le classi rendono il \verb|C++| un linguaggio orientato agli oggetti e non, come invece è il \verb|C|, un linguaggio solamente procedurale e imperativo. L'essere orientato agli oggetti è la più grande differenza del \verb|C++|, che lo rende un linguaggio di livello più alto rispetto al \verb|C|. La possibilità di scrivere sia ad alto livello che a basso livello rende il \verb|C++| un linguaggio estremamente potente e versatile. Purtroppo, gli oggetti, la vera caratteristica del \verb|C++|, non sono un obiettivo di questo corso e, in quanto tali, non li affronteremo.\\
+
+Abbiamo già usato qualche oggetto: gli \emph{stream}. Se ricordi, abbiamo sfruttato alcune funzioni come ``open()'' utilizzando l'operatore di accesso ``punto'': \verb|stream.open("nomefile")|. Nel \verb|C|, se lo \emph{stream} fosse stato una struttura, avremmo, probabilmente, utilizzato una funzione esterna e lo \emph{stream} non l'avrebbe contenuta esso stesso (sarebbe stato, semplicemente, un'accozzaglia di dati racchiusi in una struttura). Può sembrare una sottigliezza, ma gli ``oggetti'' hanno rivoluzionato la programmazione rendendola molto più sintetica, meno dispersiva, con una faccia diversa e più organizzata: la maggior parte dei linguaggi più moderni sono orientati agli oggetti.
+\end{small}
+

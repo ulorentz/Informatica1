@@ -1,0 +1,132 @@
+\ProvidesPackage{Informatica}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Pacchetti da usare
+\usepackage[italian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{listings}
+\usepackage{amssymb}
+\usepackage{makeidx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{subfiles}
+\usepackage[usenames,dvipsnames]{xcolor} % Per definire alcuni colori come nei link di hyperref
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{caption}
+\usepackage{framed}
+\usepackage{epstopdf}
+\usepackage{hyperxmp}
+\usepackage{hyperref}
+\usepackage{appendix}		%Per sub appendici 
+\usepackage{chngcntr}		% ..
+\usepackage{etoolbox}		% ..
+\usepackage{titlesec}
+\usepackage{pdfpages}		% Per includere i temi d'esame
+\usepackage{titlepic}		%Per l'immagine di copertina
+\usepackage{graphicx}
+
+%%%%%%%%%%
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Titoli custom
+\titleformat{\chapter}[display]
+{\bfseries\Large}
+%MakeUppercase{\chaptertitlename} //Mettere Capitolo
+{\filleft\MakeUppercase{\chaptertitlename} \thechapter}
+{2ex}
+{%\titlerule%
+%i\vspace{2ex}%
+\filleft\Huge}
+[%\vspace{1ex}%
+\titlerule%barra orizzontale
+\vspace{6ex}] %spazio dopo la barra orizzontale del titolo
+
+
+
+
+%Colori usati 
+\definecolor{light-gray}{gray}{0.9}
+\definecolor{shadecolor}{gray}{0.93}
+\colorlet{darkblue}{blue!60!black} % Da usare per link e citazioni
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Definisco i link
+\hypersetup{%TODO che fanno sti comandi?
+	bookmarksnumbered=true,
+	bookmarksopen=true,
+	bookmarksopenlevel=1,
+	colorlinks=true,
+%	linkcolor=darkblue,
+	linkcolor=blue,
+	pdfstartview=Fit,
+	pdfpagemode=UseOutlines,
+	citecolor=darkblue,
+	pdftitle={Informatica 1},
+	pdfauthor={Lorenzo Uboldi},
+	pdflang={it},
+	pdfsubject={Informatica 1},
+	pdfcreator={Lorenzo Uboldi},
+	pdfcaptionwriter={Lorenzo Uboldi}
+	pdfcopyright={Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International},	
+	pdflicenseurl={http://creativecommons.org/licenses/by-nc-sa/4.0/},
+	pdfmetalang={it}
+}
+
+%Margini 
+\geometry{margin=3cm}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Definizioni per il codice nel testo
+
+\makeatletter
+%% define a caption format; if the caption
+%% is the default (\relax), the separator is
+%% not printed; as long as no caption text
+%% starts with \relax, this will work
+\DeclareCaptionFormat{alsoempty}{%
+	#1\if\relax\expandafter\noexpand\lst@caption\else#2#3\fi}
+\makeatother
+%% set this format as the default for lstlisting
+\captionsetup[lstlisting]{format=alsoempty}
+
+\lstset{%
+	belowcaptionskip=1\baselineskip,
+	breaklines=true,
+	%	frame=L,
+	xleftmargin=\parindent,
+	showstringspaces=false,
+	backgroundcolor=\color{light-gray},
+	frame=single,	
+	% numbers=left,  
+	language=C++,
+	extendedchars=true, 
+	%style=customC++,
+	basicstyle=\footnotesize,
+	showstringspaces=false,
+	captionpos=b,
+	caption=\relax
+	%	numbers=left,                   
+	%	numbersep=10pt,                  
+	%	numberstyle=
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Sub appendici
+%\AtBeginEnvironment{subappendices}{%
+%	\chapter*{Appendix}
+%	\addcontentsline{toc}{chapter}{Complementi}
+%	\counterwithin{figure}{section}
+%	\counterwithin{table}{section}
+%}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Definizioni nuovi comandi
+\renewcommand{\lstlistingname}{Esempio} %Per il codice

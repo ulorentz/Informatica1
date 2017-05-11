@@ -1,0 +1,171 @@
+\chapter{Librerie}\label{lib}
+In un file ``main.cpp'', abbiamo definito una serie di funzioni di statistica per lavorare sui dati di un esperimento. Qualche giorno dopo, facciamo un nuovo esperimento e, per l'analisi dati, dobbiamo scrivere un programma; le funzioni scritte il giorno precedente ci sono utili e quindi le copiamo dal vecchio ``main.cpp''. Ogni volta che vogliamo fare un po' di statistica, copiamo il codice da vecchi file. Decisamente scomodo! 
+
+Inoltre, il nostro ``main.cpp'' potrebbe avere decine, se non centinaia, di funzioni, e le sue dimensioni diventerebbero spropositate: difficilmente leggibile e poco chiaro.
+
+Per fortuna il \verb|C++| (così come il \verb|C| e moltissimi altri linguaggi) ha uno strumento comodissimo: le librerie. 
+
+Una libreria non è altro che una collezione di funzioni, oggetti e variabili ``stand alone'' (di per sé una libreria non fa nulla). Possiamo, però, avere tutto ciò che contiene a disposizione nel nostro ``main.cpp'' (o in un qualsiasi altro file di codice).\\
+
+Inutile dire che, sin dal nostro primo ``hello world'', abbiamo usato librerie (\emph{iostream}, ad esempio): ormai dovresti sapere benissimo come si includono (o, più correttamente, come si includono gli \emph{header}) e si usano. La domanda lecita, invece, è: come si definiscono?
+
+\section{Definire una libreria: \emph{header} e \emph{.cpp}}
+In una libreria, è fondamentale separare la dichiarazione dalla definizione; l'interfaccia dall'implementazione.
+
+Una libreria è composta da due file (almeno): uno è detto ``\emph{header}'' e contiene le interfacce (prototipi, dichiarazioni, ecc\ldots), l'altro (che termina in un'estensione del \verb|C++| come .cpp) contiene tutte le definizioni.
+
+Un concetto sottile è che, potenzialmente, l'utente finale potrebbe avere accesso solo all'\emph{header}. Una libreria è po' come un computer: se siamo l'utente finale lo vediamo da fuori, lo possiamo usare e sfruttare le sue funzioni, ma normalmente non vediamo come è fatto dentro. Se poi siamo curiosi, vi sono computer che possiamo aprire, smontare e studiare senza che scada la garanzia; altri sono più restrittivi e, se lo facciamo, perdiamo la garanzia. Di alcune librerie, dette ``proprietarie'', ad esempio, non possiamo vedere il file ``.cpp'', in altre, dette ``open-source'', siamo liberi di farlo. Ma sto divagando.
+
+Torniamo alla nostra libreria con funzioni di statistica, e prepariamo due file: ``statistica.h'' (l'\emph{header}) e ``statistica.cpp''.
+\begin{lstlisting}[caption=statistica.h]
+#ifndef STATISTICA_H
+#define STATISTICA_H
+
+//Funzione che calcola la media, in ingresso un vettore di float e la sua dimensione: restituisce la media
+float Media(float [], unsigned int);
+
+//funzione che calcola varianza
+//...
+
+//funzione che....
+//...
+
+#endif /*STATISTICA_H*/
+\end{lstlisting}
+
+\begin{lstlisting}[caption=statistica.cpp]
+#include "statistica.h" //file locale, non libreria standard: ci vogliono gli apici e non i <...>
+
+float Media(float v[], unsigned int n){
+	float media=0;
+	for(unsigned int i=0; i<n; ++i)
+		media+=v[i];
+	media/=n;
+	return media;
+}
+
+//...	(definizione delle altre funzioni)
+
+
+//...
+\end{lstlisting}
+
+Ecco fatto: al di là di quei curiosi ``\emph{\#ifndef ...}'', ``\emph{\#define ...}'' e ``\emph{\#endif}'' non c'è nulla di strano: un file contiene i prototipi delle funzioni, l'altro le definizioni. 
+
+Per capire il significato e il motivo di quelle direttive preprocessore, dobbiamo prima studiare come agisce il compilatore.   \\
+
+Abbiamo il nostro ``main.cpp'' in cui, ad esempio, usiamo la funzione \emph{Media()}:
+\begin{lstlisting}[caption=main.cpp]
+#include <iostream>
+#include "statistica.h" //file locale: ci vogliono apici e non <...>
+using namespace std;
+
+int main(){
+	float v[3]={1.01,6,12.73};
+	cout << "Media: "<< Media(v, 3) << endl;
+	return 0;	
+}
+\end{lstlisting}
+
+Come ho sottolineato, per includere l'\emph{header} di qualsiasi libreria che non sia ``standard'' (cioè che non appartenga agli standard del \verb|C| o \verb|C++|), dobbiamo usare le virgolette al posto dei segni di maggiore e minore. Inoltre, se il file non è nella cartella dove stiamo lavorando,  tra le virgolette ci vuole il \emph{path} completo! (Vedi l'appendice \ref{linux}  sull'uso di Linux per ulteriori informazioni sul significato di ``percorso completo''). \\
+ 
+Proviamo a compilare con ``\verb|g++ main.cpp -o main|'': per tutta risposta riceviamo uno strano messaggio:
+\begin{shaded}
+\begin{verbatim}
+g++     main.cpp   -o main
+/tmp/ccRF16WN.o: In function `main':
+main.cpp:(.text+0x2f): undefined reference to `Media(float*,unsigned int)'
+collect2: error: ld returned 1 exit status
+\end{verbatim}
+\end{shaded}
+Cos'è successo?
+
+Se ti ricordi, il preprocessore è ``stupido'': quando scriviamo \emph{\#include "statistica.h"}, semplicemente prende tutto ciò che è contenuto in \emph{statistica.h} e lo incolla al posto della direttiva presente nel \emph{main}. Quindi, il file finale composto dal preprocessore si ritrova con il prototipo delle funzioni ma non l'implementazione, dato che non è contenuta in \emph{statistica.h} ma in un altro file. 
+
+Il compilatore prova a compilare ma gli manca un pezzo: nel \emph{main} c'è una referenza (una sorta di cartellino con scritto ``qui devi usare ecc\ldots'') ad una certa funzione ``Media(float[], unsigned int)'', ma da nessuna parte riesce a trovare una ``spiegazione'' di come questa è fatta. Vedi l'ultima riga? ``\emph{ld returned 1 exit status}'': \emph{ld} è il \emph{linker}, colui che deve mettere insieme i pezzi, il quale non ha trovato tutto il necessario e fallisce.
+
+Sono sicuro che stai pensando: ma perché non mettiamo le definizioni dentro l'\emph{header}? Assolutamente da non fare!
+
+Il modo giusto di procedere è la cosiddetta \emph{compilazione parziale}.
+
+\subsection{Compilazione parziale: preprocessore, linker e \emph{\#ifndef}}
+Prova a scrivere sul terminale ``\verb|g++ -c main.cpp|'': il compilatore, senza lamentarsi, creerà un misterioso file: \emph{main.o}. Se provi ad eseguirlo, a seconda del tuo sistema operativo, potresti ottenere un errore del tipo ``\emph{bash: ./main.o: cannot execute binary file: Exec format error}'' oppure ``\emph{bash: ./main.o: Permission denied}''. 
+
+\emph{Main.o} è un file \emph{oggetto}, un file compilato parzialmente\footnote{È scritto, quindi, in ``linguaggio macchina''. Quando usiamo una libreria closed-source, ci vengono forniti l'header e il file oggetto: in questo modo non possiamo sapere come è implementata (e neanche copiare/modificare/chissà che altro\ldots).}. Il compilatore crea codice macchina dove possibile ma, quando incontra la chiamata a funzione ``Media()'', non sapendo come è fatta, lascia una ``reference'': una sorta di frase con scritto ``qui manca qualcosa, bisogna attaccarcelo'' (il ``-c'' istruisce il compilatore a procedere in questo modo). Nota: il compilatore, con l'opzione ``-c'' non si lamenta solo se è presente, da qualche parte, il prototipo della funzione (ad esempio nel .h che includiamo). Se, invece, non vi è né definizione né prototipo, anche con un ``-c'', produrrà un errore del tipo: ``\emph{error: ‘funzione’ was not declared in this scope}'' 
+
+Torniamo al nostro \emph{statistica.cpp} e facciamo la stessa cosa: ``\verb|g++ -c statistica.cpp|''. Il compilatore crea codice macchina delle funzioni (un altro file oggetto: \emph{statistica.o}), solo loro senza nient'altro . Come si ``incollano'' i due file oggetto? È il \emph{linker} l'unico in grado di farlo: se scriviamo ``\verb|g++ main.o statistica.o -o main|'' il linker cerca la referenza alla funzione mancante nel \emph{main.o}; la trova in \emph{statistica.o} e incolla i due pezzi per creare il codice finale ed eseguibile\footnote{Il \emph{linker}, in ogni caso, fa sempre qualcosa di simile: il nostro programma deve sempre essere ``linkato'' con le librerie di sistema per poter diventare un vero e proprio file eseguibile.}. Tutto chiaro? Un po' macchinoso ma niente di complesso.\\
+
+Ma quindi, quel \emph{\#ifndef ...} a cosa serve?
+
+La nostra libreria (\emph{statistica.h}) potrebbe essere inclusa in una seconda libreria (diciamo, per esempio, \emph{tuboKundt.h}), la quale, a sua volta, è inclusa nel \emph{main}. Il preprocessore quando incontra \emph{\#include "statistica.h"} nel \emph{main} incolla lì tutto e fa lo stesso quando lo trova dentro \emph{tuboKundt.h}. Poi, nel \emph{main}, incontra \emph{\#include "tuboKundt.h"} e incolla lì tutto, creando una doppia copia di alcune cose presenti in \emph{statistica.h} (particolarmente sensibili a questi errori sono le definizioni di nuovi tipi di dato come le \textbf{struct}). 
+
+Una ridefinizione porta ad un errore fatale in compilazione, del tipo:
+\begin{shaded}
+\begin{verbatim}
+In file included from foo.h:1:0,
+                 from main.cpp:2:
+media.h:1:8: error: redefinition of ‘struct foo’
+   struct foo{
+          ^~~~~~
+In file included from main.cpp:1:0:
+
+\end{verbatim}
+\end{shaded}
+È importante istruire il preprocessore a non incollare ovunque il \emph{.h}, ma a farlo solo una volta. La scrittura:
+\begin{lstlisting}
+#ifndef STATISTICA_H
+#define STATISTICA_H
+...
+...
+#endif /*STATISTICA_H*/
+\end{lstlisting}
+dice, in poche parole: ``se non è definita la macro STATISTICA\_H (if not defined, \emph{ifndef}), allora definiscila (\emph{define})'', Alla fine del \emph{.h}, vi è la conclusione della definizione ``\emph{endif}'' (il /*...*/ è un commento per il programmatore: definizione di cosa?). Quando il preprocessore trova l'\emph{include}, cerca di copiare il \emph{.h} ma, se la macro STATISTICA\_H non è stata definita, allora procede (e la definisce), se invece è  stata già definita (quindi ha già incolato tutto altrove), salta alla fine del'\emph{endif} e va oltre (con il risultato di  non incollare tutto due volte). ``STATISTICA\_H'' è scritto maiuscolo per ricordare che è una macro preprocessore, come da convenzione del \verb|C++|.\\
+
+Per esercizio, scriviti le tue librerie di statistica, di algoritmi su vettori, ecc\ldots
+
+\section{Il Makefile}
+Cambiamo programma, ora abbiamo un \emph{main} che usa diverse librerie. Per creare l'eseguibile, dobbiamo compilare parzialmente ogni libreria e quindi linkare tutto insieme; una sorta di:
+\begin{shaded}
+\begin{verbatim}
+g++ -c main.cpp
+g++ -c lib1.cpp
+g++ -c lib2.cpp
+g++ -c lib2.cpp
+...
+...
+g++ main.o lib1.o lib2.o lib3.o .... -o main
+\end{verbatim}
+\end{shaded}
+Estremamente scomodo, tanto più che, ogni volta che cambiamo un file di codice, dobbiamo ricompilarlo e poi chiamare di nuovo il linker (l'ultimo comando).
+
+\emph{Make} è una piccola (ma complessa) utility che permette di automatizzare la compilazione: per farlo, ha bisogno di un file di ``comandi'', detto \emph{makefile}. 
+
+Al nostro livello, scrivere un \emph{makefile} è semplicissimo. Ipotizziamo di avere i file ``main.cpp'', ``statistica.h'', ``statistica.cpp'', ``ordinamento.h'' e ``ordinamento.cpp''; il \emph{makefile} andrebbe scritto così:
+\begin{lstlisting}[language=make,  caption=makefile]
+compila: main.o statistica.o ordinamento.o
+	g++ main.o statistica.o ordinamento.o -o main
+main.o: main.cpp
+	g++ main.cpp -c
+statistica.o: statistica.h statistica.cpp
+	g++ statistica.cpp -c
+ordinamento.o: ordinamento.h ordinamento.cpp
+	g++ ordinamento.cpp -c
+esegui: main
+	./main
+clean:
+	rm *.o main
+\end{lstlisting}
+
+Il \emph{makefile} definisce una serie di regole. Una \emph{regola} è una parola seguita dai due punti (tipo ``compila:'). Dopo i due punti vanno inserite le cose di cui ha bisogno, ad esempio i file necessari per la compilazione (nel nostro caso tutti i file oggetto). Il comando associato alla regola si definisce la riga sottostante, dopo uno spazio di tab (che è obbligatorio, perché senza il comando non viene riconosciuto): nel nostro caso è un comando per il compilatore.
+
+Nel mio \emph{makefile}, successivamente, ho definito le regole per costruire i file oggetto. 
+
+La regola deve avere il nome del file oggetto in questione, ad esempio, ``statistica.o''. Di cosa ha bisogno? Dell'\emph{header} e del \emph{.cpp}. Quindi, a capo e con uno spazio di tab, vi è il comando di compilazione. 
+
+Come lavora  \emph{make}? È molto più intelligente di quanto possa sembrare. Quando scriviamo ``\emph{make compila}'', controlla la data in cui è stato creato il file eseguibile e la confronta con le date di ultima modifica dei file di cui ha bisogno la regola; se non sono stati modificati da quando \emph{main} è stato compilato, allora non fa nulla (non ci sarebbe bisogno di ricompilare!). Se le date non coincidono, invece, passa alle regole che definiscono i vari ``\emph{.o}''. Prendiamo ``statistica.o'': per prima cosa controlla la data di ultima modifica di ``statistica.h'' e ``statistica.cpp''. Sono più nuovi di ``.o''? Se sì compila, se no, no, e così via. Questa tecnica è molto utile quando abbiamo centinaia, se non migliaia, di file di codice da compilare: se modifichiamo un solo file vengono ricompilati giusto un paio di file e non tutti (ad esempio: compilare ROOT impiega circa mezz'ora, se gli sviluppatori modificano un file e vogliono testarlo, non devono aspettare tutto quel tempo in attesa che la nuova modifica abbia effetto).
+
+Se scriviamo  sul terminal ``make'' senza un comando, lui esegue il primo della lista, per cui è comodo aver scritto per primo il comando finale della catena di compilazione. Da notare che se non definiamo tutte le regole, \emph{make} non sa come fare e si ferma.
+
+L'ultima regola che ho definito è \emph{clean} (che va chiamato con ``make clean''): rimuove tutti i file oggetto e il file eseguibile, utile per forzare la ricompilazione di tutto (o per pulire la cartella). Attento, è ``*.o'': se ti dimentichi il ``.o'' e lasci solo ``*'', potresti combinare un vero disastro eliminando tutto ciò che è nella cartella! 
+
+Può sembrarti molto scomodo dover scrivere il \emph{makefile} (che deve chiamarsi proprio ``makefile'' ed essere nella cartella in cui lanciamo il comando ``make''), ma il vantaggio è che va scritto solo una volta: poi ci basta chiamare \emph{make} al posto di dover riscrivere decine di comandi di compilazione.

@@ -1,0 +1,986 @@
+\chapter{Funzioni}\label{funzioni}
+Nel capitolo sugli \emph{array}, abbiamo imparato ad ordinarli, trovare l'elemento massimo, calcolarne media, varianza, ecc\ldots
+
+Ipotizziamo di scrivere un codice che riempie un vettore di dati, lo rielabora, trova l'elemento massimo, lo rielabora ancora, trova di nuovo l'elemento massimo e così via per diverse ripetizioni. Avremmo bisogno di un codice (abbozzato) di questo tipo:
+
+\begin{lstlisting}
+#include <iostream>
+#include <fstream>
+#include <cstdlib>
+using namespace std;
+
+int main(){
+	double* array;
+	usigned int dim=0;
+	double max;
+	
+	//1) Carico da file
+	...
+	
+	//2) Eseguo dei conti
+	...
+	
+	//3) Calcolo il massimo
+	for(int i=1; i<dim; ++i){
+		if(array[i]>max)
+			tmp=array[i];	
+	}
+	...
+	
+	//4) Eseguo altri conti
+	...
+	
+	//5) Calcolo nuovamente il massimo
+	for(int i=1; i<dim; ++i){
+		if(array[i]>max)
+		tmp=array[i];	
+	}
+	...
+	//e cosi' via...
+	...
+	
+	return 0;	
+}
+\end{lstlisting}
+
+Come puoi notare, il codice per calcolare il massimo è sempre lo stesso. Semplicemente lo ripetiamo più volte ove serve. L'algoritmo per il massimo ha un codice breve, ma potremmo averne di molto più lunghi e complessi, la cui ripetizione confonderebbe inutilmente (oltre ad essere piuttosto scomoda da riscrivere \emph{n} volte).
+
+Alla fine dei conti, l'algoritmo ``massimo'' vuole in ingresso un vettore e la sua dimensione e restituisce un elemento dell'\emph{array}. È una sorta di ``$massimo= f(vettore, dimensione)$''. Possiamo ``rubare'' alla matematica il concetto di funzione: un oggetto che, preso in argomento delle variabili, esegue qualcosa e, se necessario,  restituisce dei valori.
+
+Una funzione è proprio questo: una porzione di codice isolata in una ``scatola'', dotata del proprio spazio dei nomi. La funzione può essere chiamata ovunque da ``terzi'', eseguendo il suo compito. 
+
+Quando chiamiamo una funzione, è come se il nostro codice principale si interrompesse momentaneamente per entrare in un nuovo ambiente: la funzione. Questa viene caricata in RAM, con un proprio spazio dei nomi: viene eseguito il codice della funzione, e quindi, una volta concluso, ritorna qualcosa al chiamante e il codice principale continua. \\
+
+Sin dal tuo primo ``Hello World'' hai usato una funzione: \verb|int main()|. \emph{Main}, definita così, è una funzione che in argomento non prende niente e restituisce al chiamante un intero. Ma chi è quest'ultimo? È il sistema operativo (ricordi il ``\verb|return 0|''?). \emph{Main} è la funzione principale, colei che può chiamare tutte le altre, il punto di partenza e di fine (quindi che non può mancare) e sopra a lei c'è solo il sistema operativo.
+
+Ma vediamo come definire nuove funzioni e, quindi, come utilizzarle.
+\section{Dichiarare, definire e usare una funzione}
+La prima cosa da definire è un'``interfaccia'': bisogna dire al compilatore che forma ha la nostra funzione. 
+
+L'interfaccia della funzione è chiamata \emph{prototipo}. Il prototipo della funzione ricerca del massimo potrebbe essere il seguente:
+\begin{lstlisting}
+double Max(double [], unsigned int);
+\end{lstlisting}
+o anche:
+\begin{lstlisting}[label=func1]
+double Max(double array[], unsigned int dim);
+\end{lstlisting}
+
+Il prototipo di una funzione ha lo scopo di rendere chiaro come è fatta e come si utilizza: nel nostro caso, vuole per argomento (ciò che è tra le parentesi) un \emph{array} di \textbf{double} e un \textbf{unsigned int} e restituisce un \textbf{double}.
+
+Il prototipo è una sorta di facciata, in cui vediamo che argomenti vuole, il suo nome e cosa restituisce (tra le parentesi basta il tipo di dato: il nome della variabile, nel prototipo, è facoltativa). 
+
+Il prototipo deve essere scritto prima del \emph{main}: quando andiamo a chiamare una funzione, il compilatore deve conoscere già il prototipo (gli basta questo, non è necessario che sappia come è implementata).\\
+
+
+Come si utilizza la funzione di cui abbiamo visto il prototipo (esempio \ref{func1})? Una funzione va ``chiamata'', farlo è semplicissimo:
+
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+//Definisco il prototipo, una buona cosa e' metterci prima un commento che spiega la funzione:
+//Find maximum element of array which has dimension dim
+double Max(double array[], unsigned int dim); 
+
+int main(){
+	double* array;
+	unsigned int n=0;
+	double max=0;
+	
+	//carico in qualche modo gli elementi in array (che diviene un vettore dinamico) e n diventa diverso da zero
+	...
+	...
+	max=Max(array, n); //gli array non si passano usando le parentesi quadre, ma solo con il loro nome: passiamo in realta' il puntatore
+	
+	//posso anche evitare di usare una variabile, le funzioni possono apparire dentro i ``cout'':
+	cout << "Valore massimo: " << Max(array,n) << endl;
+	
+}
+\end{lstlisting}
+
+Ma \emph{Max} come è fatta? In tutto questo discorso, in effetti, manca il \emph{corpo} della funzione. Il corpo è la vera e propria definizione: un blocco di codice dove specifichiamo come agisce la funzione.  Ad esempio:
+\begin{lstlisting}
+#include <iostream>
+
+//Prototipo
+double Max(double array[], unsigned int dim);
+//main
+int main(){
+	...
+}
+
+//corpo della funzione
+double Max(double array[], unsigned int dim){ //variabili della funzione
+	double tmp=0; //variabili della funzione
+	for(int i=1; i<dim; ++i){
+		if(array[i]>max)
+			tmp=array[i];	
+	}
+	return tmp;
+}
+\end{lstlisting}
+
+Prima cosa da sottolineare: nel corpo della funzione il nome delle variabili del suo argomento (ciò che è tra le tonde) non è più facoltativo, lo devi mettere! Perché? Come ho già accennato, una funzione ha il suo spazio dei nomi: vede solo le variabili locali (e globali), ma non quelle delle altre funzioni (ad esempio non vede quelle del \emph{main}, che è un'altra funzione). Le sue variabili sono definite o nell'argomento o dentro il suo codice. Per farla breve, ``\lstinline|unsigned int dim|'' è una variabile locale visibile all'interno del corpo della funzione, che nasce quando questa viene chiamata e muore quando finisce.\\
+
+Per chiarire il concetto:
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+int glo=4; //variabile globale
+
+int foo(int);
+
+int main(){
+	int a=1, b=0;
+	b=foo(a);
+	cout << d << endl; //provo a stampare una variabile di foo, ERRORE! non viene vista
+}
+
+int foo(in c){
+	int d=3;
+	cout << glo << endl; //ok, variabile globale, viene vista
+	cout << c << d <<endl;//ok, variabili locali
+	cout << a << endl; //NON compila! E' una variabile di un altra funzione, non viene vista!
+	return d;
+}
+\end{lstlisting}
+
+Una volta entrati nelle graffe, una funzione non è nulla di nuovo: è un blocco di codice in cui possiamo mettere tutto quello che abbiamo visto finora: è semplicemente un codice separato dal resto.\
+
+In realtà, il prototipo non deve per forza esistere ed essere separato dal corpo, ma si può  avere anche il solo corpo a monte del \emph{main}, ad esempio:
+
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+//corpo della funzione
+double Max(double array[], unsigned int dim){ //variabili della funzione
+	double tmp=0; //variabili della funzione
+	for(int i=1; i<dim; ++i){
+	if(array[i]>max)
+		tmp=array[i];	
+	}
+	return tmp;
+}
+
+int main(){
+	...
+}
+\end{lstlisting}
+
+Qual è, allora, lo scopo di scrivere il prototipo? È una questione di leggibilità: se avessimo molte definizioni di funzioni prima del \emph{main}, ci troveremmo una grande quantità di codice prima di arrivare a quest'ultimo (insomma, sarebbe molto dispersivo). Quando affronteremo le librerie, poi, vedremo che spesso all'utente interessa sapere soltanto come è fatta l'\emph{interfaccia} della funzione e non come è implementata. Il prototipo ci chiarisce come dobbiamo usarla e, se è presente un breve commento, che cosa fa: in un paio di righe spiega tutto il necessario; il corpo, invece, è lungo e dispersivo.
+\subsection{\emph{return variabile;}}
+L'ultima riga della funzione, però, è qualcosa di nuovo:  ``\lstinline|return d;|''. Abbiamo visto che la funzione ``\lstinline|double Max(double[], unsigned int)|'' restituisce un \textbf{double}. Ecco, il \textbf{return} istruisce il computer riguardo a cosa deve restituire al chiamante: nel nostro caso il contenuto della varibile \verb|d|. Ovviamente, quando incontriamo l'istruzione \textbf{return}, l'effetto è che la funzione termina restituendo il valore della variabile che segue al \textbf{return} (oppure, non restituendo niente: vedremo a breve).
+
+Un concetto importante è che una funzione può restituire al più un solo valore: se vogliamo ``ritornare'' due variabili non possiamo. Vedremo nella sezione \ref{by} un modo per poter avere più informazioni da una funzione; il \textbf{return}, però, non può farlo.
+
+Detto ciò, all'interno del corpo della funzione possono esserci più istruzioni \textbf{return}: semplicemente la prima che si incontra viene eseguita (ritornando, quindi, al chiamante e terminando la funzione). Ad esempio:
+\begin{lstlisting}
+//funzione molto elementare (si puo' fare di meglio...) che calcola se un numero e' primo o no
+bool prime_number(unsigned long n){ 
+	for(int i=2; i<n/2; ++i){
+		if(n%i==0)//se il resto della divisione e' zero allora e' un divisore
+			return false;  
+	}
+
+	return true;
+}
+\end{lstlisting}
+
+Come vedi, in questo esempio sono presenti due \textbf{return}: il primo ad essere incontrato viene eseguito. In poche parole, in una funzione posso avere \emph{n} \textbf{return} (ad esempio in diversi \textbf{if}, \textbf{switch\ldots case}, ecc\ldots), l'unica condizione è che questi devono restituire lo stesso tipo di dato: quello specificato nel prototipo della funzione.
+
+\subsection{\emph{void funcion}}
+Non per forza una funzione deve restituire qualcosa, può anche essere il ``nulla'': \textbf{void}. 
+
+Un prototipo di una funzione che non restituisce niente potrebbe essere:
+\begin{lstlisting}
+void foo(int n);
+\end{lstlisting}
+
+Ma, all'interno del corpo, dobbiamo ancora usare la parola chiave \textbf{return}? La risposta è sia si che no, in questo senso: non siamo obbligati, ma possiamo usarla. 
+
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+void Print(int n){
+	cout << "La variabile inserita e': " << n <<endl;
+}
+
+int main(){
+	int tmp=0;
+	cout << "Inserisci una variabile: ";
+	cin >>tmp;
+	Print(tmp);
+	return 0;
+}
+\end{lstlisting}
+
+Come vedi, in questo esempio la funzione non necessita di un \textbf{return} (in quanto non restituisce niente): quando l'esecuzione del suo codice arriva alla fine, la funzione termina e il chiamante riprende il controllo.
+
+L'uso del \textbf{return}, nelle funzioni che ritornano \textbf{void}, può essere utile nel caso di \textbf{if} (o altri check) per restituire prematuramente il controllo al chiamante:
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+void Print_Positive(int n){
+	if(n<0)
+		return; //esce dalla funzione
+	cout << "La variabile inserita e': " << n <<endl;
+}
+
+int main(){
+	int tmp=0;
+	cout << "Inserisci una variabile positiva: ";
+	cin >>tmp;
+	Print(tmp);
+	return 0;
+}
+\end{lstlisting}
+
+Una funzione, inoltre, può non avere alcun argomento: questo si indica con le parentesi tonde vuote\footnote{Nel vecchio C, invece, bisognava metterci un void all'interno (tipo ``int foo(void)''): le parentesi tonde vuote significavano un numero di argomenti indefinito.}. Ad esempio:
+
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+void hello(){
+	cout<< "Hello World! " << endl;
+}
+
+int main(){
+	hello();
+	return 0;
+}
+\end{lstlisting}
+
+Ovviamente, una funzione può avere una combinazione di queste caratteristiche: il \emph{main}, ad esempio, non ha alcun argomento ma restituisce un intero.
+
+\subsection{Funzioni e array}
+\subsubsection{Array in argomento} Se vogliamo passare ad una funzione un \emph{array} monodimensionale, sia dinamico che statico, è semplicissimo, le due scritture sono equivalenti:
+
+\begin{lstlisting}
+void Array(int []);
+//uguale a:
+void Array(int *);
+\end{lstlisting}
+
+Il perché della loro equivalenza (o, in altri termini, perché possiamo usare un puntatore per passare \emph{array}) dovrebbe essere chiaro.
+
+La prima scrittura, forse, ha il pregio di rendere più chiaro che la nostra funzione vuole un \emph{array} e non un semplice puntatore.
+
+C'è da sottolineare che sia con il puntatore che con le quadre, la dimensione dell'\emph{array} non è comunicata alla funzione, per cui spesso dobbiamo passarle con un'altra variabile  anche questa informazione.
+
+Nel \emph{main} una funzione del tipo ``\lstinline|void Array(int [])|'' (o con il puntatore) si usa così:
+\begin{lstlisting}
+int main(){
+	int v[15];
+	Array(v); //passo solo il nome dell'array: perche'? (ricorda equivalenza tra [] e * : v cos'e'?)
+	return 0;
+}
+\end{lstlisting}
+
+\subsubsection{Restituire array} Per restituire un \emph{array}, l'unico modo è usare un puntatore:
+\begin{lstlisting}
+int* InizializzaZero(int array[], unsigned int dim){
+	for(unsigned int i=0; i<dim; ++i)
+		array[i]=0;
+	return array;
+}
+\end{lstlisting}
+
+Infatti, la scrittura ``\lstinline|int[] InizializzaZero(int array[], unigned int dim)|'' produce un errore di compilazione (come detto: devi restituire un puntatore).
+
+\subsubsection{Matrici e array multidimensionali}
+Per quanto riguarda gli \emph{array} multidimensionali, la questione è diversa a seconda che sia una matrice dinamica o statica. Perché? Una matrice dinamica, per come l'abbiamo costruita noi, è un puntatore a puntatore; una matrice statica, invece, no! Ti ricordi?  In memoria, è un semplice \emph{array}; il doppio indice è solo un'astrazione per il programmatore. 
+
+Nel caso di una funzione che prende in argomento  una matrice dinamica e che la restituisce, il prototipo potrebbe essere:
+\begin{lstlisting}
+int** matr(int** m, unsigned int righe, unsigned int colonne);
+\end{lstlisting}
+Niente di strano, quindi.\\
+
+Le funzioni in cui compaiono \emph{array} multidimensionali statici, invece, sono un po' scomode e meno versatili.
+
+Abbiamo visto che per un \emph{array} monodimensionale possiamo tralasciare la dimensione nel prototipo. Invece, per quanto riguarda il caso a più dimensioni, il compilatore deve ``sapere'' come convertire l'\emph{array} lineare della memoria ad un \emph{array} multidimensionale per il programmatore. In poche parole, possiamo tralasciare solo la dimensione più a sinistra, le altre vanno fissate (perché? Prova a pensarci!). 
+
+Se abbiamo un \emph{array} a due dimensioni (ad esempio, 4 e 5) il prototipo sarà del tipo:
+\begin{lstlisting}
+void matr(int m[][5]);
+\end{lstlisting}
+
+A tre dimensioni:
+\begin{lstlisting}
+void matr(int m[][4][5]);
+\end{lstlisting}
+
+Inoltre, ritornare un \emph{array} statico a più dimensioni ha una sintassi davvero allucinante, per non confonderti le idee non te la riporto neanche: semplicemente, è meglio evitare situazioni del genere (o usare matrici dinamiche)\footnote{No, non ci riesco, se proprio sei curioso ecco come andrebbe scritta: \lstinline|int (*matr(int m[][5]))[5]|. Insomma, meglio lasciar stare\ldots}.\\
+
+
+Insomma, se usiamo \emph{array} multidimensionali statici, le relative funzioni sono utilizzabili solo per \emph{array} di cui la maggior parte delle dimensioni è fissata. Molto meglio, per quanto riguarda le funzioni, usare le matrici dinamiche: in quel caso, infatti, una funzione nata per una matrice a due dimensioni è valida qualsiasi esse siano.
+\begin{small}
+\section{La chiamata a funzione}
+Ciò che segue è un piccolo discorso opzionale su cosa succede quando chiamiamo una funzione.\\
+
+ Ho già accennato che, chiamando una funzione, questa viene caricata in memoria. Ma cosa significa? Quando compiliamo il codice, il file eseguibile contiene dentro di sé le funzioni ben distinte ognuna dall'altra, come se fossero dei blocchi unitari, ognuno con le proprie variabili e il proprio spazio dei nomi. Insomma, ogni funzione è un blocco di linguaggio macchina separato dal resto. Quando la funzione viene chiamata, ad esempio, dal \emph{main}, il suo blocco di codice viene caricato nella RAM e la CPU passa dal \emph{main} a lei, quasi come se fosse a sua volta un piccolo programma. Se la funzione ne chiama un'altra, il blocco di codice di quest'ultima viene a sua volta caricato in RAM e così via. Se chiamiamo \emph{n} volte una funzione, il suo blocco di codice viene chiamato \emph{n} volte. Ogni qual volta una funzione termina la sua esecuzione, il suo blocco di codice viene eliminato dalla RAM, e lo spazio liberato (insieme a quello di tutte le sue variabili). È una struttura ``\emph{FIFO}'' (``First In First Out). 
+
+Chiamare una funzione, quindi, non è semplicemente eseguire il suo codice, ma comporta tutto un insieme di operazioni  legate al caricamento in memoria: per farla breve, non è gratis, ha un costo computazionale\footnote{Questo non vale per le cosiddette ``inline functions'': dalla struttura identica alle funzioni, ma differenti in quanto non sono distinte dal chiamante ma sono codice fisicamente presente al suo interno.}. Il discorso delle performance, come al solito, è una finezza.  C'è un caso, però, un po' patologico che può essere utile nominare. Le funzioni vengono caricate nella \emph{stack} (non nella \emph{heap}) che, come abbiamo visto, non è particolarmente grande (te lo ricordo: di default, su Linux, è grande circa 8MB). Quando usiamo la ricorsione (questa tecnica sarà spiegata, se sei interessato, nei complementi a questo capitolo, \ref{rico}), una funzione chiama se stessa \emph{n} volte; il problema, però, è che la nuova funzione viene chiamata prima che la vecchia termini l'esecuzione. Per cui, alla fine dei conti, saranno caricate in RAM, contemporaneamente, \emph{n} funzioni: esaurire la \emph{stack} non è impossibile. 
+
+Ma, allora, qual è il vantaggio delle funzioni se sono computazionalmente più pesanti del codice lineare? Il primo vantaggio è che rendono la vita più facile al programmatore (ma se fosse l'unico, allora basterebbe far lavorare qualcuno, tipo il preprocessore, per incollare il codice della funzione nel chiamante, risparmiando, così, la chiamata). Il secondo vantaggio (fondamentale) è comprensibile con il seguente esempio: abbiamo il nostro \emph{main} che chiama qualche milione di volte una funzione. Il codice macchina avrà la seguente forma: ci saranno il \emph{main} e la funzione compilati e distinti in due blocchi indipendenti di eseguibile; quindi, ogni volta che chiamiamo la funzione, vi sarà un'istruzione per la CPU di caricare in RAM il blocco di codice della funzione. In totale, l'eseguibile sarà relativamente piccolo: il codice del \emph{main} più quello della funzione e  poco altro. Se invece l'essenza delle funzioni fosse un semplice artificio per rendere la vita più facile al programmatore e venisse semplicemente incollata nel chiamante, il \emph{main} avrebbe un codice enorme: ogni volta che chiamiamo la funzione verrebbe aggiunto tutto il suo codice. Il binario compilato, quindi, avrebbe dimensioni notevoli e un semplice programma che, ad esempio, calcola qualche milione di volte la media di dati, peserebbe troppo per essere caricato in RAM.  
+\end{small}
+
+
+\section{Passaggio di argomenti: \emph{by value, by pointer e by reference}}\label{by}
+Abbiamo visto che ogni funzione ha un proprio spazio dei nomi a cui appartengono le sue variabili. Anche gli argomenti sono variabili locali: scrivendo ``\lstinline|void foo(int b)|'', \verb|b| nasce con la funzione e vive solo al suo interno. 
+
+Il seguente esempio dovrebbe chiarire questo  concetto fondamentale:
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+void incrementa(int a){ //la variabile passata alla funzione nella sua chiamata viene copiata dentro la variabile locale ''int a''
+	a+=1; //stiamo modificando la copia locale
+	cout << "Valore locale di a: " << a << endl;	
+}
+
+int main(){
+	int a=17;
+	incrementa(a); //il valore di a viene copiato dentro la variabile locale: la a del main non viene toccata
+	cout << "Valore di a nel main: " << a << endl; //e' rimasta immutata
+	return 0;
+}
+\end{lstlisting}
+
+
+E se volessimo modificare il valore della variabile del \emph{main}? 
+Potremmo, ad esempio, restituire il valore dopo averla incrementata:
+\begin{lstlisting}
+int incrementa(int a){
+	return a+1;
+}
+\end{lstlisting}
+Nel \emph{main}, dovremmo chiamare la funzione così: \lstinline|a=incrementa(a)|. In questo modo, la variabile del \emph{main} verrebbe copiata dentro quella locale della funzione: tutti i calcoli sarebbero eseguiti su quest'ultima e, alla fine, il suo valore verrebbe restituito al \emph{main}. 
+
+Per quanto funzionante, questo metodo ha un difetto: se vogliamo modificare il valore di più variabili del chiamante?
+
+Se sei stato attento, magari ti è venuto in mente qualcosa\ldots cosa ne dici dei tediosi puntatori?
+
+Vediamo un esempio:
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+void incrementa(int* a){
+	*a+=1; //incremento la variabile puntata da a
+}
+
+int main(){
+	int a=17;
+	incrementa(&a); //passo alla funzione l'indirizzo di a
+	cout << "Valore di a nel main: " << a << endl;
+	return 0;
+}
+\end{lstlisting}
+
+Con questo metodo, dopo aver chiamato la funzione, il valore di \verb|a| del \emph{main} sarà 18. 
+
+Cerchiamo di capire cosa accade. La variabile locale, in questo caso, è un puntatore: quando passiamo alla funzione l'indirizzo di \verb|a|, quest'ultimo viene copiato nella variabile locale. Vi è ancora la distinzione tra variabile locale e  quella del chiamante (se modificassimo il contenuto del puntatore \verb|a|, ovvero il suo indirizzo, il valore verrebbe modificato solo localmente: l'indirizzo della variabile del chiamante rimarrebbe immutato), però la funzione possiede l'indirizzo di una variabile che appartiene al chiamante. Anche se non è sua quindi, tramite l'indirizzo è in grado di accedervi (dereferenziando il puntatore) e modificarla. 
+
+Il vantaggio di passare le variabili \emph{by pointer} è che possiamo modificare \emph{n} variabili del chiamante e non solo una, un po' come se potessimo restituire un numero arbitrario di variabili\footnote{Ad un lettore attento potrebbe saltare all'occhio anche un altro dettaglio: se modifichiamo le variabili usando i puntatori, al posto che restituendole, il computer deve fare un passaggio in meno. Ma l'efficienza non è il nostro scopo\ldots}.\\
+
+Inutile dirlo: la sintassi con l'uso dei puntatori è alquanto scomoda. Il \verb|C++| ha introdotto un oggetto molto interessante che semplifica la vita: la \emph{reference}. Senza entrare nei dettagli di cos'è, ti basta sapere come si usa nelle funzioni per apprezzarne la comodità:
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+void incrementa(int& a){ //passaggio by reference, prende da sola l'indirizzo della variabile passata dal chiamante
+	a+=1; //avendo passato la reference del chiamante e' come se stessi lavorando su di lei, e non su una variabile locale
+}
+
+int main(){
+	int a=17;
+	incrementa(a); //passo normalmente a, ma incrementa si prende la reference, quindi a viene incrementata
+	cout << "Valore di a nel main: " << a << endl;
+	return 0;
+}
+\end{lstlisting}
+
+In poche parole, quando passiamo gli argomenti \emph{by reference}, il meccanismo del puntatore viene reso automatico ed implicito: la funzione va a prendersi l'indirizzo della variabile passata dal chiamante e, quindi, lavora direttamente su di lei e non su di una copia locale\footnote{Ma quindi passare argomenti \emph{by pointer} o \emph{by reference} sono solo due scritture diverse ma con lo stesso effetto? Ciò è quasi sempre vero. L'anno prossimo, studiando gli oggetti, vedrai che a volte è vantaggioso passare \emph{const reference}. Passare ``\textbf{const} \&'' ha un effetto profondamente diverso rispetto a passare ``\textbf{const} *''. Se te ne ricorderai, riflettici!}.\\
+
+
+Invece, quando ha senso utilizzare il passaggio \emph{by value}? Nelle situazioni in cui non vogliamo che la variabile del chiamante sia modificata, ovvero quando ci fa piacere che la funzione lavori su di una copia locale. Ad esempio, una funzione che calcola la media ha senso definirla così:
+\begin{lstlisting}
+float media(float array[], unsigned int n);
+\end{lstlisting}
+
+La variabile \verb|n| non deve essere modificata, per cui la  passiamo per valore e non per referenza (o puntatore).
+\subsection{Allocazione dinamica dentro a funzioni}
+Normalmente, se passiamo un \emph{array} ad una funzione e lo modifichiamo al suo interno, la modifica verrà vista anche dal chiamante. Perché? Ricorda: passare un \emph{array} significa passare un puntatore, e accedere agli elementi dell'\emph{array} significa dereferenziare il puntatore. Quello che stiamo passando per valore è il puntatore, ma l'indirizzo di memoria, nel chiamante e nella funzione, sarà lo stesso: se accediamo agli elementi puntati sono uguali sia in uno che nell'altro, una modifica nella funzione ha effetto anche nel chiamante. 
+
+Esempio banale:
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+void inizializza(int array[], unsigned int dim){ //al solito array[] e' equivalente a *array
+	for(unsigned int i=0; i<dim; ++i)
+		array[i]=0; //la modifica ha effetto sull'elemento puntato da array e i successivi
+}
+
+int main(){
+	int* a=new int[12];
+	inizializza(a, 12);
+	for(int i=0; i<12; ++i)
+		cout << a[i] << endl; // sono stati modificati dalla funzione!
+	return 0;
+}
+\end{lstlisting}
+
+C'è una situazione, però, in cui passare un puntatore non ha alcun effetto sulla variabile del chiamante.  È il caso in cui vogliamo allocare dinamicamente un puntatore del \emph{main} dentro una funzione, ingenuamente potremmo scrivere questo:
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+void alloca_inizializza(int *p, unsigned int dim){
+	p=new int[dim];
+	for(unsigned int i=0; i<dim; ++i)
+		p[i]=0;
+}
+
+int main(){
+	int *v;
+	alloca_inizializza(v, 20);
+	for (int i=0; i<20; ++i)
+		v[i]=2; //con buone probabilita' andremo in segmentation fault!
+	//...
+	//...
+	delete[] v; //se non siamo andati prima in seg fault, ci andiamo sicuramente qui
+	return 0;
+}
+\end{lstlisting}
+
+Alla prima lettura potrebbe sembrarti tutto corretto, eppure (te lo assicuro!), è sbagliato. Ma dov'è l'errore? Rifletti: quando passiamo la variabile \verb|v| alla nostra funzione, il suo contenuto viene copiato dentro la variabile locale \verb|p|; essendo entrambi puntatori, il contenuto di \verb|v| è un indirizzo di memoria (casuale, non essendo stato inizializzato).
+Dentro la funzione chiamiamo l'operatore \textbf{new}, il quale alloca della memoria e restituisce a \verb|p| l'indirizzo del primo byte. Ecco l'errore! L'indirizzo viene restituito a \verb|p| che è una variabile locale, il puntatore \verb|v| del \emph{main}, invece, non viene modificato: quando usciamo dalla funzione, la memoria rimane allocata ma il suo indirizzo è perso con la fine di \verb|p|. Quando, poi, nel \emph{main} andiamo a modificare l'area di memoria puntata da \verb|v|, stiamo toccando memoria potenzialmente non nostra (\verb|v| non è stato inizializzato: a chi punta?). Se non andiamo qui in \emph{segmentation fault} ci andremo sicuramente quando chiamiamo l'operatore \textbf{delete}: \verb|v| non punta nessuna memoria allocata. 
+
+Insomma, non solo perdiamo per strada l'\emph{array} che abbiamo allocato, ma poi ci facciamo anche terminare dal sistema operativo. 
+
+Come risolvere? La questione è che dobbiamo modificare il puntatore presente nel \emph{main}: possiamo usare un puntatore a puntatore o una \emph{reference}. Il primo caso (sintatticamente scomodo) lo lascio da affrontare a te, se ne hai voglia. Invece, analizziamo la \emph{reference} a puntatore:
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+void alloca_inizializza(int* &p, unsigned int dim){ //p e' una reference a puntatore ad interi
+	p=new int[dim]; //l'indirizzo del primo byte di memoria non e' piu' assegnato ad una variabile locale: p e' una reference, sara' il puntatore del chiamante ad essere modificato 
+	for(unsigned int i=0; i<dim; ++i)
+		p[i]=0;
+}
+
+int main(){
+	int *v;
+	alloca_inizializza(v, 20);
+	for (int i=0; i<20; ++i)
+		v[i]=2; //nessun problema! v, essendo stato preso by reference, e' stato modificato: punta al vettore allocato dinamicamente nella funzione
+	//...
+	//...
+	delete[] v; //tutto liscio! 
+	return 0;
+}
+\end{lstlisting}
+
+Tutto chiaro? La \emph{reference} è molto più agevole di un puntatore a puntatore; inoltre, se volessimo allocare dinamicamente una matrice in una funzione, avremmo bisogno di un puntatore a puntare a puntatore (complicato, eh?). Usando una \emph{reference} si ritorna a quanto già visto nel capitolo sull'allocazione dinamica di matrici.
+
+\subsection{Stream e funzioni}
+Ci sono oggetti, nel \verb|C++|, che non sono \emph{copiabili}. Uno di questi è lo \emph{stream}. Un canale non è altro che una virtualizzazione di un \emph{bus} di dati fisico che collega la RAM ad una piccola porzione dell'hard disk. Ovviamente, questo canale nel computer è unico. Se potessimo copiare lo \emph{stream} avremmo, all'interno del programma, più copie di un oggetto che in realtà è unico e univoco: sarebbe un assurdo e potrebbe portare a situazioni molto poco piacevoli. Se non ti fidi prova a copiare uno \emph{stream} nel codice: verrai insultato malamente dal compilatore.
+
+Per questo motivo, uno \emph{stream} può essere passato solo \emph{by reference} o \emph{by pointer} in quanto, passandolo \emph{by value}, creeremmo una copia locale all'interno della funzione.
+\section{Overload di funzioni}
+Quando definiamo una funzione, a livello di ``linguaggio'', stiamo dando un nome ad un'azione. 
+
+Vi sono situazioni in cui ci verrebbe da chiamare allo stesso modo azioni simili ma leggermente diverse. Ad esempio, l'azione ``mangia'' cambia a seconda dell'\emph{argomento} che dobbiamo mangiare: se è una pasta usiamo la forchetta, per un budino il cucchiaio, con  pizza le mani, ecc\ldots Se in italiano esistessero nomi diversi per ogni ``sfumatura'' del verbo mangiare, sarebbe un vero disastro lessicale.
+
+Anche il \verb|C++| permette di associare ad una ``parola'' diverse ``sfumature'' e comportamenti. Questa caratteristica è detta \emph{function overloading}. 
+
+Con questa tecnica, possiamo definire due o più funzioni indipendenti con lo stesso nome ma con liste di argomenti diverse. Ecco un esempio:
+
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+void Stampa(int n){
+	cout << "Il numero inserito e': " << n << endl;
+}
+
+void Stampa(char a){ //overloading!
+	cout << "La lettera inserita e': " << a << endl;
+}
+
+int main(){
+	char c='b';
+	Stampa(c); //il compilatore capisce quale funzione usare a causa dell'argomento
+	Stampa(2); //idem
+	return 0;
+}
+\end{lstlisting}
+
+Avendo argomenti diversi, il compilatore è in grado di ``scegliere'' la funzione corretta durante la chiamata. Un'altra differenza possibile può essere, ad esempio, un numero di argomenti diverso (ma c'è una possibile soluzione alternativa che tra poco vedremo). 
+
+Ciò che invece il \verb|C++| si rifiuta di accettare è una differenza nel solo \emph{return value}. Mentre quando invochiamo una funzione l'argomento con cui la chiamiamo è esplicito, la variabile ritornata, tecnicamente, è indipendente da cosa vi è a sinistra della funzione. Sarebbe estremamente pericoloso accettare una cosa di questo tipo:
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+void Stampa(int n){
+	cout << "Il numero inserito e': " << n << endl;
+}
+
+int Stampa(int n){ //ERRORE: non si puo' fare!
+	cout << "Ti ho restituito la variabile n " << endl;
+	return n;
+}
+
+int main(){
+	int n=Stampa(1); 
+	return 0;
+}
+\end{lstlisting}
+Nel \verb|C| qualcosa del genere era accettabile, ma causava complicazioni notevoli in fase di \emph{debugging}. Il \verb|C++| si rifiuta di compilare un \emph{overload} nella sola \emph{return variable}.
+
+Nota che, invece, è possibile \emph{ritornare} valori differenti se la lista degli argomenti è diversa:
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+void Stampa(char a){
+	cout << "La lettera inserita e': " << a << endl;
+}
+
+int Stampa(int n){ //return value diverso ma accettabile: la lista degli argomenti e' diversa, non vi e' ambiguita' in compilazione
+	cout << "Il numero inserito e': " << n << endl;
+	return n;
+}
+
+int main(){
+	int n=Stampa(2);
+	return 0;
+}
+\end{lstlisting}
+
+Questi esempi di \emph{overloading} sono assai stupidi, ma ci sono casi in cui è davvero comodo utilizzare questa tecnica. Ad esempio, quando si definiscono tipi di dato diversi da quelli built-in e si vogliono adattare anche a loro funzioni già costruite per i dati standard:
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+//definisco la struttura puntoR2
+struct puntoR2{
+	float x;
+	float y;
+};
+
+int max(int array[], unsigned int dim){
+	int tmp=0; 
+	tmp=array[0]; 
+	for(int i=1; i<dim; ++i){
+		if(array[i]>tmp)
+			tmp=array[i];	
+	}
+	return tmp;
+}
+//restituisce il punto R2 con l'ordinata massima
+puntoR2 max(puntoR2, unsigned int dim){
+	puntoR2 tmp=0; 
+	tmp=array[0]; 
+	for(int i=1; i<dim; ++i){
+		if(array[i].y>tmp.y) //definisce il concetto di ordinamento per la struttura
+			tmp=array[i];	
+	}
+	return tmp;
+}
+
+int main(){
+	//...
+	//...
+	return 0;
+}
+\end{lstlisting}
+
+Nell'esempio precedente l'\emph{overload} è comodissimo: avremmo potuto dare nomi diversi alle funzioni (es \verb|maxR2|), ma il codice si sarebbe complicato nel momento di chiamare la funzione (dovendoci ricordare quale funzione usare ogni volta). Grazie all'\emph{overload}, non ci accorgiamo di avere tante funzioni diverse. \\
+
+Vi è una cosa importante da notare, non puoi definire due funzioni con il prototipo uguale (anche se il corpo è differente). Farlo causerà sempre un errore in compilazione. 
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+int DoSomething(int n){
+	return ++n;
+}
+
+int DoSomething(int n){ //ERRORE!! Stesso prototipo del precedente come fa il compilatore a scegliere quale usare?
+	return --n;
+}
+
+int DoSomething(int n){ //ERRORE!! Funzione gia' definita (identica alla prima), errore in compilazione
+	return ++n;
+}
+
+int main(){
+	//...
+	return 0;
+}
+\end{lstlisting}
+Chiara la differenza tra \emph{overloading} di funzione ed errore di programmazione?
+\subsection{Default arguments}
+Una caratteristica piuttosto utile del \verb|C++| è di poter assegnare degli argomenti default ad una funzione, ad esempio:
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+void Stampa(int n, unsigned int n_volte=1){ //n_volte e' un argomento di default: se non lo assegno vale 1
+	for(unsigned int i=0; i<n_volte; ++i)
+		cout << "Valore inserito: " << n << endl;
+}
+
+int main(){
+	//posso chiamare la funzione stampa in due diversi modi:
+	Stampa(2); //stampa 2 una volta (n_volte non viene assegnato, quindi e' l'argomento di default)
+	Stampa(2,100); //stampa 2 cento volte (sovrascrivo l'argomento di default)
+	return 0;
+}
+\end{lstlisting}
+
+In una funzione posso avere \emph{n} argomenti default, nella chiamata a funzione, però posso lasciare vuoti solo gli argomenti più a destra: non è ammesso assegnare un valore ad un argomento e lasciare quello di default alla sua sinistra. Per chiarire meglio:
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+void foo(int n=0, bool b=true, float f=1.1){
+ //...
+ //...
+}
+
+int main(){
+	//questo e' ammesso:
+	foo(); //tutti gli argomenti vengono passati alla funzione con il valore di default
+	
+	//anche questo e' ammesso
+	foo(1, false); //f rimane 1.1
+	
+	//errore! non posso assegnare un valor a b senza che tutti gli argomenti alla sua sinistra abbiano un valore assegnato nella chiamata
+	foo(false); //non ho assegnato n ma ho assegnato b
+	
+	return 0;
+}
+\end{lstlisting}
+
+Ultima cosa da dire: se dividi il prototipo dal corpo della funzione, gli argomenti di default devono comparire solo nel prototipo. Ad esempio:
+
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+//prototipo: ha gli argomenti di default
+void foo(int n=0, bool b=true, float f=1.1);
+
+int main(){
+	//...
+	//...
+	return 0;
+}
+
+//nel corpo non devo piu' assegnare il valore agli argomenti, in caso contrario ho errore di compilazione
+void foo(int n, bool b, float f){
+	//...
+	//...
+}
+\end{lstlisting}
+\section{Alcune funzioni utili}
+Di seguito riporto alcuni esempi concreti di funzioni. In particolare, una funzione per caricare da file un \emph{array} di dati con dimensione non nota a priori.
+\subsection{Lettura da file: dimensione non nota}
+Abbiamo un file, \verb|dati.dat|, che contiene un numero di dati che non ci è noto. Sappiamo solo il tipo di dato, per esempio \textbf{int}. Ecco il codice:
+\begin{lstlisting}
+#include <iostream>
+#include <fstream>	//ifstream
+#include <cstdlib>	//exit()
+using namespace std;
+
+void CaricaInteri(const char *nomefile, int* &v, unsigned int &dim){ //passiamo il nome del file come una stringa del C: un'array di caratteri costante
+	ifstream in(nomefile);
+	int tmp=0; 
+	if(in.fail()){
+		cerr << "Errore di apertura canale in lettura con " << nomefile << endl;
+		exit(1);
+	}
+	
+	//Per prima cosa devo contare i dati su file
+	dim=0; //inizializzo il numero dei dati a zero
+	in >> tmp; //leggo un dato
+	while(!in.eof()){ //se non ho letto il carattere end of file continuo il ciclo
+		dim++; //incremento il numero di dati
+		in >> tmp; //leggo altro dato
+	}
+	//ora ho il numero di dati, contenuto in dim, quindi alloco un vettore di quella dimensione e riporto la testina della lettura del file a zero
+	v=new int[dim];
+	in.clear();
+	in.seekg(0);
+	//ora carico i dati
+	for(int i=0; i<dim;++i)
+		in>>v[i];
+	in.close(); //chiudo il canale	
+}
+
+int main(){
+	int *v;
+	unsigned int n;
+	CaricaInteri("dati.dat", v, n);
+	//uso il mio vettore
+	//...
+	//...
+	delete[] v; //ricordati di pulire la memoria usata!
+	return 0;
+}
+\end{lstlisting}
+
+Questa funzione non dovrebbe farti sorgere grandi dubbi: è un riassunto di quanto detto nel presente capitolo e nei precedenti. Puoi provare a scrivere una funzione simile che lavori, ad esempio, su un file di \textbf{float}. Per esercizio può essere utile anche scrivere le funzioni che, al posto di leggere, scrivono su file.
+\subsection{Random numbers}
+In questa sottosezione impareremo, più che altro, ad usare una funzione già scritta, ma in ogni caso conoscerla è importante.\\
+
+La questione dei numeri casuali, in Fisica e in Matematica, ricopre un'importanza fondamentale. In Matematica diversi metodi numerici per risolvere, ad esempio, integrali o equazioni differenziali, richiedono l'uso di numeri generati casualmente. In Fisica, invece, moltissime simulazioni di esperimenti o di fenomeni fisici partono proprio da numeri casuali generati secondo varie distribuzioni.
+
+In queste note impareremo a produrre numeri detti ``pseudo-casuali'': la funzione che useremo genera numeri che appaiono casuali ma in realtà non lo sono; in altri termini, questa funzione non andrebbe \emph{mai} usata per fare cose serie. D'altro canto, come può una macchina deterministica come un computer produrre numeri veramente casuali?\footnote{\label{truerand}In realtà, Linux ha un file molto particolare, \emph{/dev/random} (o il più versatile \emph{/dev/urandom}), dentro cui sono immagazzinati numeri \emph{realmente} casuali (e da dove escono? Linux, ad esempio, registra il momento in cui tu inserisci una chiavetta usb, oppure il momento in cui c'è un errore di sistema dovuto a cause esterne, o il movimento del mause, ecc ecc\ldots tutti eventi casuali). Sono byte indipendenti, e quindi vanno letti come char (la cui dimensione è, appunto, un byte), se sei interessato all'argomento scrivi ``man random.4'' sul terminale.}
+
+La funzione incriminata è \emph{rand()}, che è contenuta nella libreria \verb|cstdlib|: è un generatore di numeri interi pseudo casuali uniformemente distribuiti tra 0 e \verb|RAND_MAX| (una costante definita sempre in \verb|cstdlib|).
+
+Il generatore di numeri casuali lineare ha bisogno di essere ``inizializzato'' con un \emph{seme} (\emph{seed}, in inglese). A partire da questo seme genera i numeri successivi. Se il seme fosse sempre lo stesso, genererebbe ogni volta \emph{gli stessi numeri} (per questo viene detto ``pseudo-casuale''). La funzione \emph{srand(int)} inizializza il \emph{seme} all'intero che gli passiamo in argomento. Un piccolo ``trucchetto'' è usare come \emph{seme} il tempo del sistema operativo. La funzione \emph{time(NULL)} (contenuta nella libreria \verb|ctime|) restituisce i secondi passati dal primo gennaio del 1970 (quindi, a secondi di distanza, siamo sicuri che i nostri numeri casuali saranno completamente diversi). Una volta inizializzato il \emph{seme}, possiamo generare i numeri, vediamo come:
+
+\begin{lstlisting}
+#include <iostream>
+#include <ctime>	//time(NULL)
+#include <cstdlib>	//rand(), srand()
+using namespace std;
+
+int main(){
+	int v[5]; //generiamo cinque numeri casuali
+	srand(time(NULL)); //la funzione srand inizializza il seme all'intero restituito da time
+	for(int i=0; i<5; ++i)
+		v[i]=rand(); //generiamo i numeri pseudocasuali
+	for(int i=0; i<5;++i)
+		cout << v[i] << endl; //li stampiamo
+	return 0;	
+}
+\end{lstlisting}  
+
+Nel codice precedente generiamo cinque numeri casuali. Se riesci ad eseguire due volte di seguito il programma abbastanza rapidamente, ti accorgerai che i cinque numeri della prima esecuzione saranno gli stessi della seconda: se è passato meno di un secondo il \emph{seme} è lo stesso! Oppure, per verificarlo, scrivi un codice che genera \emph{n} numeri casuali e, come \emph{seme}, metti un numero costante, tipo 2: ogni volta che esegui il programma i numeri sono gli stessi.
+ 
+A questo punto, siamo pronti a scrivere una funzione che genera, ad esempio, \textbf{float} uniformemente distribuiti tra due numeri che specifichiamo noi (e non interi compresi tra zero e RAND\_MAX), vediamo come:
+\begin{lstlisting}
+#include <iostream>
+#include <ctime>		//time(NULL)
+#include <cstdlib>		//rand(), srand()
+using namespace std;
+
+//Ricorda di inizializzare il seme prima di chiamarla!!!
+float generaFloat(float min, float max){
+	float r;
+	r = (max-min)*rand()/RAND_MAX + min; //genera numeri uniformemente distribuiti tra min e max, perche' non e' necessario mettere (float)RAND_MAX? Ricorda le operazioni vengono eseguite da sinistra a destra
+	return r;
+}
+
+int main(){
+	float* v;
+	float min=0, max=0;
+	unsigned int n=0;
+	cout << "Inserisci quanti numeri generare: ";
+	cin >> n;
+	cout << "Inserisci minimo: ";
+	cin >> min;
+	cout << "Inserisci massimo: "; 
+	cin >> max;
+	v=new float[n];
+	srand(time(NULL));
+	for(unsigned int i=0; i<n; ++i)
+		v[i]=generaFloat(min, max);
+	
+	cout << "Numeri casuali tra " << min << " e " << max << endl;
+	for(unsigned int i=0; i<n; ++i)
+		cout << v[i] << endl;
+	delete[] v;
+	return 0;
+}
+\end{lstlisting}
+
+Ora prova a scrivere una funzione che genera numeri interi uniformemente distribuiti tra un massimo e un minimo arbitrari. Come risolveresti i problemi di divisione tra interi, conversione tra \textbf{float} e \textbf{int} e l'essere certo che nessuno dei due estremi sia più probabile dell'altro? 
+
+È possibile scrivere le funzione per i numeri casuali \textbf{float} e \textbf{int} in modo che una sia l'overload dell'altra?\\
+
+Nel corso di Trattamento Numerico dei Dati Sperimentali, imparerai a generare numeri  casuali distribuiti secondo funzioni arbitrarie, in particolare con distribuzione gaussiana (che, come saprai, è onnipresente in Fisica). Va detto che, in realtà, tutto il necessario (e anche ben di più, con tanto di distrubuzioni binomiali, T di student, ecc\ldots) è già presente dentro la libreria ``\verb|random|'', nata con lo standard del \verb|C++| del 2011. Sempre in quella libreria, sono definiti diversi generatori di numeri casuali di cui, alcuni, migliori della funzione  \emph{rand()} che abbiamo usato\footnote{Addirittura, vi è un oggetto, ovvero \emph{std::random\_device}, che su Linux va a leggere \emph{/dev/urandom} (che ho già citato nella nota \ref{truerand}) che, quindi, genera numeri non deterministici, se l'entropia del sistema è sufficientemente alta. Allora perché si usano numeri pseudo-casuali? Essenzialmente per motivi di performance: il computer è velocissimo a generare un numero pseudo-random, mentre ``random\_device'' può essere lento (in attesa che l'entropia del sistema aumenti).}. Se sei interessato all'argomento, potresti dare un occhio alla reference online (\url{http://www.cplusplus.com/reference/random/}).
+\subsection{Calcolo del tempo di esecuzione}
+Per scoprire cosa sta andando storto, o semplicemente imparare a capire qualcosa di più del \verb|C++| e degli algoritmi, può essere utile imparare a misurare i tempi di esecuzione del nostro programma o di porzioni del codice.
+
+Di nuovo, dobbiamo usare una funzione già scritta da altri: tutti gli strumenti necessari sono contenuti nella libreria standard del \verb|C| (\verb|#include <stdlib>|).
+
+Il modo più preciso per calcolare il tempo trascorso è di misurare i cicli di \emph{clock} che la CPU compie. Ti sarà capitato di notare, a fianco del nome dei processori, scritte del tipo ``2.4GHz'': indicano la velocità della CPU, in altri termini il numero di \emph{clock} che è in grado di elaborare in un secondo. Senza entrare nei dettagli, un \emph{clock} è il calcolo più elementare possibile di una CPU: il più piccolo ``step'' di pensiero che il processore sà fare.
+
+Un programma può chiedere alla CPU di contare i cicli di \emph{clock} che trascorrono, e quindi, dividendo per il periodo di un ciclo, si ottiene il tempo reale passato. 
+
+Un esempio dovrebbe chiarire tutto:
+\begin{lstlisting}
+#include <iostream> 
+#include <cstdlib> //clock(), clock_t, CLOCKS_PER_SEC
+using namespace std;
+
+int main(){
+	clock_t start, end; //definisco due variabili di tipo clock_t: possono immagazzinare un dato che rappresenta i clock della cpu
+	
+	start=clock(); //la funzione clock ritorna il clock attuale della cpu: assegno a start il clock iniziale
+	
+	//Codice di cui voglio calcolare il tempo di esecuzione
+	//...
+	//...
+	//...
+	end=clock(); //assegno ad end il clock finale di esecuzione
+	float time=(float)(end-start)/CLOCKS_PER_SEC; //calcolo il tempo trascorso (in secondi) dividendo il delta clock per il numero di clock per secondo (variabile definita per ogni CPU). NOTA: sia clock_t che CLOCKS_PER_SEC sono di tipo intero (motivo del (float))
+	cout << "Tempo trascorso: " << time << " secondi." << endl; 
+	return 0;
+}
+\end{lstlisting}
+
+\subsection{Funzioni di ordinamento e statistica}
+Alcune ``azioni'' che abbiamo già studiato consistono nel trovare l'elemento massimo e minimo di un vettore, ordinarlo, trovarne la media, la varianza, la deviazione standard, ecc\ldots Inutile dire che un buon esercizio per te potrebbe essere scrivere quello di scrivere le relative funzioni!\\
+
+\begin{subappendices}
+\section*{COMPLEMENTI}
+\addcontentsline{toc}{section}{COMPLEMENTI}
+\section{Argomenti del \emph{main}: \emph{argc} e \emph{argv}}
+Abbiamo visto che pure il \emph{main} è una funzione: è la madre di tutte le funzioni. Finora è sempre stato del tipo ``\lstinline|int main()|'', ovvero una funzione \textbf{void} in argomento che restituisce un \textbf{int}. Esiste, in realtà, un \emph{overload} del \emph{main}, ovvero: ``\lstinline|int main(int argc, char** argv)|''. Come vedi, questo \emph{main} prende due argomenti, e prima di analizzare cosa sono, ci chiediamo: da chi li prende? Dal chiamante, ovvero il sistema operativo che, nei nostri casi, è rappresentato dal terminal. 
+
+Questo \emph{overload} del \emph{main} ci permette di passare dalla riga di comando degli argomenti al nostro programma (quindi delle informazioni, dei dati). Il primo, \verb|argc|, è un intero che rappresenta il numero di argomenti passati. Il secondo è un \emph{array} di \emph{array} di caratteri che, tradotto, è un'\emph{array} di stringhe.
+
+Argc, in realtà, non dobbiamo passarlo esplicitamente, è il sistema operativo che se ne occupa: conta lui il numero di argomenti che stiamo passando. Noi dobbiamo solamente passare le stringhe di caratteri.
+
+Ecco un esempio banale:
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+int main(int argc, char** argv){
+	cout << "Numero di argomenti: " << argc << endl;
+	for(int i=0; i<argc; ++i)
+		cout << argv[i] << endl;
+	return 0;
+}
+\end{lstlisting} 
+Chiamando il \emph{main} come ``\verb|./main ciao come stai?|'', otteniamo il seguente output:
+\begin{shaded}
+\begin{verbatim}
+Numero di argomenti: 4
+./main
+ciao
+come
+stai?
+\end{verbatim}
+\end{shaded}
+
+In poche parole, il sistema operativo automaticamente conta per noi il numero di argomenti: sono quattro (il primo è nome del programma). Quindi, stampiamo i quattro elementi del vettore di stringhe \emph{argc} (e, come vedi, il primo elemento è proprio il nome del programma).\\
+
+Gli argomenti del \emph{main} possono diventare molto utili: ad esempio, per passare al programma il nome del file su cui scrivere, oppure il numero di passi da fare in un ciclo, ecc\ldots
+
+Un esempio un po' più significativo può essere il seguente (nota: la funzione \emph{atoi}, contenuta in \verb|ctstlib|, converte una stringa ad un intero). Il programma vuole come argomenti il nome del file su cui scrivere e il numero di dati casuali da generare:
+\begin{lstlisting}
+#include <iostream>
+#include <cstdlib> //atoi
+#include <fstream>
+using namespace std;
+
+int main(int argc, char** argv){
+	if(argc!=3){//controllo che il numero di argomenti sia esattamente il necessario
+		cout << "Usage: " << argv[0] << " nomefile numerodati" << endl; //./main nomefile numerodati
+	return 1;
+	}   
+	int ndati=atoi(argv[2]); //converto il numero di dati passato da riga di comando ad un intero: gli argomenti del main sono array di char
+	ofstream out(argv[1]); //apro un canale di out usando il nomefile passato da argomento al main
+	srand(time(NULL));
+	for(int i=0; i<ndati; ++i)
+		out << rand() << endl;
+	out.close();
+	return 0;
+}
+\end{lstlisting}
+
+Come vedi, ho controllato che il numero di argomenti passati al \emph{main} sia esattamente quello richiesto dal programma: nessuno mi assicura che l'utente finale non passi più o meno argomenti del necessario, e una situazione del genere, spesso, può portare a comportamenti non definiti che è meglio evitare.
+\section{La Ricorsione}\label{rico}
+La ricorsione è una tecnica molto interessante degli algoritmi. È strutturata implementando un algoritmo che chiama e richiama se stesso fino a che non si verifica una condizione base. Ovviamente, è importantissimo definire un caso base che faccia uscire dal \emph{loop} infinito che, in caso opposto, si genererebbe.
+
+La ricorsione permette di scrivere algoritmi semplici ed eleganti per problemi che, utilizzando una soluzione iterativa, richiederebbero un codice più complesso. 
+
+Il vantaggio della ricorsione è l'eleganza e la semplicità dell'algoritmo, ma purtroppo, siccome la chiamata a funzione ha un costo elevato, è una tecnica inefficiente. Al contrario, gli equivalenti algoritmi iterativi sono assai più efficienti, ma spesso decisamente più complicati da scrivere.
+
+L'esempio più classico che si riporta parlando di ricorsione è il calcolo del fattoriale di un numero. Per calcolare $n!$ possiamo invocare $n\cdot(n-1)!$, ricordandoci che $0!=1!=1$ (il caso base). 
+
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+int fattoriale(int n){
+	if(n> 1)
+		return n*fattoriale(n-1); //richiamo me stesso
+	else
+		return 1; //caso base!
+}
+
+int main(){
+	int n=0;
+	cout <<"Inserisci un numero di cui calcolare il fattoriale: "; 
+	cin>>n;
+	cout <<"Il fattoriale di " << n << " e': " << fattoriale(n) << endl;
+	return 0;
+}
+\end{lstlisting}
+Nota che il calcolo del fattoriale comporta molto rapidamente l'\emph{overflow},  utilizzando  \textbf{int}.\\
+
+Un altro esempio classico è la serie di Fibonacci, che potresti provare ad implementare per esercizio.
+
+Anche i vettori, a volte, si prestano ad essere affrontati per ricorsione. Ad esempio, prova a scrivere un algoritmo ricorsivo che trova il massimo di un \emph{array}.\\
+
+Da notare che un \emph{loop} infinito nella ricorsione porta prima o poi ad esaurire la \emph{stack} e, quindi, all'interruzione del programma da parte del sistema operativo. Al contrario, un \emph{loop} infinito in un algoritmo iterativo, generalmente, non comporta l'esaurimento della memoria ma solo l'uso completo e inutile della CPU: il nostro programma si ``inchioda'' all'infinito (e ci conviene ``ucciderlo'' con  control+c per uscire). 
+
+\section{Variabili \emph{static}}
+Abbiamo visto che ogni funzione ha il proprio spazio dei nomi: le variabili nascono quando la funzione viene chiamata e muoiono quando termina.
+
+Esiste un tipo di variabile che ``sopravvive'' anche dopo la fine della funzione e che rimane accessibile nelle successive chiamate: la variabile \textbf{static}. 
+
+Una variabile definita \textbf{static} viene allocata e inizializzata una sola volta, ovvero la prima volta che chiamiamo la funzione: quando questa termina, la variabile rimane allocata. In poche parole, è una variabile che è condivisa tra tutte le successive chiamate a funzione, con l'effetto di ``salvare'' il dato tra una chiamata e l'altra.
+Può, quindi, essere utile per tenere traccia di informazioni.
+
+Vediamo un esempio:
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+void conta(){
+	static int contatore=1; 
+	cout << "Questa funzione e' stata chiamata " << contatore << " volte." << endl;
+	++contatore;
+}
+
+int main(){
+	for(int i=0; i<5; ++i)
+		conta();
+	return 0;
+}
+\end{lstlisting}
+L'output del programma sarà:
+\begin{shaded}
+\begin{verbatim}
+Questa funzione e' stata chiamata 1 volte.
+Questa funzione e' stata chiamata 2 volte.
+Questa funzione e' stata chiamata 3 volte.
+Questa funzione e' stata chiamata 4 volte.
+Questa funzione e' stata chiamata 5 volte.
+\end{verbatim}
+\end{shaded}
+Ommettendo la parola chiave \textbf{static}, avremmo stampato per cinque volte ``Questa funzione e' stata chiamata 1 volte.'', in quanto la variabile sarebbe morta e rinata ad ogni chiamata della funzione.
+
+Da notare due cose. La prima è che, se inizializziamo una variabile \textbf{static}, questo avviene solo alla prima chiamata della funzione (il ``\verb|contatore=1|'' dell'esempio ha effetto solo la prima volta che la funzione viene invocata). La seconda è che la parola chiave \textbf{static}, all'interno di una funzione, non aumenta la visibilità della variabile\footnote{Al contrario, la parola chiave \textbf{static} modifica l'ambito di visibilità per una variabile globale: lo restringe al file in cui è dichiarata. Una variabile globale \textbf{static} è visibile solo nel file in cui è dichiarata; leggendo il capitolo sulle librerie, capirai meglio cosa si intende per ``file'' di codice.}: sopravvive sì in chiamate successive, ma non diventa visibile (e accessibile) al di fuori del corpo della funzione. Se cerco di accederci dal \emph{main}, ad esempio, otterrò un errore di compilazione.
+%\section{Overload di Operatori}
+\end{subappendices}

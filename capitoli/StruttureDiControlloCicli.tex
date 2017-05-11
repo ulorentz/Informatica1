@@ -1,0 +1,598 @@
+
+\chapter{Strutture di controllo e cicli}\label{cicli}	
+Abbiamo visto buona parte di ciò che concerne i dati e la memoria; siamo capaci di usare le variabili e abbiamo capito come vengono trattate nella RAM. Ma, con gli strumenti che abbiamo, il nostro codice non ha molte potenzialità operative, non è particolarmente versatile. 
+	
+In questo capitolo studieremo due importantissime strutture che rendono il codice potente e dinamico: le strutture di controllo e i cicli. Dal momento che le prime sono spesso utili nelle seconde, inizieremo con queste.
+\section{Strutture di controllo}
+Ci sono situazioni in cui l'operazione che desideriamo eseguire cambia in base alle condizioni iniziali. Mi spiego meglio: se all'inizio abbiamo una situazione, potremmo voler fare una determinata operazione; se invece la situazione è un'altra, potremmo desiderare una diversa operazione. Come facciamo? Il nostro codice viene eseguito in maniera consequenziale: un'operazione dopo l'altra (una riga di codice dopo l'altra). Come facciamo a dire: ``No, non eseguire quest'operazione, esegui quella!''?\\
+	
+Per capire meglio ti propongo un esempio pratico: vogliamo scrivere un programma che, preso in input un numero, ne trovi il valore assoluto. 
+	
+Se viene inserito un numero negativo, ci basta farne il modulo moltiplicando per $-1$, ma se viene inserito un numero positivo? La moltiplicazione per $-1$ non deve assolutamente avvenire!
+	
+Cerchiamo di estrapolare i concetti generali. Per prima cosa dobbiamo controllare la situazione iniziale, ovvero se si verifica una condizione specifica: nel nostro caso il segno del numero (ad esempio, per condizione prendiamo la negatività del numero). A seconda che la condizione si verifichi o no, dobbiamo eseguire un'istruzione o l'altra.
+	
+Tornando al nostro esempio: se il numero è negativo (condizione verificata) allora dobbiamo trovarne il valore assoluto, ma se il numero è positivo (condizione non verificata) allora non dobbiamo eseguire nessuna operazione.\\
+	
+Nota una cosa: il controllo di una condizione è un'operazione binaria. La condizione è verificata o non è verificata, non esiste una terza opzione. Una variabile booleana è perfetta per rappresentare questa situazione: può essere settata su \textbf{true} se la condizione si verifica, \textbf{false} negli altri casi.\\
+\subsection{\emph{if\ldots else}} 
+Passiamo ad analizzare il codice che rappresenta questa situazione.
+\paragraph{if(\ldots)\{\ldots\}}Esiste un costrutto che, a partire da una situazione iniziale, controlla se una condizione viene verificata.  Quindi, se ciò avviene, entra in un nuovo scope ed esegue ciò che è contenuto.
+	
+Questo costrutto è il seguente:
+\begin{lstlisting}
+if(condizione della situazione iniziale){//nuovo scope
+	//istruzioni
+}
+\end{lstlisting}
+Nota che \textbf{if} è una parola riservata. ``If'' viene seguito da parentesi tonde: al loro interno vi è un codice (generalmente breve) che controlla la situazione iniziale, questo codice deve produrre un risultato tassativamente booleano. Infatti, se nelle parentesi tonde, a controllo concluso, risulta un valore \textbf{true} allora il programma entra nelle parentesi graffe che seguono; se, invece, si trova un valore \textbf{false} ciò non avviene. \\
+	
+Per capire meglio l'uso di questo enunciato all'interno di un programma, vediamo un esempio pratico: vogliamo scrivere un programma che decida se è pari un numero inserito da tastiera.
+	\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+int main(){
+	int numero=0;
+	cout << "Inserisci un numero: " << endl;
+	cin >> numero; //cin legge da tastiera un valore e lo inserisce in numero
+	if(numero%2==0){
+		cout << "Il numero e' pari!" << endl;
+	}
+	return 0;
+}
+\end{lstlisting}
+
+Cosa succede?
+Fino a  \emph{cin} dovrebbe esserti tutto chiaro. \emph{Cin}, così come \emph{cout}, è un operatore di input/output (o meglio, \emph{cin} di input, \emph{cout} di output). \emph{Cin} è un'abbreviazione di ``console input'' e legge da tastiera un valore, viene seguito da ``>>'' e da una variabile: scrive il valore inserito da tastiera nella variabile. Per una spiegazione più approfondita vedi il capitolo in/out.
+
+A questo punto interviene \textbf{if}: trova il resto della divisione e lo paragona con zero, e se è uguale a zero (il numero è pari) il confronto restituisce \textbf{true}.  Potremmo dire che, in questo caso, \textbf{if} dà l'ok per entrare nelle parentesi graffe: il codice in esse contenuto viene eseguito. Se il resto della divisione non è zero, il confronto con zero dà come risultato \textbf{false}: \textbf{if} non permette di entrare nelle parentesi graffe e il relativo codice non viene eseguito.\\
+
+Perché ho scritto ``=='' e non un semplice ``=''? Questi due simboli, in realtà, sono profondamente diversi. Il primo è un operatore binario\footnote{Con operatore binario, si intende che necessita di due operandi. Un operatore che lavora su un solo operando è detto ``unario''. Ci tengo a sottolineare che ``binario'' non significa, quindi, che opera sui bit. Un operatore che agisce sui bit è detto ``bit a bit'' o, in inglese, \emph{bitwise} (un operatore binario, invece, è detto \emph{binary}).}, ovvero confronta ciò che è a destra con ciò che è a sinistra: se sono uguali restituisce \textbf{true}, altrimenti \textbf{false}. Il semplice ``='', invece, è un operatore di assegnazione: il valore contenuto nella variabile a destra viene assegnato a quella di sinistra. 
+
+Nella prossima sottosezione approfondiremo gli operatori binari e il loro funzionamento. Prima, però, voglio introdurre il completamento naturale della struttura \textbf{if}.
+
+\paragraph{else\{\ldots\}} Nell'esempio precedente controlliamo se una variabile è pari e stampiamo a video questa considerazione. E se volessimo stampare a video qualcosa anche quando la variabile è dispari?
+Potremmo pensare di fare una cosa così (ti avviso, è sbagliato!):
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+	
+int main(){
+	int numero=0;
+	cout << "Inserisci un numero: " << endl;
+	cin >> numero; //cin legge da tastiera un valore e lo inserisce in numero
+	if(numero%2==0){
+		cout << "Il numero e' pari!" << endl;
+	}
+	cout << "Il numero e' dispari!" << endl;
+	return 0;
+}
+	\end{lstlisting}
+Se il numero è dispari il programma non entra nello scope di \textbf{if} e tutto va bene: viene stampata la cosa giusta. Ma se il numero è pari? Abbiamo un problema: non solo il programma entra nello scope di \textbf{if}, ma viene stampato anche ciò che segue. Il risultato ottenuto non è quello desiderato!
+Potremmo procedere con un secondo \textbf{if} dove, per condizione, andremmo a controllare la cosa \emph{esattamente opposta}. 
+	
+Quando dopo un \textbf{if} abbiamo un codice che deve essere eseguito al verificarsi della condizione opposta dell'\textbf{if} iniziale, ci viene in aiuto un'altra struttura (in modo da evitare un secondo e ridondante \textbf{if}): \textbf{else}.
+
+Il codice di prima, corretto, diventa:
+	\begin{lstlisting}
+#include <iostream>
+using namespace std;
+	
+int main(){
+	int numero=0;
+	cout << "Inserisci un numero: " << endl;
+	cin >> numero; //cin legge da tastiera un valore e lo inserisce in numero
+	if(numero%2==0){
+		cout << "Il numero e' pari!" << endl;
+	}
+	else{
+		cout << "Il numero e' dispari!" << endl;
+	}
+	return 0;
+}
+	\end{lstlisting}
+	Come funziona \textbf{else}? Si oppone ad un \textbf{if}. Se la condizione di entrata nell'\textbf{if} non è verificata, allora si entra nello scope dell'\textbf{else} (quest'ultimo, quindi, non ha bisogno di alcuna parentesi tonda contenente una condizione). \`E implicito che un \textbf{else} non ha senso se non è preceduto da un \textbf{if}.
+	
+	\paragraph{NOTA} Una piccola precisazione: se l'istruzione da eseguire dentro un \textbf{if} o un \textbf{else} è costituita da una singola riga di codice (se e solo se è una sola riga!), allora possiamo evitare le parentesi graffe dello scope. Te lo dico perché, per brevità del codice, spesso nei miei esempi scriverò così. Varrà lo stesso per i cicli, ma lo ripeterò. \\
+	
+	Ti faccio notare che un \textbf{if} non deve per forza essere seguito da un \textbf{else}. Ci sono casi in cui, se la condizione non si verifica, non deve essere eseguito alcun codice alternativo: un caso è l'esempio del valore assoluto che avevo introdotto all'inizio. A dirla, tutta dovresti essere in grado di scrivere il programma da solo (fallo!), in ogni caso ti riporto una possibile soluzione:
+	\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+int main(){
+	int numero=0;
+	cout << "Inserisci un numero: " << endl;
+	cin >> numero;
+	if(numero<0)
+		numero=numero*(-1);
+	cout << "Valore assoluto: " << numero << endl;
+	return 0;		
+}
+	\end{lstlisting}
+	
+	Le strutture di controllo possono essere incluse una dentro l'altra, incastrate in una scalata di \textbf{if} ed \textbf{else}; ad esempio:
+	\begin{lstlisting}
+#include <iostream>
+using namespace std;
+int main(){
+	int numero=0;
+	cout << "Inserisci un numero maggiore di zero: " << endl;
+	cin >> numero;
+	if(numero<10){
+		cout << "Il numero ha una singola cifra." << endl;
+		if(numero%2==0){
+			cout << "Il numero e' pari. " << endl;
+			if(numero==2)
+				cout << "Il numero e' primo." << endl;
+		}
+	}
+	
+	return 0;
+}
+	\end{lstlisting}
+	
+	Non è l'unica situazione dove puoi trovare tanti \textbf{if} e, ovviamente, \textbf{else}: nell'esempio di prima per ogni condizione avrei potuto mettere il complementare dentro un \textbf{else}); l'altra situazione è quella, mi vien da dire, ``a cascata'': tanti \textbf{if} scollegati e uno dopo l'altro.
+	
+	Ti riporto un esempio molto semplice. Vedremo più avanti che esiste una struttura che è in grado di risolvere la stessa situazione in maniera elegante, ma solo in condizioni molto particolari.
+	
+	\begin{lstlisting}
+#include <iostream>
+using namespace std;
+int main(){
+	int c=0;
+	cout << "Inserisci un numero da 1 a 5 corrispondente ad una lettera da 'a' a 'e': " << endl;
+	cin >> c;
+	if(c==1)
+		cout << "a!" << endl;
+	if(c==2)
+		cout << "b!" << endl;
+	if(c==3)
+		cout << "c!" << endl;
+	if(c==4)
+		cout << "d!" << endl;
+	if(c==5)
+		cout << "e!" << endl;
+	return 0;
+}
+	\end{lstlisting}
+		
+	\subsection{Operatori binari e logici}
+	Abbiamo visto che \textbf{if} vuole, nelle parentesi tonde, un enunciato che produca un valore booleano. La cosa più banale è una variabile \textbf{bool}; questa non è, però, l'unica situazione che produce un risultato booleano: molto più notevoli sono gli operatori binari. 
+	
+	Gli operatori binari valutano una relazione tra due variabili, e a seconda del risultato restituiscono \textbf{true} o \textbf{false}. Nei codici precedenti ne ho introdotti un paio senza molte spiegazioni: vediamoli in dettaglio. 
+	
+	Chiedersi se una variabile è maggiore (o minore) di un'altra è una relazione binaria: se la variabile è effettivamente maggiore (rispettivamente minore) allora verrà restituito \textbf{true}, al contrario \textbf{false}. 
+	
+	
+	Esistono operatori binari relativi alla matematica ed operatori puramente logici, vediamoli!
+	
+	Gli operatori binari matematici che andremo ad utilizzare sono i seguenti (il codice in \verb|C++| segue tra virgolette dopo la freccina):
+	\begin{itemize}
+	\item \textbf{Uguale} $\to$ \textbf{`` == ''}
+		\\Come ho già accennato, c'è una profonda differenza tra ``='' e ``==''. Il singolo uguale è un operatore di assegnazione. Ne abbiamo già discusso, non approfondirò di nuovo il significato. I programmatori del \verb|C|, per distinguere l'operatore logico ``uguale'' dall'uguale di assegnazione hanno deciso che, per il primo, il simbolo sarebbe stato ``==''.\\
+		Quest'operatore controlla se ciò che è posto a sinistra coincide con ciò che è posto a destra, in tal caso produce un valore \textbf{true}; se ciò non avviene produce un \textbf{false}.\\
+		Stai attento a non confondere ``=='' con ``='': se lo fai combini sicuramente un bel disastro nel tuo codice, hai capito perché?\\ \\
+		\emph{Importante}: non usare \emph{mai} quest'operatore tra variabili di tipo \textbf{float} o \textbf{double}. Quando abbiamo studiato i dati in virgola mobile, abbiamo visto che non sempre ritroviamo risultati esatti o quello che ci aspettiamo. Un'operazione che dovrebbe generare ``$0$'', nel computer potrebbe produrre un risultato prossimo a tale valore, ma non esattamente zero!!! 
+		\\Ti ricordi l'esempio di codice che ti avevo proposto per farti vedere un caso in cui accade esattamente quel problema? Un programma come quello che segue non funzionerà mai:
+		\begin{lstlisting}
+#include <iostream>
+using namespace std;
+int main(){
+	float a=0.3, b=0.2, c=0.1;
+	float d=a-b-c;
+	if(d==0)
+		cout << "Risultato corretto! " << endl;
+	return 0;	
+}
+		\end{lstlisting}
+		Questo è un programma inutile e stupido, ma se nel tuo codice, scrivendo programmi seri, usi dei numeri in virgola mobile con ``=='' potresti creare errori per nulla facili da individuare. \\
+		Usa l'operatore ``=='' solo con \textbf{int}, \textbf{short}, \textbf{long}, \textbf{char} e \textbf{bool}.
+	 
+	\item \textbf{Diverso} $\to$ \textbf{`` != ''}
+	\\Non c'è molto da spiegare: è l'esatto opposto dell'operatore precedente. Il punto esclamativo nega ciò che segue: significa ``non uguale''. Questo operatore confronta ciò che è a sinistra con ciò che è a destra: se differiscono produce un valore \textbf{true}.
+	\\Giusto per completezza: esiste una parola riservata per indicare ciò che in simboli è ``!='': \textbf{not\_eq}; non ti capiterà praticamente mai di trovarla, ma nel caso sai cos'è\ldots
+	\\Vale la stessa considerazione di prima sul non usare numeri in virgola mobile (anche perché, essenzialmente, quest'operatore è identico al precedente: semplicemente produce risultati opposti).
+	
+	\item \textbf{Maggiore}  $\to$ \textbf{`` > ''}
+	\\Funziona esattamente come il relativo operatore matematico. Inoltre, è molto meno problematico nell'uso con i numeri a virgola mobile dei precedenti operatori: l'unico caso critico è quello in cui, di nuovo, due numeri dovrebbero essere uguali (e quindi restituire \textbf{false}) ma in realtà uno è leggermente maggiore dell'altro. \`E comunque un caso raro e, perciò, è comune usare questo operatore anche con i \textbf{float} e i \textbf{double}.
+	\item \textbf{Maggiore o uguale}  $\to$ \textbf{`` >= ''}
+	\\Anche in questo caso, stesse funzionalità dell'operatore matematico e quasi nessun problema con i \textbf{float} e i \textbf{double}.
+	\item \textbf{Minore} $\to$ \textbf{`` < ''}
+	\\Stesse considerazioni fatte per ``>''.
+	
+	\item \textbf{Minore o uguale}  $\to$ \textbf{`` <= ''}
+	\\Stesso discorso del ``>=''.
+	\end{itemize}
+	
+	Abbiamo visto praticamente tutti gli operatori binari matematici. Ci sono, però, ancora due operatori binari, diciamo ``logici'': \emph{and} e \emph{or}.
+	
+	Questi due operatori, a differenza dei precedenti, a sinistra e a destra hanno dei valori booleani e stabiliscono delle relazioni tra gli stessi restituendo un nuovo valore booleano. Vediamo in dettaglio come funzionano.
+	\begin{itemize}
+	\item \textbf{and}: se sia a destra che a sinistra vi sono due \textbf{true}; restituisce a sua volta \textbf{true}, se i due valori sono diversi o entrambi \textbf{false}, allora restituisce \textbf{false}.
+	\\Nel \verb|C| non esisteva la parola riservata \textbf{and}: il simbolo per rappresentarla era ``\&\&''. Nel codice scritto da qualche nostalgico (o pezzi di codice derivanti dal \verb|C|), potresti trovare questo simbolo: non spaventarti, è un semplice \textbf{and}.
+	
+	
+	\item \textbf{or}: affinché sia prodotto un valore \textbf{true}, è sufficiente che solo uno dei due valori sia \textbf{true} (ovviamente possono esserlo entrambi); per cui, l'unico caso in cui viene prodotto un valore \textbf{false} è quando entrambi sono \textbf{false}.
+	\\Anche \textbf{or} non esisteva nel \verb|C|: il relativo simbolo era ``||''.
+	
+	\item Ti aspettavi due punti e invece ecco il terzo!	Voglio fare una precisazione: ``\textbf{!}'' può essere usato in situazioni diverse dal ``!=''. Lo possiamo usare per negare una qualsiasi operazione che produca un valore booleano. 
+	\\Il punto esclamativo è, infatti, un operatore logico vero e proprio che nega ciò che segue ma non è un operatore binario: prende un solo argomento.
+	\\Di nuovo, per completezza, sappi che esiste una parola riservata per indicare ``!'': \textbf{not}; ti sarà raro trovarla, ma nel caso\ldots
+	\\Se scriviamo:
+	\begin{lstlisting}
+		if(!( a>0 and a<10))
+	\end{lstlisting}
+	stiamo imponendo che \verb|a| deve essere minore di 0 e maggiore di 10 (estremi inclusi). In questo caso, avremmo potuto semplicemente invertire i versi. Ci sono situazioni, però, in cui torna comodo (ad esempio per negare il valore che ritornano alcune funzioni, nei prossimi capitoli vedrai qualche esempio).\\
+	Ovviamente puoi usarlo per negare anche una semplice variabile booleana, esempio:
+	\begin{lstlisting}
+	bool var=true;
+	if(var)
+		//codice
+	if(!var)
+		//codice
+	\end{lstlisting}
+	Il programma entra nel primo \textbf{if}, mentre nel secondo no.
+\end{itemize}
+	\textbf{if}, \textbf{and} e \textbf{or} spesso tornano utili per effettuare dei controlli, potremmo dire di ``sicurezza'', sugli input (e varie altre cose). Ad esempio, nel programma scritto prima in cui si chiedeva un numero da 1 a 5 da convertire in lettera, si potrebbe inserire un ``check'' sul fatto che effettivamente il numero inserito sia compreso tra 1 e 5. Provo a farti vedere:
+	\begin{lstlisting}
+#include <iostream>
+using namespace std;
+int main(){
+	int c=0;
+	cout << "Inserisci un numero da 1 a 5 corrispondente ad una lettera da 'a' a 'e': " << endl;
+	cin >> c;
+	if(c<1 or c>5){
+		cout << "Hai inserito un numero non valido!" << endl;
+		return 0; //Con questo comando ritorno al sistema operativo 0, interrompo qui il programma, non continua!
+	}
+	/* L'if precedente si sarebbe potuto scrivere anche cosi':
+	if(!(c>=1 and c<=5)){
+		cout << "Hai inserito un numero non valido!" << endl;
+		return 0;
+	}
+	Spesso in informatica esistono piu' modi, ugualmente funzionali, per scrivere la stessa cosa: sta al tuo gusto, e a cosa ti viene in mente prima, decidere come comportarti.
+	*/
+	if(c==1)
+		cout << "a!" << endl;
+	if(c==2)
+		cout << "b!" << endl;
+	if(c==3)
+		cout << "c!" << endl;
+	if(c==4)
+		cout << "d!" << endl;
+	if(c==5)
+		cout << "e!" << endl;
+	return 0;
+}
+	\end{lstlisting}
+	
+	\section{Cicli}
+	Può capitare di dover compiere istruzioni estremamente ripetitive, tutte uguali o nelle quali cambia veramente poco. Invece di scrivere migliaia di righe di codice, è stato introdotto un utilissimo strumento: il ciclo.
+	
+	Come funziona un ciclo? \`E composto da due parti: un blocco di codice che viene ripetuto in maniera ciclica e un blocco di codice che valuta una condizione: finché la condizione si verifica (o non si verifica, a seconda del tipo di ciclo) il ciclo continua. 
+	
+	\`E importante notare una cosa: i cicli sono di tre tipi diversi ma sono sempre intercambiabili. Mi spiego meglio: ognuna delle tre tipologie è più adatta ad alcune situazioni, ma ogni ciclo può essere riscritto usandone un altro. 
+	
+	A volte ti sembrerà che un problema possa essere risolto con cicli diversi, e non stai sbagliando! \`E veramente così (anche se, in alcune situazioni, alcuni cicli sono molto più adatti di altri). La scelta del ciclo è solo tua: da un lato potresti scegliere quello più elegante (che richiede meno righe di codice), dall'altro seguire la tua inclinazione; io, per esempio, tendo ad abusare del ciclo \textbf{for}, probabilmente mi piace più degli altri!
+	
+	
+	\subsection{\emph{while}}
+	Per spiegartelo preferisco partire da un esempio di codice, poi lo analizziamo insieme.
+	\begin{lstlisting}
+#include <iostream>
+using namespace std;
+int main(){
+	int numero=1; //inizializzo ad uno per poter entrare nel ciclo, vedi la spiegazione
+	while(numero !=0){
+		cout << "Inserisci un numero (zero per chiudere il programma): ";
+		cin >> numero;
+		if(numero%2==0) //controllo il resto della divisione
+			cout << "E' pari!" << endl;
+		else
+			cout << "E' dispari!" << endl;
+	}
+	return 0;
+}
+	\end{lstlisting}
+	In breve, il programma funziona così: si avvia, chiede di inserire un numero, analizza se è pari o dispari e continua così finché non si inserisce zero.
+	
+	Dovrebbe esserti tutto chiaro nel resto del programma, le uniche perplessità potrebbero essere, giustamente, nel \textbf{while}.
+	
+	Il ciclo \textbf{while} inizia con la relativa parola riservata, quindi è seguito da una parentesi tonda. All'intero di questa vi è un codice che analizza una condizione, e se come risultato viene prodotto un \textbf{true} si entra nelle parentesi graffe: il codice contenuto in esse viene eseguito. Arrivati alla fine delle graffe, \textbf{while} testa di nuovo la condizione, e così via fino a che non si produce un \textbf{false}. In tal caso non si entra più nelle graffe: il programma procede con ciò che segue oltre il ciclo.
+	
+	Da notare una cosa: prima di entrare nel ciclo si verifica la condizione, e questo vuol dire che potenzialmente non si potrebbe mai entrare nel ciclo. Nell'esempio precedente, se avessi inizializzato \verb|numero| a zero non saremmo mai entrati nel ciclo \textbf{while} e il nostro programma sarebbe stato decisamente inutile.\\
+	
+	Torniamo all'esempio. In quel caso, qual era il vantaggio e la necessità di usare un ciclo?
+	
+	Poniamo che il nostro utente sia così negato per la matematica da avere una quantità di numeri non ben definita da processare per decidere se sono pari o dispari (ironizzo: è un modo per dire che l'informatica non è così stupida, si può scrivere di meglio\ldots Ma come al solito cerco esempi banali per scrivere codici brevi). Abbiamo un problema: quando scriviamo il programma non sappiamo quanti numeri vorrà analizzare l'utente, quindi: o lui per ogni numero riavvia il programma (ma sarebbe un programma terribile, nessuno comprerebbe mai qualcosa del genere!) oppure ci ingegniamo per scrivere un programma che si modifichi a run-time, in base alle necessità dell'utente. 
+	
+	Ecco qui che entra in gioco il ciclo: potenzialmente il programma va avanti all'infinito, continua a chiedere numeri all'utente da analizzare; è quest'ultimo che interrompe il programma quando è soddisfatto.
+	
+	Esistono molti altri usi di cicli, alcuni dei quali non dipendono dall'utente, ma da condizioni del computer, o da risultati di calcoli effettuati dal computer. A breve cercherò di presentarti qualche esempio più significativo.\\
+	
+	\paragraph{Scopes e cicli}
+	Una caratteristica comune a tutti i cicli è che ogni singola ripetizione rappresenta uno \emph{scope}. Questo cosa significa? Una variabile dichiarata all'interno delle graffe del ciclo è visibile solo e soltanto in quel singolo \emph{scope}: ad ogni ripetizione nasce, viene usata e alla fine della graffa muore; alla ripetizione successiva, nasce di nuovo. Per cui, se avevi assegnato un valore alla ripetizione precedente, non sarà più visibile!
+	
+	Questo esempio dovrebbe chiarire:
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+int main(){
+	int i=0;
+	while(i<10){
+		int j=1;
+		i=j;
+		j++; 	
+	}
+	return 0;
+}
+\end{lstlisting}
+	Il ciclo non si interrompe mai: \verb|j| ad ogni ciclo rinasce e averlo incrementato alla ripetizione precedente non è servito a nulla\footnote{Se un tuo programma entra in \emph{loop} e lo vuoi interrompere, premi Control+C.}. 
+	\subsection{\emph{do\ldots while}}
+	Nel ciclo \textbf{while}, come abbiamo visto, prima di entrare nelle graffe viene testata la condizione, in questo modo non è detto che si entri nel ciclo. 
+	
+	Potremmo desiderare, a volte, che avvenga il contrario: per prima cosa si entri, almeno una volta, nel ciclo, dopo di che, per decidere se entrarci di nuovo, dobbiamo testare la condizione, e così via.
+	
+	Riprendiamo l'esempio di prima: affinché si entrasse nel \textbf{while} abbiamo dovuto inizializzare la variabile \verb|numero| al valore di uno. Dopo un po' che si programma, nel corso di Informatica 1, inizia a diventare automatico inizializzare le variabili numeriche a zero; ricordarsi di inizializzarla ad un valore diverso può essere non del tutto banale. Insomma, tutto questo  per dire: non sarebbe più comodo inizializzare la variabile a zero ed avere un ciclo che, almeno una volta, chiede all'utente di inserire un numero e poi testa la condizione?\\
+	
+	Esiste il ciclo \textbf{do\ldots while}; riscrivo il programma di prima utilizzandolo, poi, come al solito, spiego tutto.
+	
+	\begin{lstlisting}
+#include <iostream>
+using namespace std;
+int main(){
+	int numero=0;
+	do{
+		cout << "Inserisci un numero (negativo per chiudere il programma): ";
+		cin >> numero;
+		if(numero%2==0) //controllo il resto della divisione
+			cout << "E' pari!" << endl;
+		else
+			cout << "E' dispari!" << endl;
+	}while(numero >=0);
+	return 0;
+}
+	\end{lstlisting}
+	Il programma, arrivato alla parola riservata \textbf{do}, entra nel ciclo, esegue il codice e, solo successivamente, arriva al \textbf{while}, dove testa la condizione e decide se entrare in un nuovo ciclo.
+	
+	Ti faccio notare una differenza rispetto al ciclo \textbf{while}: nel \textbf{do\ldots while} è \emph{necessario}, alla fine, un bel punto e virgola! \\
+	
+	Per concludere: i due cicli analizzati finora sono estremamente simili, la differenza è che il secondo esegue almeno una volta il codice tra le graffe.\\
+	
+	Come accennato, i vari cicli sono interscambiabili. Se vuoi fare un esercizio, per convincerti, prova a scrivere quest'ultima versione del programma (con \verb|numero| inizializzato a 0) con un ciclo \textbf{while}. Dovrai inserire qualcosa di nuovo: prima, dentro o dopo? E cosa?	
+	
+	\subsection{\emph{for}} 
+	Passiamo all'ultimo ciclo, il quale, apparentemente, è tutta un'altra cosa. Un esempio:
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+int main(){
+	unsigned int num=0;
+	cout << "Programma per conto alla rovescia, da che numero vuoi partire?: ";
+	cin >> num;
+	for(int i=0; i<num; i++){
+		cout << num-i << endl;
+	}
+	cout << "Zero!" << endl;
+	return 0;
+}
+\end{lstlisting}
+	Il ciclo \textbf{for} è composto da due parti: una parentesi tonda e la solita parentesi graffa con il codice da eseguire.
+	
+	La parentesi tonda, però, è profondamente diversa da quelle degli altri due cicli, vediamo perché.
+	
+	Come puoi notare, vi sono tre parti distinte separate da un punto e virgola. La prima parte serve per dichiarare ed inizializzare una variabile, detta contatore; generalmente viene chiamata \verb|i|, ma puoi chiamarla come vuoi (se hai tanti \textbf{for} uno dentro l'altro, devi per forza dare nomi diversi); io l'ho inizializzata a zero, ma il valore può essere qualsiasi (spesso si sceglie un valore comodo e sensato per quello che dobbiamo fare). La seconda parte è quella in cui viene testata la condizione, nello specifico che la nostra \verb|i| sia minore di \verb|num|: finché ciò si verifica le iterazioni continuano. La terza parte effettua un'operazione sulla variabile contatore: per esempio io l'ho incrementata (specifico: ad ogni iterazione viene incrementata).
+	
+	Il concetto è che \verb|i| parte da 0 e ad ogni iterazione si incrementa di 1. Quando arriva al valore \verb|num|-1 (e quindi il programma può ancora entrare nel ciclo) \verb|i| viene incrementato di 1: al successivo controllo non è più minore di \verb|num|, così si esce dal ciclo \textbf{for}.
+	
+	A volte, le variabili contatore partono da un valore, tipo 10, e vengono decrementate; insomma, non per forza dobbiamo incrementarla! 
+	
+	Ti accorgerai dell'utilità dei cicli, in particolare del \textbf{for}, parlando di \emph{array}.
+	
+	Ti faccio notare che, così come con gli \textbf{if}, se abbiamo una sola riga di codice, anche nei cicli possiamo evitare le parentesi graffe.\\
+	
+	Ora come ora, probabilmente, ti sarà difficile vedere come il ciclo \textbf{for} possa essere equivalente agli altri due. Per capirlo ci serve uno strumento molto utile: il \textbf{break}.
+	\subsection{Gli enunciati \emph{break} e \emph{continue}}
+	Abbiamo visto che tutti i cicli controllano \emph{una} condizione, solo una! E se noi volessimo controllarne un'altra? Se all'accadere di un particolare evento (uno nuovo, non la condizione del ciclo) volessimo interrompere il ciclo?	\`E possibile: la combinazione di un \textbf{if} e un enunciato \textbf{break} lo permette.
+	
+	Quando in un ciclo il programma incontra un enunciato \textbf{break}, a qualsiasi iterazione si trovi, il ciclo viene interrotto, si esce dallo \emph{scope} e si continua nel codice del programma.
+	
+	Un \textbf{break} può essere davvero utilissimo: possiamo usarlo come controllo sulle iterazioni del ciclo (ad esempio interromperlo se dura troppo), oppure per interruzioni forzate da parte dell'utente, ecc\ldots \\
+	
+	Propongo un esempio: è un programma per calcolare il fattoriale di un numero. Quest'operazione è molto delicata, perché genera numeri enormi con una facilità notevole. Per non rischiare l'overflow possiamo inserire un check nel ciclo: quando il nostro calcolo raggiunge una determinata cifra lo interrompiamo.
+	\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+int main(){
+	unsigned int num=0; //unsigned per avere numero massimo piu' grande!
+	unsigned int appo=0; //creo una variabile d'appoggio per il calcolo
+	cout << "Inserisci un numero di cui calcolare il fattoriale: ";
+	cin >> num;
+	appo=1; //per il calcolo del fattoriale
+	for(int i=1; i<=num; i++){
+		appo=appo*i;
+		if(appo>=100000000){ //scelgo questo numero perche' mi sembra ragionevole rispetto alle dimensioni della variabile
+			cout << "Numeri troppo grandi!" << endl;
+			break;
+		}
+		if(i==num) //se abbiamo incontrato il break questo non viene eseguito mai
+			cout << num << "! = " << appo << endl;
+	}
+	return 0;
+}
+	\end{lstlisting}
+	Ti accorgerai, se provi a compilare il programma, che con numeri molto piccoli superiamo già il limite imposto.
+	
+	Potremmo scrivere un controllo sull'overflow decisamente migliore, che ci permetta di utilizzare i limiti dell \textbf{unsigned int} fino in fondo. Se hai voglia, te lo lascio per esercizio!\\ \\
+	
+	%TODO altro esempio?
+	
+	Passiamo ora al \textbf{continue}. In realtà è molto più raro da usare, trova molte meno applicazioni, e sinceramente nel corso di Informatica 1 non l'ho mai visto usare. Comunque, io te l'accenno: non si sa mai che tu lo possa trovare utile in qualche tuo codice.
+	
+	L'enunciato \textbf{continue} dice: interrompi questa iterazione, non continuare con il codice nello scope del ciclo, e vai all'iterazione successiva. In poche parole, a differenza del \textbf{break} non interrompe il ciclo, ma solo la singola iterazione dove viene incontrato: fa passare il programma alla successiva.
+	
+	Un esempio molto semplice:
+	\begin{lstlisting}
+#include <iostream>
+using namespace std;
+int main(){
+	int salta=0;
+	cout << "Inserisci un numero da 1 a 10: quale numero vuoi saltare nel conto alla rovescia? " ;
+	cin >> salta;
+	for(int i=10; i>0; i--){
+		if(i==salta)
+			continue;
+		cout << i << endl;
+	}
+	cout << "Zero! " << endl;
+	return 0;
+}
+	\end{lstlisting}
+	
+	
+	Visti questi elementi, ti è più chiaro come un \textbf{for}, insieme ad un \textbf{if} e \textbf{break}, possa sostituire un \textbf{while}? Fai qualche prova!
+
+	\subsection{I cicli infiniti} 
+	Un particolare ciclo è il cosiddetto ``ciclo infinito''. Un ciclo che, in teoria, non si interrompe mai: non esiste una condizione di uscita. O meglio: non esiste come condizione inclusa nel ciclo, ma esiste tramite un \textbf{if}-\textbf{break}. 
+	
+	I cicli infiniti sono utili quando a priori non sappiamo quanti cicli dovremo fare, oppure se le condizioni di uscita sono tante (e di pari importanza). 
+	
+	Possiamo scrivere cicli infiniti sia usando \textbf{for} che \textbf{while} (e, ovviamente, \textbf{do\ldots while}):
+	\begin{lstlisting}
+	//Ciclo for infinito
+	for( ; ; ){
+		espressione da eseguire;
+		if(condizione di uscita)
+			break;
+		if(altra condizione di uscita)
+			break;
+		... //Altre condizioni?	
+	}
+	
+	//Ciclo while infinito
+	while(true){
+		espressione da eseguire;
+		if(condizione di uscita)
+			break;
+		if(altra condizione di uscita)
+			break;
+		... //Altre condizioni?		
+	}
+	\end{lstlisting}
+	
+	Ho messo più condizioni per rendere chiaro che possono essere tante, in realtà ne basta una sola (ma almeno una\ldots se no, buona attesa per la fine del programma!).
+	
+	Il ciclo \textbf{for} infinito ha un vantaggio: può implementare in maniera elegante un contatore di iterazioni. Ti mostro:
+	\begin{lstlisting}
+	for(int i=0; ; i++){
+		espressione;
+		if(condizione di uscita)
+			break;	
+	}
+	\end{lstlisting}
+	
+	Mancando la parte centrale del \textbf{for}, non vi è un limite alle iterazioni; la presenza della variabile \verb|i|, invece, serve da contatore: può essere utile all'interno del ciclo.
+	
+	Ovviamente, in tutti questi cicli, l'\textbf{if} non deve essere per forza alla fine, ma lo puoi posizionare all'inizio, in mezzo, dove vuoi!\\
+	
+	Passiamo al dovuto esempio di codice:
+	\begin{lstlisting}
+#include <iostream>
+using namespace std;
+int main(){
+	const int numero=17;
+	int risposta=0;
+	cout << "Indovina il numero segreto! Prova con un numero da 1 a 20. Inserisci 0 per chiudere il programma." << endl;
+	for( ; ; ){
+		cout << "Inserisci un tentativo: ";
+		cin >> risposta;
+		if(risposta == 0)
+			return 0; //chiudo direttamente il programma
+		if(risposta == numero)
+			break; //interrompo il ciclo infinito
+		cout << "Hai sbagliato, prova di nuovo! " << endl;
+	}
+	cout << "Bravo, hai indovinato! " << endl;
+	return 0;
+}
+	\end{lstlisting}
+	Come vedi, posso uscire da un ciclo non solo con l'enunciato \textbf{break}, ma anche con un \textbf{return} (che, in questo caso, chiude il programma).
+	
+	L'utilità del ciclo infinito, in questo caso, è che abbiamo due condizioni di uscita di pari importanza. \`E, in realtà, una pura questione di stile: avremmo potuto scrivere un normalissimo \textbf{while} e un ulteriore \textbf{if} per la seconda condizione di uscita. Sta sempre a te decidere come comportarti (anche se ci sono occasioni in cui il ciclo infinito è davvero più comodo)!
+	
+	Dovrebbe essere tutto chiaro, così come il fatto che possiamo complicare il programma inserendo un \textbf{if} per controllare che l'input sia effettivamente un numero tra 0 e 20 ed avvertire l'utente in caso contrario.
+	
+	\subsection{\emph{switch}\ldots\emph{case}}
+	Questo costrutto schematizza una serie di \textbf{if}. Si presta per risolvere in maniera elegante alcune situazioni particolari. 
+	
+	Ad esempio, se abbiamo una variabile che può assumere valori discreti e per ogni valore vogliamo accada una cosa diversa, lo \textbf{switch-case} è perfetto! \`E un costrutto che si presta benissimo per situazione di ``multi selezione''. 
+	
+	Ma come è strutturato? In generale è composto così:
+	\begin{lstlisting}
+	switch(variabile){
+		case valore-intero-1:
+			espressione;
+			break;
+		case valore-intero-2:
+			espressione;
+			break;
+		...
+		...
+		...
+		case valore-intero-n:
+			espressione;
+			break;
+		default:
+			espressione;	
+	}
+	\end{lstlisting}
+	
+	Subito dopo \textbf{switch} vi è una parentesi tonda, all'interno della quale c'è la variabile che può assumere una serie di valori discreti. Segue una parentesi graffa, in cui abbiamo diversi \textbf{case}, uno per ogni valore. Dopo ogni \textbf{case}, infatti, vi è il valore, che può essere o un numero intero o una lettera (la quale va racchiusa tra singoli apici, come `a'). Nota che, quello che segue a \textbf{case}, deve essere un valore costante: non può essere un'espressione del tipo "\verb|nuovavariabile|/17" (che dipende dal valore, variabile, di \verb|nuovavariabile|). Il valore viene concluso da due punti, dopo i quali vi è l'espressione che vogliamo venga eseguita. Alla fine vi è un \textbf{break}: la sua presenza ci porta alla fine della parentesi graffa.  Senza di lui passeremmo al \textbf{case} successivo, anche se non è quello desiderato.
+	
+	Particolare è la presenza del \textbf{default}: se la variabile assume un valore diverso da quello di ogni \textbf{case}, viene eseguito il codice che segue al \textbf{default} (può anche non seguire niente, se non vogliamo venga eseguito qualcosa).
+	
+	Questa struttura è particolarmente comoda per menù o situazioni di scelta multipla.
+	
+	Ti ripropongo il programma per stampare a video le lettere che avevo presentato con l'\textbf{if}. L'ho scritto utilizzando molti elementi presentati finora: ciclo \textbf{for} infinito, \textbf{break} e \textbf{continue}. Dai un occhio: spero ti sia tutto chiaro!
+	\begin{lstlisting}
+#include <iostream>
+using namespace std;
+int main(){
+	int c=0;
+	for( ; ; ){
+		cout << "Inserisci un numero da 1 a 5 corrispondente ad una lettera da 'a' a 'e': ";
+		cin >> c;
+		switch(c){
+			case 1:
+				cout << "a!" << endl;
+				break;
+			case 2:
+				cout << "b!" << endl;
+				break;
+			case 3:
+				cout << "c!" << endl;
+				break;
+			case 4:
+				cout << "d!" << endl;
+				break;
+			case 5:
+				cout << "e!" << endl;
+				break;
+			default:
+				cout << "Hai inserito un numero non ammesso, inserisci di nuovo!" << endl;
+				continue; //passo alla successiva iterazione del for: evito il break di uscita
+		}
+		break; //sono uscito correttamente dallo switch: interrompo il for infinito!
+	}
+	return 0;
+}
+	\end{lstlisting}
+	In questo caso, non sappiamo quante volte l'utente sbaglierà ad inserire il numero: finché questo non è corretto dovremo continuare a chiederglielo. Un ciclo infinito si presta molto bene a questa situazione! Nel caso tutto vada bene, alla fine dello \textbf{switch}, vi è un \textbf{break} che interrompe il ciclo infinito. Se, invece, le cose non vanno come dovrebbero, nel \textbf{default} vi è un \textbf{continue} che fa saltare il \textbf{break}: si passa all'iterazione successiva!
+	
+	
+	Avremmo potuto usare, al posto di un ciclo infinito, un \textbf{while} con, come condizione, un controllo sul numero inserito: finché rimane diverso da quelli ammessi, continuano le iterazioni. Questi sono modi diversi per scrivere lo stesso programma, ma l'ho detto: a me piace il ciclo \textbf{for}\ldots
+

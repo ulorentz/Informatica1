@@ -1,0 +1,703 @@
+
+	\chapter{Tipi di dato standard e variabili}
+	Cos'è un dato? 
+
+	In sostanza, quando pensiamo ad un dato immaginiamo qualcosa che può essere ``immagazzinato'' da qualche parte, e a cui poi possiamo successivamente accedere. 
+	
+	In realtà, se spogliamo al massimo il concetto, un dato è un'informazione e, ovviamente, l'informazione può essere immagazzinata.
+	
+	In matematica, ad esempio, un dato può essere un numero. \`E interessante il parallelo con la matematica, perché ci permette di aggiungere alcune caratteristiche importanti al concetto di dato che stiamo cercando di costruire. 
+	
+	Pensiamo ad un numero: la prima cosa che ci viene da fare è creare delle categorie, degli ``insiemi''. Ma perché lo facciamo? Essenzialmente gli elementi di questi insieme hanno delle caratteristiche, o anche delle proprietà, in comune. 
+	
+	Ad esempio: i numeri naturali, $\mathbb{N}$, sono i numeri interi che vanno da $0$ ad infinito; inoltre su di essi sono definite alcune operazioni, come la somma e il prodotto, con le relative proprietà. 
+	
+	Sempre nel parallelo con la matematica, potremmo dire che ``$17$'' è un \emph{dato} che appartiene ad $\mathbb{N}$; i numeri interi, invece, sono un \emph{tipo di dato}. 
+	
+	Sono sicuro che avrai già capito la generalizzazione: un dato è un singolo elemento, mentre un tipo di dato è un insieme di elementi con proprietà comuni su cui, spesso, sono anche definite delle operazioni. 
+	
+	Altri notevoli tipi di dato, in matematica, sono i numeri relativi, razionali e reali. Vedremo che, in informatica, questi insiemi numerici (o meglio, la loro rappresentazione in macchina) sono i principali tipi di dato standard.
+	
+	L'ultimo concetto da chiarire, prima di parlare dell'informatica, è quello di \emph{variabile}. 
+	\\ Quando in matematica scriviamo $\forall \, x \in \mathbb{R}$ intendiamo che $x$ è una \emph{variabile} di tipo ``numero reale''. 
+	
+	Ecco il concetto di variabile: un tipo di dato è un insieme, una variabile è, invece, un elemento di questo insieme che può assumere valori diversi. Il valore che assume la variabile è il dato.
+	
+	Abbiamo introdotto, appoggiandoci ad un mondo che ci è più amico (la matematica), tutto ciò di cui, tra poco, andremo a parlare.
+	
+	\section{I dati in informatica}
+	
+	In informatica i tipi di dato principali sono i seguenti: \textbf{int}, \textbf{long}, \textbf{float}, \textbf{double}, \textbf{char}, \textbf{bool}.
+	
+	Non preoccuparti! Tra poco ti verranno spiegati tutti; prima, però, approfondiamo il concetto di variabile e di dato.
+	
+	Abbiamo già visto la struttura elementare di un programma dove, però, non compariva alcuna variabile. \`E arrivato il momento di trovare un posto alle nostre variabili all'interno del programma. Ecco un esempio:
+	
+	\begin{lstlisting}
+#include <iostream>
+using namespace std;
+		
+int main(){
+	int x; //dichiarazione della variabile
+	x=7; //operazione di assegnazione
+	cout << "Valore della variabile x: " << x << endl;
+	
+	return 0;
+}
+\end{lstlisting}
+	%TODO: lascio paragraph o no?
+	\paragraph{Dichiarazione di variabili}Dunque, cosa significa \textbf{int} \verb|x|? Stiamo dichiarando la variabile \verb|x|: istruiamo il computer a riservare della memoria per la nostra \verb|x|. Senza dichiarare le variabili è impossibile usarle! Nella riga successiva uguagliamo \verb|x| a $7$; se non avessimo dichiarato la variabile, per il computer questa riga non avrebbe senso: per lui \verb|x| non esisterebbe!
+	
+	Dovrebbe essere chiaro cosa significa dichiarare una variabile: vuol dire informare il computer della sua esistenza.  Il che, tradotto, ha come risultato il far riservare della memoria per la nostra variabile per poterla successivamente usare nel programma.
+	
+	Quando hai tante variabili dello stesso tipo da dichiarare, non devi per forza specificare il tipo di dato per ognuna: basta farlo una volta e separare i nomi delle variabili con una virgola. Ecco un esempio:
+	\begin{lstlisting}
+int main(){
+	int a; //dichiaro le tre variabili una alla volta in righe diverse
+	int b;
+	int c;
+	
+	int d, e, f; //Questa scrittura e' piu' sintetica, ma comunque valida!
+	return 0;
+}
+	\end{lstlisting}
+	
+	\paragraph{Assegnazione}Torniamo all'esempio precedente, non penso ci sia molto da dire sul significato di \verb|x=7|\ldots ma, per amor di precisione: stiamo assegnando un valore alla variabile. Lo possiamo fare sia esplicitamente, assegnando un numero, sia uguagliando una variabile ad un'altra (generalmente dello stesso tipo, o comunque compatibile, ne parleremo più avanti\ldots). Esempio:
+	\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+int main(){
+	int a;
+	int b;
+	a=15;
+	b=a;
+	a=13;
+	cout << a << endl << b << endl;
+	return 0;
+}
+	\end{lstlisting}
+	Cosa succede in queste righe di codice? \\
+	Ho dichiarato le variabili \verb|a| e \verb|b|, poi ho assegnato ad \verb|a| il valore $15$, successivamente   ho uguagliato \verb|b| ad  \verb|a| (ora valgono entrambe $15$), infine ho posto \verb|a| uguale a $13$.
+	
+	Nota una cosa fondamentale: quando si uguagliano due variabili \emph{si uguaglia il loro contenuto}, solo quello! Nel nostro caso,  \verb|b| non diventa  \verb|a|, semplicemente  \verb|b| viene riempito con lo stesso valore contenuto in  \verb|a|! Questo vuol dire che il successivo cambiamento di  \verb|a| non ha alcuna influenza su \verb|b|.
+	
+	Il precedente codice dovrebbe rendere chiaro che, una volta dichiarata una variabile, posso successivamente modificarla quante volte voglio.
+	
+	Giusto per chiarezza, lo ripeto: il comando \verb|cout << nome della variabile| va a stampare a video il \emph{ contenuto} della variabile. 
+	
+	\paragraph{Inizializzazione}
+	Prima di parlare dei tipi di dato specifici, voglio spiegarti una cosa importante che, sin da subito, devi imparare a fare sempre. 
+	
+	Cosa succede se noi dichiariamo una variabile, tipo ``\textbf{int} a;'' e poi la andiamo ad usare? Questa variabile non è stata inizializzata (non le abbiamo assegnato un valore) e non è detto che contenga 0: molto probabilmente è riempita con un valore casuale! Non inizializzare le variabili è estremamente pericoloso: se poi ci dimentichiamo di assegnare un valore, ci ritroveremo variabili contenenti dati assolutamente non voluti (ed usandole, potremmo incappare in risultati molto fastidiosi). 
+	
+	Quindi, ogni volta che dichiari una variabile, inizializzala subito, ovvero assegnale un valore, anche 0 se per ora non sai quanto deve valere. Puoi farlo sia nella dichiarazione che subito dopo, entrambe le seguenti scritture sono valide:
+	\begin{lstlisting}
+int main(){
+	int a=0;
+	int b;
+	b=0;
+	return 0;
+}
+	\end{lstlisting}
+	
+	A volte ti sembrerà inutile, o magari ridondante, ma fallo sempre! Inizializzare le variabili può salvarti da brutte situazioni e, comunque, è indice di un buono stile di programmazione (per dirla in soldoni: è anche apprezzato all'esame!).
+	
+	\paragraph{NOTA:}
+	Sebbene le variabili possano essere dichiarate in qualsiasi punto del codice, nell'esame di Informatica 1 si richiede che vengano dichiarate all'inizio di uno \emph{scope} (o comunque all'inizio del \emph{main}, più avanti vedremo in dettaglio cos'è uno scope). Probabilmente questo è per aiutarti a scrivere un codice più organizzato, obbligandoti a pianificare quello che ti serve ed evitando di farti ``pasticciare'' con il codice. Quando diventerai un programmatore più esperto, inizierai a trovare più comodo e intelligente dichiarare le variabili dove servono, ma, per ora, per imparare, attieniti alle richieste dei tuoi professori. Dichiara (e inizializza) tutte le variabili all'inizio del main!
+	
+	\section{Tipi di dato specifici}
+	Ora, viste le caratteristiche comuni a tutte le variabili, possiamo passare ad analizzare i singoli tipi di dato. Rivediamo quali sono: \textbf{int}, \textbf{long}, \textbf{float}, \textbf{double}, \textbf{char}, \textbf{bool}. Li riporto in grassetto non a caso: se provi a scrivere queste parole su un file di codice \verb|C++|, a seconda dell'editor, ti verranno evidenziate in grassetto e di un colore specifico. Questo perché sono \emph{parole riservate}, ovvero possono essere utilizzate \emph{solo} per indicare il relativo tipo di dato. Nel tuo codice non puoi usare la parola \textbf{int} per nessun altro scopo se non quello di indicare il tipo di dato \textbf{int}. Le parole riservate in \verb|C++| sono tante. Tra queste rientrano tutte quelle che vedi scritte in grassetto negli esempi di codice finora presentati e quelle che vedrai in esempi futuri.
+	
+	\subsection{Int}
+	Il nome di questo dato lascia poco spazio all'immaginazione: le variabili di tipo \textbf{int} possono contenere i numeri interi, positivi e negativi.
+	
+	Abbiamo accennato al fatto che i dati possono essere immagazzinati: ogni variabile di uno specifico tipo occupa una certa quantità di memoria. Le variabili \textbf{int} occupano $4$ byte. 
+	
+	Sorge spontanea un'osservazione: i numeri relativi vanno da meno infinito a più infinito, ma $4$ byte sono tutt'altro che infiniti! Da questo discende che un	\textbf{int} può contenere un numero relativo di grandezza finita. 
+	
+	Il più grande intero rappresentabile è $2147483647$; il più piccolo è $-2147483648$. \footnote{Nei dati con \emph{segno}, il primo bit è zero se il numero è positivo, uno se è negativo. Un int è composto da 4 byte, ovvero 32 bit. Se un bit è usato per il segno, ne rimangono 31: il numero più grande rappresentabile in base due è $2^{31}$. I numeri positivi partono da 0, quindi arrivano a $2^{31}-1$, quelli negativi da -1, quindi il massimo è proprio $-2^{31}$. Se fai i conti, sono esattamente i numeri riportati sopra.}
+	
+	In informatica il ``segno'' di un numero occupa spazio, esattamente un bit (ricorda: un bit rappresenta uno 0 o un 1; in sistema binario, avere un bit in più a disposizione vuol dire poter immagazzinare un numero due volte più grande); possiamo liberare questo bit decidendo di trattare numeri solamente positivi. Come facciamo? Anteponiamo ad \textbf{int} la parola riservata ``\textbf{unsigned}''. 
+	
+	Il valore massimo rappresentabile da un \textbf{unsigned int} è: $4294967295$.\footnote{Se aggiungiamo il bit del segno abbiamo 32 bit, dovendo partire da zero, il massimo numero rappresentabile in base due sarà $2^{32}-1$, esattamente quello riportato nel testo. }\\
+	
+	Bene, abbiamo parlato di cosa può immagazzinare un \textbf{int} e di quanta memoria occupa, rimane da parlare delle operazioni che si possono fare tra dati di tipo \textbf{int}.
+	
+	Propongo un esempio di codice che poi analizzeremo:
+	
+	\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+int main(){
+	int a, b, c;
+	a=5;
+	b=2;
+	
+	//SOMMA
+	c=a+b;
+	cout << "Somma: " << c << endl;	
+	
+	//DIFFERENZA
+	c=a-b;
+	cout << "Differenza: " << c << endl;	
+	
+	//MOLTIPLICAZIONE
+	c=a*b;
+	cout << "Moltiplicazione: " << c << endl;	
+		
+	//DIVISIONE
+	c=a/b;
+	cout << "Divisione: " << c << endl;	
+	
+	return 0;
+}
+	\end{lstlisting}
+	Per quanto riguarda le prime tre operazioni non c'è alcuna sorpresa, l'ultima è l'unica un po' delicata (in realtà se ci si pensa bene il risultato non dovrebbe affatto stupire); ecco l'output del programma:
+	\begin{shaded}
+		\begin{minipage}{\textwidth}
+			\begin{verbatim}
+	Somma: 7
+	Differenza: 3
+	Moltiplicazione: 10
+	Divisione: 2
+			\end{verbatim}%
+		\end{minipage}
+	\end{shaded}
+	La divisione è la divisione intera (insomma, alla fin dei conti stiamo lavorando con numeri interi\ldots)!
+
+	$5$ diviso $2$ dà come risultato $2$ con il resto di $1$; il semplice operatore ``slash'' istruisce il computer a fare la divisione e restituisce il risultato senza resto. Noi, però, potremmo essere interessati anche a quest'ultimo e il simbolo necessario per richiederlo è ``\%''. Ecco un esempio di codice:
+	
+	\begin{lstlisting}
+#include <iostream>
+using namespace std;
+		
+int main(){
+	int a, b;
+	a=5;
+	b=2;
+	cout << "5 diviso 2 = " << a/b << " con il resto di " << a%b << endl;
+	
+	return 0;
+}
+	\end{lstlisting}
+	
+	L'output sarà il seguente:
+	\begin{shaded}
+		\begin{minipage}{\textwidth}
+			\begin{verbatim}
+	5 diviso 2 = 2 con il resto di 1
+	\end{verbatim}%
+\end{minipage}
+\end{shaded}
+	
+	Dobbiamo stare attenti quando facciamo la divisione tra interi: a meno di forzare il meccanismo, non dobbiamo mai aspettarci il risultato decimale. Per quanto riguarda il ``forzare il meccanismo'' ne riparleremo nella prossima sezione.
+	
+	\paragraph{Incremento di variabili} Un'operazione utile è incrementare una variabile intera, ovvero sommarle 1 (quando parleremo dei cicli vedrai quanto spesso si userà!). Se \verb|a| è la nostra variabile da incrementare, al posto di scrivere \verb|a=a+1| possiamo usare la scrittura più compatta \verb|a++|\footnote{Una curiosità: ti sei chiesto cosa significa il nome C++? La risposta sta proprio nel concetto di incremento: C++ vuol dire un passo avanti al C.} oppure \verb|++a|.
+	
+	Cosa cambia? Vediamo il seguente codice:
+	\begin{lstlisting}
+#include <iostream>
+using namespace std;
+int main(){
+	int a=1;
+	int b=1;
+	cout <<"a all'inizio: " << a++ << endl;
+	cout <<"b all'inizio: "<< ++b << endl;
+	
+	cout << "ora a=b? " << a << "=" << b << "? " << endl;
+	
+	return 0;
+}
+	\end{lstlisting}
+	Ecco l'output:
+	\begin{shaded}
+		\begin{verbatim}
+		a all'inizio: 1
+		b all'inizio: 2
+		ora a=b? 2=2? 
+		\end{verbatim}
+	\end{shaded}
+	Cosa succede? Cosa cambia nelle due scritture?\\
+	Scrivendo \verb|a++| prima usiamo \verb|a| e poi la incrementiamo; scrivendo \verb|++b| per prima cosa viene incrementata, poi viene usata. 
+	
+	Ti propongo un codice: per esercizio prova a capire cosa succede senza compilarlo!
+	\begin{lstlisting}
+int main(){
+	int a=13;
+	int b=1;
+	int c=0;
+	
+	c++;
+	c=c+(b++);	
+	b=b-(++a);
+	c=c+(c++);
+		
+	return 0;
+}
+	\end{lstlisting}
+	Quanto valgono a, b e c alla fine del codice?\\
+	
+	Nota che quanto detto vale sia per il \verb|++| che per il \verb|--| (quindi per ridurre la variabile).
+	
+	Un'ultima cosa che potresti trovare in alcuni codici e che ti spiego per non farti trovare impreparato. Scrivere \verb|a=a+b| (quindi dire che \verb|a| è uguale a se stesso a cui si aggiunge \verb|b|) può essere abbreviato con la scrittura \verb|a+=b| (lo stesso vale per divisione e moltiplicazione: \verb|a/=b| e \verb|a*=b|).
+	
+	
+		
+	\subsection{Long}
+	
+	Il tipo di dato \textbf{long} è essenzialmente un \textbf{int} più grande. Ha le stesse identiche caratteristiche di un \textbf{int} (quindi le operazioni che possiamo fare sono le stesse e possiamo immagazzinare sempre numeri interi), solo che può contenere numeri molto più grandi. 
+	
+	Una variabile di tipo \textbf{long} occupa $8$ byte, il doppio di una variabile \textbf{int}. 
+	
+	Il più grande numero rappresentabile da una variabile \textbf{long} è $9223372036854775807$; il più piccolo è $-9223372036854775808$.
+	
+	Anche in questo caso possiamo utilizzare il bit riservato al segno anteponendo la parola \textbf{unsigned} (potendo, però, immagazzinare solo numeri positivi).
+	\\Il più grande intero rappresentabile da una variabile di tipo \textbf{unsigned long} è: \\$18446744073709551615$.
+	
+	Come vedi sono numeri decisamente più grandi rispetto agli \textbf{int}, ma purtroppo c'è un prezzo da pagare: viene usato il doppio della memoria.
+	\\
+	
+	Nella prossima sezione parleremo delle relazioni reciproche tra \textbf{int} e \textbf{long}: quando una variabile di un tipo può essere assegnata all'altra e viceversa.
+	
+	\subsection{Short}
+	Il dato \textbf{short} è un \textbf{int} più corto. \`E composto da solo 2 byte. Il numero più grande rappresentabile è: $32767$. Il più piccolo: $-32768$. Essendo fondamentalmente un  \textbf{int}, possiamo anche qui dichiararlo senza segno potendo così rappresentare un numero due volte più grande.
+	
+	L'unica utilità dei dati \textbf{short} è di risparmiare memoria quando sappiamo in anticipo che i numeri che immagazzineremo sono piccoli. \`E una vera e propria finezza che, se sei un programmatore inesperto e intenzionato semplicemente a passare l'esame, ti puoi anche dimenticare\ldots
+	
+	
+	
+	\subsection{Float}
+	Abbiamo parlato finora di numeri interi. Bene, ora è naturale introdurre i numeri decimali. ``Float'' significa ``floating point'', ovvero virgola mobile, e tra poco capiremo cosa vuol dire.
+	
+	Dunque, se in teoria gli \textbf{int} dovrebbero rappresentare $\mathbb{Z}$ con i relativi limiti, i \textbf{float} dovrebbero rappresentare $\mathbb{R}$ con i relativi limiti. I quali limiti, purtroppo, non sono pochi. 
+	
+	In macchina i numeri \textbf{float} sono composti da due parti: l'esponente e la mantissa. La mantissa contiene le cifre vere e proprie del numero; l'esponente, invece, indica dove è posizionata la virgola (da qui, virgola mobile). L'esponente può essere molto grande: i \textbf{float}, oltre a rappresentare numeri decimali possono rappresentare numeri alla potenza di dieci notevole.  
+	
+	I limiti dei \textbf{float} sono principalmente due. Vediamo il primo.
+	
+	Dal momento che occupano solo 4 byte, le cifre che il dato \textbf{float} può contenere sono limitate, così come è limitato l'esponente. In particolare, un \textbf{float} ha una precisione di 6 cifre decimali (può contenere fino a 6 cifre), mentre il numero può avere un esponente minimo pari a $10^{-37}$ e massimo pari a $10^{38}$.
+	
+	Ora, il fatto di contenere al massimo sei cifre ci porta subito ad introdurre l'errore di troncamento. Pensiamo a 1234567.89. Le cifre di questo numero sono ben più di sei, sono nove. In macchina questo numero viene rappresentato così: $1.23456\cdotp10^6$. Cosa succede? Perdiamo le cifre successive alla sesta, semplicemente non ci stanno!
+	
+	Un altro esempio notevole (dove questo errore può dare molto fastidio) è il seguente: 1.000000356. In macchina viene troncato: le ultime cifre eccedono le sei possibili. Se facciamo dei conti, ad esempio sottraendo a quel numero un altro simile, avremo risultati sbagliati! 
+	\\Esempio:
+	\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+int main(){
+	float a= 1.000000356;
+	float b= 1.000000321;
+	float c=a-b;
+	cout << c << endl;
+
+	return 0;
+}
+	\end{lstlisting}
+	L'output di questo programma sarà un tristissimo ``0''.
+	\\
+	
+	Parliamo del secondo problema. Abbiamo accennato al fatto che in macchina i numeri sono rappresentati in base due. La conversione tra sistema decimale a sistema binario porta con sé dei problemi delicati. 
+	
+	Mi spiego meglio: essenzialmente alcuni numeri, che in sistema decimale sono finiti, in sistema binario non lo sono. Quando questi numeri vengono rappresentati in macchina, dal momento che può essere contenuto un numero finito di cifre binarie, vengono troncati. Questo avviene non a livello delle cifre decimali (che magari sono finite), ma delle cifre binarie! Quindi il numero originario, in macchina, non è il numero voluto, ma qualcosa che si avvicina. Di tutto ciò, a meno di conoscere il sistema binario, non ce ne accorgiamo facilmente! Facendo conti con questi numeri, all'apparenza innocui, possono succedere cose spiacevoli. Un esempio di numero che in base due non è finito è 0.1. Ti mostro un codice e il relativo output:
+	\begin{lstlisting}
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+int main(){
+	float a=0.3;
+	float b=0.2;
+	float c=0.1;
+	float d=a-b-c;
+	cout << d << endl;
+	return 0;
+}
+	\end{lstlisting}
+	A video viene stampato il seguente numero: $7.45058e-09$, che è il modo del computer per dire $7.45058\cdot10^{-09}$, in ogni caso non zero!
+	\\
+	
+	Un piccolo appunto su come vanno scritti i \textbf{float}. Prima di tutto avrai notato che nei numeri decimali ho sempre usato il punto e mai la virgola, questo perché in informatica va utilizzato il punto e non la virgola (ricordatene quando assegni ad una variabile decimale un numero!). In secondo luogo possiamo assegnare alle variabili numeri esponenziali. Per farlo si scrive così: ad esempio $1.34\cdot10^{7}$ va assegnato come $1.34E07$, oppure $3.14\cdot10^{-12}$ diviene $3.14E-12$. 
+	
+	
+	
+	\subsection{Double}
+	Così come i \textbf{long} sono essenzialmente degli \textbf{int} più grandi, i \textbf{double} sono dei \textbf{float} più grandi e di maggiore precisione.
+	
+	Un \textbf{double} occupa 8 byte e può rappresentare dati in virgola mobile. Ha una precisione di 15 cifre (ben maggiore delle 6 dei \textbf{float}!); il massimo esponente rappresentabile è $10^{308}$, il minimo $10^{-307}$.
+	
+	Nel laboratorio di Informatica 1, se non ricordo male, l'uso dei \textbf{double} viene sconsigliato in favore dei \textbf{float} (stesso vale per \textbf{long} e \textbf{int}): insomma, se usi un \textbf{double} devi avere una buona ragione per farlo. Più avanti, invece, per la loro maggiore precisione, userai praticamente solo loro.
+	
+	\subsection{Char}
+	Char significa ``carattere''. Un dato \textbf{char} può contenere un carattere della tastiera (in particolare sono utili le lettere dell'alfabeto). I caratteri che può contenere sono quelli ASCII: puoi cercare in internet quali sono.
+	Per assegnare una lettera ad una variabile \textbf{char} ci sono due modi: 
+	\begin{itemize}
+		\item Assegnando il codice del carattere ASCII, es:
+		\begin{lstlisting}
+char esempio=97;
+		\end{lstlisting}
+		Dove 97 è il codice per la lettera ``a''.
+		\item Assegnando il carattere che ci interessa, es:
+		\begin{lstlisting}
+char esempio='a';
+		\end{lstlisting}
+		Nota che, con questo secondo metodo, assegniamo la lettera racchiusa tra apici (apici, non virgolette!): senza gli apici il compilatore darà errore.
+	\end{itemize}
+	
+	\subsection{Bool}
+	Il dato \textbf{bool} può contenere una variabile booleana, una variabile logica: 1 o 0, vero o falso. 
+	Occupa solo un byte (e questo è il vantaggio rispetto ad usare un \textbf{int} a cui assegnare 0 o 1!) e ti accorgerai, più avanti, che è un dato estremamente utile, non tanto per immagazzinare dati esterni, quanto come strumento di controllo all'interno del tuo codice. Ne riparleremo nel capitolo 4!
+	
+	Un dato \textbf{bool} può essere uguagliato ad 1, 0, \textbf{true} e \textbf{false} (nota: sono parole riservate). Ovviamente 1 equivale a \textbf{true} e 0 a \textbf{false}, ma le parole rendono il codice molto più chiaro e leggibile!
+	 
+	\subsection{Riassumiamo\ldots}
+	Nota che le parole \textbf{unsigned}, \textbf{long}, \textbf{short} sono degli ``specificatori''. Essenzialmente, posti prima di un tipo di dato, ne modificano alcune caratteristiche. Un \textbf{long} è in realtà un \textbf{long int} (e, infatti, se li metti entrambi nel codice è corretto, ma per brevità \textbf{int} si omette). Stesso vale per un dato \textbf{short}. Perché ti dico ciò? Perché una di queste parole può essere usata anche con i \textbf{double}: esiste il dato \textbf{long double}. Detto ciò, sappi che questo è assolutamente inutile saperlo, per l'esame, ma magari ho stimolato il tuo interesse\ldots \\
+	
+	Ti dico un'altra cosa non fondamentale per l'esame, ma che potrebbe esserti utile sapere. I \textbf{long} e i \textbf{double} occupano 8 byte, ovvero 64 bit. Non tutti i computer sono in grado di gestirli: i processori da 32 bit sanno gestire pacchetti di dati grandi, al massimo, 32 bit. I \textbf{long} e i \textbf{double} troppo grandi per processori di questo tipo! Su una macchina a 32 bit un \textbf{long} diventa un normale \textbf{int} e un \textbf{double} un \textbf{float}. Va detto, però, che oggi giorno quasi tutti i processori sono a 64 bit e questo problema ormai non si pone più\ldots, ma meglio conoscere i limiti dei computer più datati, se mai dovrai programmare su uno di quelli! Per ulteriori informazioni sulla differenza tra CPU a 32 e 64 bit, puoi leggere i complementi al terzo capitolo.\\
+	
+	
+	Ti riporto, per riassumere, un output di un programma con tutte le caratteristiche dei dati numerici visti finora. Sappi che, in realtà, nell'esame di Informatica 1 ti ritroverai ad usare praticamente solo \textbf{int} e \textbf{float}; più avanti, però, ti saranno utili anche gli altri.
+	
+	\begin{shaded}
+	
+			\begin{verbatim}
+	INT dim (byte): 4
+	Minimo: -2147483648
+	Massimo: 2147483647
+	Unsigned: 4294967295
+	
+	SHORT dim (byte): 2
+	Minimo: -32768
+	Massimo: 32767
+	Unsigned: 65535
+	
+	LONG dim (byte): 8
+	Minimo: -9223372036854775808
+	Massimo: 9223372036854775807
+	Unsigned: 18446744073709551615
+	
+	FLOAT dim (byte): 4
+	Cifre di precisione: 6
+	Esponente minimo: -37
+	Esponente massimo: 38
+	
+	DOUBLE dim (byte): 8
+	Cifre di precisione: 15
+	Esponente minimo: -307
+	Esponente massimo: 308
+	
+	LONG DOUBLE dim (byte): 16
+	Cifre di precisione: 18
+	Esponente minimo: -4931
+	Esponente massimo: 4932	
+\end{verbatim}%
+\end{shaded}\label{caratt}
+	\`E implicito che, per l'esame, non devi assolutamente sapere a memoria i limiti di ogni tipo di dato. Però, è importante sapere che i limiti esistono ed avere un'idea dei relativi ordini di grandezza. Più avanti, nella scrittura di programmi di calcolo più complessi, la conoscenza dei limiti diverrà molto importante.
+	
+
+	
+	\section{Operazioni tra tipi di dato diversi}
+	Cosa succede se nel nostro programma ci troviamo  a lavorare con variabili di tipo diverso? Se abbiamo \textbf{int}, \textbf{long},\textbf{float} e \textbf{double}, come ``interagiscono'' tra di loro? Possiamo uguagliare variabili di natura differente?
+	\\Essenzialmente sì: sono tutti numeri e il compilatore effettua una conversione implicita. Il problema è che non sono numeri uguali e la conversione porta con sé delle modifiche spesso indesiderate. 
+	
+	\subsection{Conversione tra tipi di dato diversi}
+	Vediamo in breve cosa succede nei vari casi.
+	\paragraph{int $\leftrightarrow$ long} Se una variabile \textbf{int} viene assegnata ad una di tipo \textbf{long} non succede assolutamente nulla di male: il \textbf{long} è un \textbf{int} più grande, quindi lo può contenere senza alcun problema.
+	
+	L'operazione inversa può presentare problemi. Se assegniamo ad un \textbf{int} un \textbf{long}, le cui dimensioni (in valore assoluto) sono inferiori alle dimensioni massime  rappresentabile da un \textbf{int}, allora non abbiamo nessun problema: la conversione implicita va a buon fine. Se invece il numero in questione è più grande (sempre considerando il valore assoluto) dei limiti degli \textbf{int}, allora incorriamo nel problema dell'\emph{overflow}: non riuscendo ad immagazzinare quel numero, si esce dai limiti della variabile e, all'interno della stessa, viene immagazzinato un numero più o meno casuale (spesso anche di segno opposto), insomma ci ritroviamo qualcosa che non c'entra nulla con quello che volevamo!
+	\paragraph{float $\leftrightarrow$ double} Valgono, con le dovute precisazioni, le stesse identiche considerazioni fatte nel paragrafo precedente (con la differenza che abbiamo a che fare con numeri con la virgola). Non credo ci sia molto altro da aggiungere.
+	\paragraph{int $\leftrightarrow$ float}
+	Ben più interessante e complicata è la relazione tra interi e numeri in virgola mobile. 
+	Sono due i ``paletti'' da rispettare: i limiti di grandezza dei numeri rappresentabili (problema di overflow) e il fatto che uno ha la virgola e l'altro no.
+	
+	Se assegniamo un intero ad un numero in virgola mobile, l'unico problema possibile è gli \textbf{int} e i \textbf{long} possono avere più cifre delle sei disponibili in un \textbf{float} (ricorda: il massimo numero \textbf{int} è 2147483647, ad esempio in questo caso verrà approssimato a 2.13748E09, perdendo alcune cifre finali). Per il resto, se uguagliamo numeri piccoli non incappiamo in alcun problema, la conversione è fattibile e innocua. 
+	
+	Il contrario lo è un po meno: se assegniamo ad un \textbf{int} un \textbf{float}, la parte decimale viene completamente troncata! Nota: non approssimata, troncata! Ad esempio 11.89 diviene 11; 0.782 diviene 0; 1.1 diviene 1 e così via. 
+	
+	Non è l'unico problema possibile. Il secondo è dovuto al fatto che le cifre più l'esponente potrebbero essere, in valore assoluto, decisamente maggiori del più grande \textbf{int}: se proviamo a convertire in \textbf{int} $10^{13}$ andremo sicuramente in \emph{oveflow}.
+	\\
+	
+	Tutte queste considerazioni, a meno delle diverse grandezze, valgono per le relazioni tra \textbf{long}, \textbf{double}, ecc\ldots
+	
+	\subsection{Operazioni numeriche tra interi e decimali}
+	Cosa succede quando facciamo operazioni matematiche usando sia \textbf{float} che \textbf{int}? Quale tipo di operazione viene effettuata?
+	
+	Questo problema, oltre ad essere di notevole importanza nella scrittura di programmi di calcolo, è uno dei punti fondamentali dell'esame scritto di informatica, quindi presta attenzione!
+	
+	Premetto che il caso più importante è quello della divisione, in quanto, come abbiamo visto, la divisione tra \textbf{int} è la divisione intera, un'operazione decisamente diversa dalla divisione tra numeri reali.
+	\\
+	
+	Per qualsiasi operazione tu vada a fare nel tuo codice, starai eguagliando una variabile (posta a sinistra dell'uguale) a qualche operazione tra variabili (poste a destra dell'uguale). Voglio che ti entri bene in testa un concetto: il computer per prima cosa calcola quello che si trova a destra dell'uguale e, mentre lavora, non gli interessa assolutamente nulla di cosa ci sia a sinistra dell'uguale (quindi il tipo di variabile posta a sinistra). Lui fa i suoi conti, poi, una volta finiti, assegna alla variabile di sinistra il risultato. Ma ricorda: ciò avviene solo dopo aver fatto i conti; la variabile di sinistra non influenza quello che accade a destra!
+	
+	Ci sono due problemi: i conti da fare e il fatto che il risultato deve essere convertito alla variabile di sinistra, con tutte le problematiche analizzate prima. 
+	
+	\paragraph{Somma, sottrazione e moltiplicazione} Per quanto riguarda queste tre operazioni, il concetto è molto semplice: a destra dell'uguale avviene esattamente quello che ci aspettiamo. Se facciamo un'operazione tra interi avremo come risultato un intero; se facciamo operazioni tra interi e decimali avremo come risultato un decimale; un'operazione tra decimali avrà come risultato un decimale. 
+	
+	Bene, l'unico problema, allora, nasce da quello che vi è a sinistra dell'uguale: se abbiamo un \textbf{int} e il risultato sarà decimale avremo i problemi analizzati precedentemente, così come negli altri casi.
+	
+	Insomma, niente di particolarmente complicato da capire. 
+	
+	\paragraph{Divisione}
+	La divisione presenta una difficoltà in più: quello che succede a destra dell'uguale non è così banale. 
+	
+	Ricordati che se la divisione è tra \textbf{int} (o \textbf{long} o \textbf{short}) viene effettuata la divisione intera, e se questo non è quello che desideri, puoi forzare il computer a fare la divisione decimale.
+	Se, invece, anche solo il numeratore o solo il denominatore sono decimali, allora viene fatta la divisione decimale.
+	
+	Vediamo degli esempi:
+	\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+int main(){
+	int a=3, b=5, c=0;
+	float d=7., e=9., h=0.;
+	
+	h=b/a; //a destra interi: divisione intera, poi convertito ad un float (ma non influenza il tipo di divisione)
+	h=(float)b/a; //forziamo a fare la divisione decimale
+	h=b/(float)a; //stesso di prima
+	h=7/2; //a destra costanti intere, divisione intera
+	h=7./2; //7. e' una costante float, divisione decimale
+	h=7/2.; // stesso di prima
+	c=7./2; //viene fatta la divisione decimale e poi il risultato troncato nella conversione ad int
+	c=d/e; //divisione decimale, poi troncato (risultato diviene zero)
+	h=e/d; //tutti float, nessun problema!
+	
+	return 0;
+}
+	\end{lstlisting}
+	
+	Se non sei convinto scrivi un programma che stampi i risultati! Magari prova anche a fare un po' di esperimenti per capire meglio come funziona!
+	\\
+	
+	Hai visto come forzare la divisione ad essere decimale: mettere ``(\textbf{float})'' converte la variabile a \textbf{float}; puoi porre anche ``(\textbf{double})'' davanti, l'idea è la stessa (ma usi 8 byte al posto di 4, guadagnando in precisione).
+	
+	Per quanto riguarda le costanti numeriche, se non sono presenti punti o parti decimali, il computer li interpreta come interi e si comporta di conseguenza. Inserire un punto alla fine li trasforma in \textbf{float}.
+	
+	
+	\paragraph{Un paio di esami risolti\ldots} Come ho accennato, il problema della divisione viene spesso affrontato negli scritti. Proviamo a vedere un paio di esercizi d'esame insieme.
+\begin{itemize}
+
+
+\item	Il testo del primo esercizio è:
+
+\begin{shaded}
+	\begin{verbatim}
+Sia int matr un intero che contiene il vostro numero di matricola ed inoltre
+    float matr1, matr2, matr3;
+se
+    matr1 =(int)(matr/(matr+1.));
+    matr2 = (matr+1)/matr;
+    matr3=((matr+1)/100)/(matr/100);
+scrivere il valore di:
+    matr1________________matr2__________________matr3__________________
+	\end{verbatim}
+\end{shaded}
+	Dunque, poniamo che il mio numero di matricola sia 543987 (completamente inventato, ma di lunghezza giusta). \\
+	Vediamo cosa succede a \verb|matr1|. Non dobbiamo farci confondere da quell'\textbf{int}, che è posto prima della parentesi tonda: vuol dire che converte in intero il risultato che esce dalle parentesi. Nella parentesi abbiamo a numeratore un intero, mentre a denominatore un numero decimale (somma tra un \textbf{int} e un \textbf{float}, che abbiamo visto dare come risultato un \textbf{float}). Verrà fatta la divisione decimale e il risultato (che non ci interessa con precisione) sarà comunque minore di 1, uno 0.qualcosa che, convertito in \textbf{int}, diviene 0.
+	
+	Passiamo a \verb|matr2|. A numeratore e denominatore abbiamo interi, quindi avremo una divisione intera. \`E evidente che il risultato sarà 1; a sinistra dell'uguale abbiamo un \textbf{float} ma, comunque, 1, convertito rimarrà immutato.
+	
+	Sotto con \verb|matr3|! Abbiamo tutti interi, tutte divisioni intere (e di nuovo, anche se a sinistra dell'uguale c'è un \textbf{float} per ora ci importa davvero poco!). Senza analizzare tutti i passaggi possiamo concludere che il risultato sarà comunque 1, che convertito a \textbf{float} rimane 1. 
+	
+\item Il testo del secondo esercizio è:
+\begin{shaded}
+	\begin{verbatim}
+Sia int matr un intero che contiene il vostro numero di matricola 
+ed inoltre:
+    int a,b;
+    float x,y;
+dopo:
+    a=matr/1000;
+    b=matr/0.1E4;
+    x=matr/1000;
+    y=matr/0.1E4;
+avremo:
+    a=_____ b=_____ x=_____ y=_____
+	\end{verbatim}
+\end{shaded}
+
+Di nuovo, dobbiamo curarci solo di quello che è alla destra dell'uguale: prima viene effettuata l'operazione e solo dopo il risultato viene convertito al tipo di dato posto a sinistra! Ipotizzando che il nostro numero di matricola sia ancora 543987, la situazione tra \textbf{a} e \textbf{b}, e tra \textbf{x} e \textbf{y} è pefettamente simmetrica: nel primo caso (\verb|matr/1000|) il risultato è 543 (le ultime tre cifre vengono troncate: divisione tra interi); nel secondo caso (\verb|matr/0.1E4|) il risultato è 543.987 (divisione tra un intero e un float). A questo punto avviene la conversione al tipo di dato a sinistra dell'uguale, e avremo quindi i seguenti risultati: \verb|a=543; b=543; x=543; y=543.987|.
+\item Un esercizio un po' più fine è il seguente:
+\begin{shaded}
+Sia \verb|expr| un'espressione che convolge \verb|int| e \verb|float|. Fare dei semplici esempi che giustifichino le seguenti affermazioni:\\
+a) non vale la proprietà associativa;\\
+b) non vale la proprietà commutativa.
+\end{shaded}
+
+	Quello che il tema d'esame ci sta chiedendo è di trovare degli esempi in cui non valgono, effettuando operazioni tra \emph{int} e \emph{float}, la proprietà associativa  e la proprietà commutativa \footnote{Associativa: $(a+b)+c=a+(b+c)$ oppure, per la moltiplicazione, $(a\cdot b)\cdot c=a\cdot(b\cdot c)$. Commutativa: $a+b=b+a$ per l'addizione, oppure, $a\cdot b=b\cdot a$ per la moltiplicazione. Ah! non ho dubbi che tu sappia benissimo cosa sono, volevo solo fare il punto della situazione.}
+	
+	Per quanto riguarda la proprietà associativa è abbastanza semplice: basta trovare casi patologici in cui, se effetuiamo prima un'operazione o l'altra, andiamo o non andiamo in \emph{overflow}. Ad esempio, nel caso della moltiplicazione, possiamo prendere due numeri molto grandi, \verb|a| e \verb|b|, e uno molto piccolo, chiamiamolo \verb|x|. Se calcoliamo $(x\cdot a)\cdot b$, normalmente non avremo problemi; $x\cdot (a\cdot b)$, invece, potrebbe andare in \emph{overflow} e i due risultati sarebbero diversi. 
+	
+	Se consideriamo l'addizione, possiamo sostituire al numero molto piccolo un numero molto grande ma negativo, chiamiamolo \verb|c|: $a+(b+c)$ non darà problemi, mentre $(a+b)+c$ rischia l'\emph{overflow} nella parentesi. \\
+	
+	Per quanto riguarda la proprietà commutativa, non ho trovato esempi con solo due variabili per cui essa non vale. Se invece ne consideriamo tre, il discorso è simile a prima: se \verb|a| e \verb|b| sono molto grandi e \verb|x| molto piccolo, $a\cdot x\cdot b$  non dovrebbe dare problemi (le operazioni vengono calcolate da sinistra a destra), mentre  $a\cdot b\cdot x$ rischia di essere patologico, e tanti saluti alla proprietà commutativa.
+	
+	Per l'addizione il discorso è analogo. 
+\end{itemize}
+
+	Questi temi d'esame dovrebbero farti riflettere non solo sul fatto che il computer non è perfetto, ma --in particolare l'ultimo-- anche sul fatto che il programmatore può evitare situazioni patologiche se conosce in anticipo, ad esempio, gli ordini di grandezza delle variabili (o il risultato che gli interessa quando ci sono in gioco operazioni tra float ed int). A proposito di ciò, ti invito a considerare la sezione  \ref{precfis} dove ho voluto presentare due situazioni più applicative. 
+	\section{Il discorso della precisione: l'importanza per un Fisico}\label{precfis}
+	Dovresti aver capito che i computer non sono così ``precisi'' come ci si aspetta. La rappresentazione in macchina è finita, e questo causa numerosi problemi. I casi più patologici sono dati dai numeri in virgola mobile. 
+	
+	Hai già visto che sommare e sottrarre \textbf{float} può dare risultati inattesi. La moltiplicazione e la divisione sono ancora più problematici. Banalmente, se dividiamo due numeri il cui risultato è inferiore alla precisione della macchina il risultato sarà errato. 
+	
+	Ma perché farsi questi problemi? A questa domanda è facile rispondere tenendo presente \emph{perché} un Fisico dovrebbe utilizzare la programmazione.
+	
+	Sia uno sperimentale che un teorico si ritrovano ad affrontare situazioni per cui un computer è fondamentale. Per i primi, quasi tutti gli esperimenti producono una mole di dati ingestibile con carta e penna, così come da programmi come Excel. Una singola presa dati del CERN occupa diversi terabyte: un esperimento di rivelazione della radiazione nucleare deve registrare milioni di eventi, e così via. I dati che escono dall'esperimento, di per sé, sono privi di significato: bisogna elaborarli. Per esempio, un rivelatore di radiazione registra l'energia della radiazione incidente tramite dei canali discreti: dovremo convertire questi canali, con dei calcoli, all'energia della radiazione. Inoltre, per dar senso alla nostra misura, dovremo rimuovere la radiazione di fondo ambientale, effettuare della statistica per ricavare grandezze veramente significative ed utili, ecc\ldots Sapere che i calcoli che facciamo potrebbero essere ``patologici'' e che il risultato potrebbe essere sbagliato, è importante (siamo Fisici: ci interessa il dato finale, che non deve essere errato). Dobbiamo sapere cosa possiamo fare, cosa potrebbe essere fonte di errore e dove andare a correggere. Una cifra diversa, anche di poco, in un esperimento può portare a conclusioni fisiche sbagliate\ldots
+	
+	Un teorico, viceversa, è spesso interessato a simulare situazioni che non possono essere analizzate con carta e penna: il comportamento di migliaia di particelle e la reciproca interazione, il comportamento degli ioni di un cristallo, ecc\ldots è palese che un computer può risultare molto comodo. 
+	
+	A qualsiasi Fisico può capitare di affrontare problemi matematici la cui soluzione analitica è troppo lunga e complessa o banalmente non esiste. Risolvere un sistema lineare di diecimila equazioni è fattibile a priori, ma auguri! Forse non hai ancora affrontato integrali ed equazioni differenziali, ma nel corso di Analisi 2 vedrai che questi oggetti matematici non sempre hanno soluzione analitica, anzi: nella maggior parte dei casi non ce l'hanno. Esistono però tecniche numeriche per risolverli\footnote{Se sai cos'è l'integrale di Riemann, ti sarà noto che rappresenta l'area sotto una funzione. Se l'integrale non può essere calcolato esplicitamente, una tecnica numerica può essere quella di lanciare casualmente punti in una figura geometrica di area nota che racchiude la funzione, quindi calcolare il rapporto tra i punti caduti sotto la funzione e quelli sopra.}, e i computer si prestano in maniera eccelsa. Di nuovo, però, è importante tenere conto della precisione limitata del computer.
+	
+	Vediamo un paio di esempi:
+	
+	\paragraph{Calcolo delle derivate}
+	Dai dati del nostro esperimento, vogliamo estrapolare una funzione (leggi: ho i punti su un grafico, voglio trovare una funzione che ci passa) la cui derivata è la grandezza fisica che voglio studiare (esempio banale: il mio rivelatore è in grado di trovare la posizione di una particella, ma a me interessa la funzione velocità). Misurati i punti del mio esperimento, con tecniche numeriche estrapolo la funzione che meglio li approssima e ne calcolo la derivata in diversi punti con il computer. 
+	
+	Con ingenuità, so dal corso di Analisi che la derivata di una funzione in un punto è definita come:  $$f'(x_{0})= \lim\limits_{h\to0}\frac{f(x_{0}+h)-f(x_{0})}{h}$$
+	Ma pensiamoci bene: sopra ho qualcosa di piccolo, e sotto qualcosa che tende a zero. ``Piccolo'' e ``tende a zero'' sono quanto di più patologico esista nell'aritmetica di un computer. È implicito che, se prendo un ``h'' molto piccolo, il risultato che troveremo sarà sicuramente sbagliato, per ``colpa'' del computer; se invece è troppo ``grande'', sarà sbagliato per ``colpa'' della matematica\footnote{Le derivate, tendenzialmente, è meglio calcolarle a mano e non con computer. Piuttosto, conviene estrapolare (tramite il calcolatore) una funzione che meglio approssima i dati e, quindi, derivarla con carta e penna.}.
+	
+	\paragraph{Un prototipo di simulazione} 	
+	Vogliamo studiare come varia l'energia totale e lo stato di eccitazione delle molecole di un cristallo quando quest'ultimo viene colpito da una radiazione ionizzante, il tutto al variare di parametri quali ``energia della radiazione'' e ``punto del cristallo che viene colpito''. Se consideriamo che il nostro cristallo, per quanto piccolo, avrà milioni, se non miliardi, di molecole, è chiaro che il problema non può essere risolto con carta e penna. 
+	
+	Iniziamo a considerare un problema monodimensionale: il cristallo è rappresentato da una retta e le molecole sono particelle equidistanziate tra loro in grado di scambiarsi energia quando eccitate. 
+
+	Nel nostro primo test, ipotizziamo che ci siano centomila molecole su una retta lunga 10000 e distanti 0.1 (sì, numeri adimensionali). Per riempire la retta usiamo il seguente codice:
+	\begin{lstlisting}
+....
+int a=0;
+while(a<=10000){ //"while" serve per eseguire il codice tra le graffe finche' a e' minore di 10000
+	a+=0.1;
+	//riempi punto della retta
+}
+....
+	\end{lstlisting}
+	Dove ``\verb|a|'' rappresenta la posizione della retta. Il \emph{ciclo} \textbf{while} esegue il codice tra le graffe finché la condizione tra le tonde è verificata (ovvero finché \verb|a| è minore di 10000), nel capitolo \ref{cicli} affronteremo il discorso in maniera sistematica. Sicuri di noi, lanciamo la simulazione e troviamo un risultato che non ci aspettavamo. 
+	
+	Dopo aver perso tempo a capire che è successo, scopriamo che nel riempimento qualcosa è andato storto. Prova ad eseguire il seguente codice:
+	\begin{lstlisting}
+#include <iostream>
+int main(){
+	float a=0; //posizione
+	int n=0; //numero di particelle
+	while(a<=10000){
+		a+=0.1;
+		n++;
+		std::cout << "Particella numero: " << n << "\t Posizione: " << a << std::endl;
+	}
+	std::cout <<"Numero totale di particelle: " <<n<< std::endl;
+}	
+	\end{lstlisting}
+	Ti accorgerai che il numero totale di particelle è 100015 e non le centomila che ci aspettavamo. Il tutto perché 0.1, come hai già visto, non ha una rappresentazione finita in macchina: sommare ripetutamente 0.1 non porta al risultato desiderato, perché in effetti non stiamo sommando \emph{esattamente} 0.1 (già con a<=100 il risultato non è quello atteso\ldots).
+	
+	Ti vengono in mente possibili soluzioni? Ad esempio, avremmo potuto usare, per riempire la retta, un ciclo \textbf{for} contando esattamente il numero di particelle: in questo modo, però, avremmo riempito un segmento un po' più corto. Avere sia la lunghezza esatta che il numero di particelle desiderate, con questi numeri, è impossibile.
+	
+	Un'altra soluzione potrebbe essere di scalare il problema su grandezze meno patologiche: ad esempio, moltiplicando la dimensione del reticolo per 10 e così anche lo step (che diventerebbe, quindi, 1). Una volta distribuiti i punti, scalare ``indietro'' tutto. Questa soluzione presenta due problemi: la prima è che dilatando le dimensioni potremmo finire in \emph{overflow}; la seconda è che quando rimpiccioliamo la retta riempita, potremmo andare incontro a nuovi errori di precisione.\\
+	
+	
+	Ovviamente, questi erano casi banali. Ma, per quanto semplici, sono esempi di situazioni patologiche che possono falsare i risultati.  Stai attento, quindi, quando fai conti in \verb|C++|: cerca sempre di capire  dove possono nascere errori, ed evitali quando puoi; il discorso della precisione non serve solo a passare l'esame! 
+	\section{Visibilità delle variabili}
+	Abbiamo già introdotto il concetto di \emph{scope} ma, per chiarezza, lo approfondisco. Uno \emph{scope} è essenzialmente l'area in cui ``vive'' una variabile. Se una variabile è locale (dopo spiego) allora uno scope è ciò che è racchiuso tra due parentesi graffe. Per ora hai presente solo le parentesi graffe del \emph{main} ma, in un programma, possono esservene molte altre: quelle dei cicli, delle strutture di selezione, di funzioni. 
+	
+	Una variabile ``nasce'' dove viene dichiarata, e ``muore'' alla fine dello \emph{scope}. Che implicazioni ha tutto ciò? Una variabile può essere vista ed usata solo all'interno dello \emph{scope} in cui è stata dichiarata; finito lo \emph{scope} la variabile ``muore'' e non può più essere usata né  vista. Se provi ad usare una variabile fuori dal suo \emph{scope}, il compilatore ti avviserà dell'errore. 
+	
+	Gli \emph{scope} funzionano un po' come matriosche: possono esserci \emph{scope} uno dentro l'altro. Una variabile dichiarata in uno \emph{scope} più esterno viene vista in tutti gli \emph{scope} contenuti in esso. Il viceversa, invece, non è vero. 
+	
+	Una variabile dichiarata all'interno di parentesi graffe si dice locale, e il motivo credo sia chiaro: viene vista solo localmente. Vi è un secondo tipo di variabile: quella globale. Una variabile globale viene dichiarata, per esempio, fuori dal \emph{main}, nell'intestazione del file. Questo tipo di variabile viene vista dappertutto, non solo in quel file, ma anche in tutti quelli che lo includono (capirai quando parleremo di librerie). Proprio per il fatto che sono visibili e modificabili in qualsiasi parte del codice, le variabili globali sono molto pericolose e, personalmente, ne sconsiglio fortemente l'uso. Se tu dichiari un ``\textbf{int} a'' globale, questo è visibile in ogni file che include il file dove è dichiarato. Se altrove dichiari un altro ``\textbf{int} a'', fai, come si suol dire, un bel casino. Il \verb|C++| ha sviluppato un potentissimo strumento per proteggere i nomi delle variabili: il \emph{namespace}. Purtroppo questo argomento non rientra in quelli richiesti in Informatica 1, per cui non approfondiremo.
+	\\
+	
+	Ora ti riporterò un esempio di codice che dovrebbe chiarire l'ambito di visibilità delle variabili, ma non preoccuparti di capire cosa succede: userò costrutti che non abbiamo ancora analizzato, l'unica cosa che mi interessa è che tu segua il ragionamento delle variabili. 
+	
+	\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+int global; //variabile globale, puo' essere vista ovunque!
+
+int main(){
+	int i=0; //puo' essere vista in tutto cio' che e' contenuto nello scope del main	
+	global=15; //viene vista dappertutto, posso modificarla
+	while(i<global){ //inizio scope
+		int local=global; //variabile locale
+		i++; //siamo in uno scope contenuto in quello del main, i viene vista!
+		local--;
+	} //fine scope, fuori da qui local non esiste piu'
+	cout << local << endl; //sono fuori dallo scope di "local", l non esiste piu', non posso farlo!
+		
+	return 0;
+}
+	\end{lstlisting}
+	\section{Macro e costanti}
+	Una macro è una qualsiasi riga di codice che inizia col carattere ``\#'' (asterisco). Ad esempio il ``\#include <iostream>'' è una macro. 
+	
+	Le macro non vengono analizzate dal compilatore, bensì dal preprocessore. Prima che inizi la compilazione, il preprocessore si occupa di sostituire le macro con ciò che è opportuno. Per esempio, dove trova ``\#include <iostream>'' il preprocessore prende la libreria iostream e fisicamente la incolla al posto di quella riga di codice. In poche parole: questo meccanismo è ideato per evitare di avere migliaia di righe di codice quando quelle scritte da noi magari sono poco più di una decina. Il preprocessore, poi, fà il lavoro sporco per noi, senza che ce ne accorgiamo. Una volta incollato tutto il codice, il file formatosi viene compilato dal compilatore.\\
+	
+	C'è un altro tipo di macro, tipica del \verb|C|, ovvero quella usata per definire delle costanti. 
+	Esempio:
+	\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+#define PI 3.14159
+int main(){
+	float p=PI;
+	cout << p << endl;
+	return 0;
+}
+	\end{lstlisting}
+	Abbiamo definito la costante PI: per farlo si scrive, come puoi vedere, ``\#define'' seguito dal nome della costante e, dopo uno spazio e nessun ``='', il valore dalla costante,  senza punto e virgola alla fine (ti ricordi il paragrafo sul punto e virgola? Questa è una direttiva preprocessore!).
+	
+	Se scrivi il nome di quella macro nel codice, il preprocessore andrà a sostituirla con il valore che le hai assegnato. 
+	
+	In realtà, per come la vedo io (e molti altri), è meglio evitare l'uso delle macro (ad esclusione degli ``\#include''): il preprocessore non effettua tutti i controlli che il compilatore, invece, assicura. Lui semplicemente sostituisce la parola col valore, ma non controlla che le variabili siano compatibili o che quello che stiamo scrivendo abbia senso. \`E uno strumento del \verb|C|, infatti, nel \verb|C++| è stato introdotto un nuovo tipo di costante gestita, invece, dal compilatore. 
+	
+	Se vuoi avere dei dati costanti nel tuo codice, dichiara una variabile e precedi il tipo di dato con la parola riservata \textbf{const}.
+	
+	L'esempio di prima diventa:
+	\begin{lstlisting}
+#include <iostream>
+using namespace std;
+	
+const float PI=3.14159;
+int main(){
+	float p=PI;
+	cout << p << endl;
+	return 0;
+}
+	\end{lstlisting}
+	Ora PI è una variabile globale gestita dal compilatore (e quindi a minor rischio di errore), ma è costante. Se provi a modificarla nel codice, il compilatore ti dà errore. Può sembrare una cosa inutile ma, se nel tuo programma inserisci costanti fisiche o matematiche, renderle costanti anche nel computer è una sicurezza in più. 
+	
+	La differenza tra macro e variabili costanti è, di nuovo, una finezza e, se non ricordo male, probabilmente nel corso di Informatica 1 nemmeno si sottolinea. Il concetto è che sei liberissimo di usare le macro (nello stesso corso credo si usino spesso), ma sappi che l'idea del \verb|C++| è di evitare di usarle; se la cosa ti interessa approfondisci tu l'argomento!
+	
+	\section{\emph{cout} e \emph{cin}}\label{coutcin}
+	\emph{Cout} e \emph{cin} fanno parte della classe degli stream di dati, che sono canali di input ed output: ti ricordi la schematizzazione del computer? Abbiamo detto che esistono RAM, CPU e dispositivi di input e output; ecco: \emph{cin} e \emph{cout} fanno parte degli strumenti del \verb|C++| per far comunicare CPU e RAM con i dispositivi di input ed output. Questi strumenti saranno analizzati diffusamente nel capitolo \ref{inout}, però ci saranno utile nel corso degli esempi di codice dei capitoli precedenti. Quindi, ti accenno una rapida spiegazione molto pragmatica.
+	
+	
+	\emph{Cout} sta per ``console output'',  in cui la console è il terminal. Insomma, output su terminale: serve per stampare a video stringhe e variabili. Prende una stringa o una variabile e stampa a video il loro contenuto.
+	
+	\emph{Cin}, viceversa, sta per ``console input'', quindi l'input da console (che avviene tramite tastiera). \emph{Cin} aspetta che l'utente inserisca da tastiera un valore, premendo invio lo passiamo a cin, il quale lo passa ad una variabile.
+	
+	Per poter usare sia \emph{cin} che \emph{cout} è necessario includere la libreria ``iostream''.
+	Al posto di grandi discorsi, ecco un esempio concreto:
+	\lstinputlisting{codice/tipidato/t1.cpp}
+	
+	Ecco l'output:
+	\begin{shaded}
+\begin{verbatim}
+Benvenuto in questo programma!                                                                                                                                          
+Inserisci un numero intero: 17                                                                                                                                          
+Hai inserito: 17                                                                                                                                                        
+Alcuni caratteri speciali:      backslash t è uno spazio di tab                                                                                                         
+backslash n manda a capo                                                                                                                                                
+Per stampare più variabili e stringhe separali con <<:                                                                                                                  
+1       2       3     
+\end{verbatim}
+	\end{shaded}
+%\newpage
+%\begin{subappendices}
+%	\section*{COMPLEMENTI}
+%	\addcontentsline{toc}{section}{Complementi}
+%	\subsection{I bit delle variabili intere}
+%\end{subappendices}

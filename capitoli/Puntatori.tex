@@ -1,0 +1,98 @@
+	
+	\chapter{Puntatori}
+	%TODO vedere indirizzi memoria esame con puntatori
+	Un puntatore è un altro tipo di dato, ma è molto particolare: mentre gli \textbf{int} contengono interi, i \textbf{float} numeri in virgola mobile e così via, i puntatori contengono \emph{indirizzi di memoria}. Esistono più tipologie di puntatori, uno per ogni tipo di dato già definito. Un altro modo di immaginarli, infatti, è come una variabile che ``punta'' all'area di memoria occupata da un'altra variabile. Per questo motivo esistono puntatori ad \textbf{int}, puntatori a \textbf{float}, a \textbf{char}, in realtà a qualsiasi tipo di dato esistente (sia quelli standard, che quelli definiti dall'utente; un esempio lo vedrai nel capitolo \ref{struct}).
+	
+	Per istanziare una variabile puntatore ad uno specifico tipo di dato è necessario apporre un ``\textasteriskcentered'' dopo il tipo di dato. 
+	\begin{lstlisting}
+int main(){
+	int a; //a e' un intero
+	int* b; //b e' un puntatore ad intero
+
+	reuturn 0;
+}
+	\end{lstlisting}
+	
+	Prima di procedere possiamo farci una domanda: ma quanta memoria occupa un puntatore? Un puntatore ad \textbf{int} occupa lo spazio di un \textbf{int}, quello di un \textbf{char} lo spazio di un \textbf{char} e così via? La risposta è assolutamente no. 
+	
+	Per quanto esistano diversi tipi di puntatori (e successivamente cercheremo di capire perché) occupano tutti lo stesso spazio: ovvero quanto è necessario per rappresentare un indirizzo di memoria. In un sistema operativo a 32 bit gli indirizzi di memoria occupano proprio 32 bit (4byte), mentre in un sistema operativo a 64 bit occupano proprio 64 bit (8 byte). Ormai, tutti i computer hanno sistemi operativi a 64 bit, per cui possiamo assumere che i puntatori occupano, di norma, 8 byte. 
+	
+
+	Se vuoi controllare prova ad eseguire questo:
+	
+	\lstinputlisting[ label=punt2]{codice/puntatori/p1.cpp}
+	
+	Nell'esempio \ref{punt2} ci sono un po' di cose nuove, che non riguardano i puntatori. La prima che noterai è il particolare uso di \emph{cout}: si può ``spezzettare'' (usarlo così serve per una maggiore leggibilità del codice: tutto sulla stessa riga diventa pesante!).
+	
+	L'altra cosa nuova è l'operatore ``\textbf{sizeof}'': come puoi immaginare, restituisce la dimensione della variabile alla sua destra. Oltre che sulle variabili, lo puoi utilizzare anche sui tipi di dato, ma sono necessarie le parentesi: ``\textbf{sizeof}(\textbf{int})''. L'esempio \ref{caratt} è stato ottenuto proprio con questo operatore.
+	
+	\section{L'operatore ``\&''}
+	Bene, ma come si assegna ad un puntatore un indirizzo di memoria? 
+	
+	Finora, tranne quando ti ho spiegato come sono fatti gli indirizzi di memoria, non ci siamo mai trovati a maneggiarli. Esiste un operatore, ``\&'', la cui funzione è quella di restituire l'indirizzo di memoria della variabile che segue. 
+	
+	\lstinputlisting{codice/puntatori/p2.cpp}\label{pt1}
+	Prima di analizzare il codice ritengo significativo dare un occhio all'output:
+	\begin{shaded}
+	\begin{verbatim}
+		Valore di n:12 				
+		Indirizzo di n:	0x7ffd746cc36c
+		Valore di p: 0x7ffd746cc36c     
+		Indirizzo di p:	0x7ffd746cc360
+	\end{verbatim}
+	\end{shaded}
+	Nel codice ho scritto ``\verb|p=&n|'', ovvero ho assegnato l'indirizzo di ``n'' a ``p'' (il che è lecito, visto che quest'ultimo è un puntatore a float, una variabile che contiene indirizzi di float). Se osservi l'output noterai che indirizzo di ``n'' e valore di ``p'' sono proprio uguali. 
+	
+	Nell'ultima riga ho voluto far notare che pure ``p'' ha un indirizzo, che è diverso dal suo valore. Nulla vieta, dunque, di ipotizzare l'esistenza di un puntatore ad un puntatore\ldots Ma è un altro discorso: avremo modo di analizzare questo fatidico oggetto più avanti, parlando di matrici.
+	
+	\section{Dereferenziare i puntatori: l'operatore \textasteriskcentered}
+	Se i puntatori avessero la sola utilità di immagazzinare indirizzi di memoria, sarebbero decisamente di scarso interesse\ldots Ci deve essere un qualche modo per dire ``vai a leggere l'area di memoria a cui punti''. E in effetti esiste: è l'operatore ``\textasteriskcentered''.
+	
+	Scrivo un breve codice, per poi trarre spunto nella spiegazione:
+	\lstinputlisting{codice/puntatori/p4.cpp}
+
+	Dove l'output è:
+	\begin{shaded}
+		\begin{verbatim}
+			valore di a: 1
+			Indirizzo di a: 0x7ffd77a24f64
+			Valore p1: 0x7ffd77a24f64
+			Valore dell'oggetto puntato da p1: 1
+			Valore di a: 4
+			
+		\end{verbatim}
+	\end{shaded}
+
+	Analizziamo punto per punto:
+	\begin{itemize}
+		\item \textbf{int *p2} Anche questa scrittura è corretta. Mettere l'asterisco vicino alla variabile o al tipo di puntatore è una questione, quasi sempre, di gusto. Forse la scrittura ``\lstinline|int* p|'' rende più chiara una cosa: così come in ``\lstinline|int n|'' \textbf{int} è il tipo di dato mentre ``n'' è la variabile vera e propria, in un puntatore il tipo di dato è ``\textbf{int*}'' e ``p'' è la variabile. L'asterisco fa parte del tipo di dato, non della variabile. C'è solo un caso in cui si è costretti a porre l'asterisco vicino alla variabile e non al tipo di dato:
+		
+		\quad \lstinline|int *p1, *p2, *p3;|
+		
+		Ovvero, quando sulla stessa riga dichiariamo più puntatori: bisogna esplicitare che anche p2 e p3 sono puntatori ad intero. La scrittura ``\lstinline|int* p1, p2, p3;|'' fa si che vengano istanziati, invece, un puntatore ad intero e due interi (rispettivamente p1 e p2,p3).
+		
+		\item \textbf{p1=\&a} Come già visto, stiamo assegnando l'indirizzo di \verb|a| al puntatore \verb|p1|, e questo dovrebbe rendere chiaro che la variabile è proprio ``\verb|p1|'' e non \verb|*p1| (abbiamo sulla sinistra un puntatore ad intero, sulla destra un indirizzo di un intero: stesso tipo di dato, assegnazione lecita).
+		
+		\item \textbf{cout << *p1} Ecco qui l'altro uso fondamentale di ``\textasteriskcentered'': quello di operatore per dereferenziare un puntatore. Spiego subito i paroloni. L'operatore ``\textasteriskcentered'', posto prima di una variabile puntatore, significa ``accedi all'area di memoria puntata''. Essenzialmente stiamo leggendo l'area di memoria riservata ad ``int a'', la variabile iniziale; *p, ora, \emph{è} la variabile iniziale (``*p'', non ``p''!), è quella stessa identica cella di memoria, nulla di differente. 
+		
+		Ora, dovrebbe essere chiaro perché il tipo di dato non è semplicemente \textbf{*} bensì è \textbf{int*}: utilizzando l'operatore di dereferenziazione, come potrebbe sapere il computer \emph{quanta} memoria andare a leggere? Ricordati: ogni byte della memoria ha un indirizzo, e se un puntatore contiene un indirizzo, quest'ultimo è quello del \emph{primo} byte della variabile puntata. Ma, come ben sai, spesso le variabili occupano ben più di un byte: gli int, ad esempio, ne occupano quattro. Per cui, se ``p'' è un puntatore ad interi e scriviamo ``\lstinline|cout << *p << endl|'' il computer sa che deve andare all'indirizzo contenuto in ``p'' e, dato che punta ad un intero, deve leggere quattro byte. Se ``p'' fosse stato un puntatore a double, il computer avrebbe letto otto byte, e così via. 
+		
+		\item \textbf{*p1=4} Cosa succede? Ormai l'avrai capito meglio di me: il computer sta scrivendo il valore ``4'' nell'area di memoria puntata da ``p1''. Non deve stupire, quindi, che quando successivamente stampiamo il valore di ``a'' quest'ultimo è proprio  ``4''.
+	\end{itemize}
+	
+	È chiaro, quindi, che i puntatori possono essere ``a qualsiasi tipo di dato'': esistono sia puntatori ai tipi di dato standard, che a tipi di dato definiti dal programmatore (ne vedremo un esempio nel capitolo sulle struct); esistono perfino i puntatori a puntatore (alla fine anche lui è una variabile che occupa un'area di memoria ma, come accennato, ne riparleremo prossimamente\ldots); ecco alcuni esempi:
+	\begin{lstlisting}
+....
+char* c;
+float* f;
+bool* b;
+int** i; //puntatore a puntatore ad int, fai finta di non aver visto niente, li studieremo poi...
+....
+	\end{lstlisting}
+	
+	Rimane un'ultima cosa da dire: e come si inizializza un puntatore a ``zero''? Come si dice ``non puntare da nessuna parte''? È semplice: si utilizza la parola chiave ``NULL''. Un esempio:
+	
+	\lstinputlisting{codice/puntatori/p5.cpp}
+	L'unico commento necessario è che, dopo aver assegnato un puntatore a ``NULL'', cercare di accedere all'area di memoria puntata non ha alcun senso (come accedo al niente?): se provi ad eseguire il codice noterai, infatti, che il programma va in segmentation fault.\\
+
+	I puntatori, per ora, ti possono sembrare uno strumento astratto e poco utile,  ma vedremo che la loro potenza è ben maggiore del poter semplicemente avere più variabili che si riferiscono allo stesso indirizzo di memoria. Essi mostrano tutta la loro forza con gli \emph{array} e l'\emph{allocazione dinamica} (capitolo \ref{array}) e con le funzioni (capitolo \ref{funzioni}). 

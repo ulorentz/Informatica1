@@ -1,0 +1,245 @@
+\chapter{Introduzione alla programmazione}
+Tutti i giorni, quando accendiamo il computer o usiamo il nostro smartphone, abbiamo a che fare con programmi. Ti sei mai chiesto cosa c'è sotto? Come è nato e come è stato costruito quel programma?
+
+Se anche queste domande non ti avessero mai neanche lontanamente sfiorato, nel corso di Informatica 1 ti toccherà imparare le basi del retroscena dei programmi che usi con nonchalance tutti i giorni. Vedremo giusto le fondamenta della programmazione, niente di più! Chi lo sa, magari troverai perfino interessante questo mondo\ldots
+
+Bando alle ciance, iniziamo!
+\section{Com'è fatto un computer?}
+Il computer (calcolatore in inglese) è una macchina in grado di eseguire istruzioni e di fare calcoli:  per come lo schematizzeremo noi, è composto dal processore, dalla memoria RAM e dai dispositivi di input e output. 
+
+Il processore è la parte che fa i conti, che ragiona: è il cervello del computer, è la parte pensante.
+
+La memoria di cui parleremo, trattando di programmazione, è sempre la RAM (Random Access Memory); quando un programma ``gira'', viene caricato sulla RAM, non sull'hard disk. Sistema operativo, drivers, programmi ``vivono'' tutti nella RAM: questa è la memoria con cui ci interfacciamo quando programmiamo. 
+
+I dispositivi di input sono (al nostro livello) solo due: la tastiera e l'hard disk. I files, infatti, a differenza dei programmi, sono archiviati sull'hard disk e un programma può accedervi facilmente, sia in lettura che in scrittura. L'hard disk è, quindi, sia un dispositivo di output che di input.
+\\L'altro dispositivo di output sarà, per noi, lo schermo.
+
+\section{Cosa vuol dire programmare?}
+Il computer è una macchina che ragiona in linguaggio binario: la lingua che ``parla'' è fatta di 0 e 1. Ovviamente i computer non nascono ``imparati'', loro sanno fare solo conti: bisogna istruirli su che conti fare. 
+
+Un programma non è altro che un'istruzione per il computer, un'insieme di parole (del computer, non le nostre parole!) che, una dopo l'altra, con la loro logica, rappresentano dei calcoli e delle operazioni.
+\subsection{Linguaggio macchina}
+Ecco quindi introdotto il concetto di linguaggio macchina: è una serie di 0 e 1 che rappresentano istruzioni. Il computer, oltre a saper elaborare questi 0 o 1, li sa immagazzinare: l'unità logica che può contenere questo dato è il \emph{bit} (un bit o vale zero o vale uno). La memoria del computer è, in realtà, organizzata in \emph{byte}: un byte è composto da 8 bit. Il byte è l'unità elementare della memoria, nei termini che interessano a noi: i dati che noi trattiamo sono sempre multipli di questa unità.
+
+Ma torniamo al linguaggio macchina.  Se volessimo scrivere un programma (anche il più semplice, un banale calcolo) sarebbe quasi impossibile, o comunque di una complicazione estrema. 
+
+Con la nascita dell'informatica, per rendere più agevole la scrittura di programmi da parte degli informatici, sono stati sviluppati i primi linguaggi di programmazione, decisamente più comprensibili rispetto ad una serie di 0 e 1.
+
+\subsection{Linguaggi di programmazione}
+I linguaggi di programmazione si dividono in due grandi categorie: di basso livello e di alto livello. Cosa vuol dire? Non ci si riferisce certo alla qualità, bensì a quanto il linguaggio di programmazione è vicino al linguaggio macchina. 
+
+Un linguaggio di basso livello è composto da istruzioni elementari, del tipo: prendi il dato, spostalo in tale cella di memoria, prendi l'altro dato, spostalo nell'altra cella, ecc\ldots. 
+
+Un linguaggio di basso livello è estremamente complicato da comprendere, e scrivere programmi complessi richiede capacità veramente notevoli, oltre a tempi ingenti. Un esempio di linguaggio di basso livello è l'\emph{assembly}.\\
+
+I linguaggi ad alto livello sono nati per semplificare ulteriormente la vita ai programmatori: sebbene l'assembly sia molto più comprensibile dei fatidici 0 e 1, scrivere un programma in assembly è estremamente complesso e lungo. Nei linguaggi ad alto livello, molte delle istruzioni necessarie in assembly sono rese implicite. \`E tutto molto più ``chiaro'': spesso, leggendoli, sembrano una serie di istruzioni in simil-inglese. Potremmo dire che, nei linguaggi ad alto livello, al programmatore è affidata la parte logica del programma, ma non la gestione della macchina (computer), che è invece resa implicita. Linguaggi ad alto livello sono \verb|C|, \verb|C++|, \verb|Java|, \verb|Python| e molti altri.
+
+I linguaggi ad alto livello si dividono in ``procedurali'' ed in ``orientati agli oggetti''. In realtà non credo sia fondamentale, per questo corso, capire la differenza. Ti basta sapere che \verb|C| è un linguaggio procedurale, mentre \verb|C++| (che è la sua evoluzione) è un linguaggio orientato agli oggetti. Noi studieremo quest'ultimo ma, sfortunatamente, per come viene affrontato nel corso di Informatica 1, ci limiteremo alla parte procedurale: impareremo poco di più di quanto si potrebbe studiando \verb|C|. Solo nei corsi futuri (o nelle lezioni facoltative di questo corso) affronterai la programmazione ad oggetti.
+
+\subsection{Da C++ a linguaggio macchina}
+Ma come avviene il passaggio da \verb|C++| (d'ora in poi parleremo solo di lui, non degli altri linguaggi), che come ho accennato ha elementi  di inglese e tra poco ne vedrai un esempio, a linguaggio macchina? 
+
+Essenzialmente bisogna invocare un programma, detto compilatore, che si occupa di tradurre il \verb|C++| in linguaggio comprensibile alla CPU. Nella sezione \ref{catena} approfondiremo meglio il discorso. Per ora ti basta sapere che il compilatore esiste e fa il lavoro sporco per noi.
+%Ci sono vari passaggi ma, essenzialmente, il concetto è che esiste un programma, chiamato \emph{compilatore}, che si occupa di ``tradurre'' il tuo codice in linguaggio assembly (ricordi? il linguaggio di basso livello); quindi entra in gioco l'\emph{assembler}, un programma che traduce il codice assebly in linguaggio macchina, il cosiddetto eseguibile (comprensibile dal computer). Quest'ultimo non è altro che il programma vero e proprio, che puoi lanciare ed usare.
+\\
+
+%TODO: Elimino?
+%In realtà l'operazione di compilazione avviene in due passi: non lavora subito il compilatore, infatti, il primo step viene portato avanti dal \emph{preprocessore}. Il preprocessore si occupa di preparare il file da mandare in pasto al compilatore. Sostituisce parole con intere righe di codice; se il codice si sviluppa su file differenti, prende i vari pezzi e li incolla fisicamente tutti assieme nello stesso file. Ti sembrerà di star parlando di aria fritta, ma ti dò queste informazioni perché più avanti avremo a che fare proprio con preprocessore e compilatore. In tutti i tuoi esperimenti di programmazione, ti confronterai con il compilatore, imparerai prima ad odiarlo e poi ad apprezzarlo: non si limita a tradurre il linguaggio ma ti corregge, ti dice dove e cosa hai sbagliato, e ti dà consigli. Questo vuol dire che il compilatore sa le regole del \verb|C++|, si accorge di errori all'interno del tuo codice. Il preprocessore (che incontreremo un paio di volte più avanti), invece, no: agisce sotto i tuoi piedi (non ti accorgi che sta lavorando) e non controlla moltissime cose come invece il compilatore sa fare. Il preprocessore, quindi, non ti avvisa di molti errori che potresti commettere nel codice che lo riguarda. Vedremo che, mentre in una situazione il preprocessore è fondamentale, nelle altre lo si può evitare.\\
+
+	
+Ma basta parlar di teoria, è arrivato il momento di vedere un po' di codice!
+\section{Il tuo primo programma}
+Ti riporto un esempio di programma e poi (promesso!) ti spiegherò tutto: cosa vogliono dire quelle strane parole, ma anche come compilare tutto ciò ed eseguirlo!
+
+\subsection{Il codice}
+\begin{lstlisting}
+#include<iostream>
+using namespace std;
+
+int main(){//Qui inizia il nostro programma
+	cout << "Hello World!" << endl;
+	return 0; //e qui finisce
+}
+\end{lstlisting}
+Analizziamo riga per riga: 
+\begin{itemize}
+
+
+\item\textbf{\#include<iostream>} Questa è una direttiva per il preprocessore (così come lo è tutto ciò che inizia con \#). Stiamo dicendo al preprocessore di includere nel nostro codice l'\emph{header} (dall'inglese: intestazione) di una libreria, \emph{iostream}. L'\emph{header}  è essenzialmente un file dentro cui è contenuto del codice dove sono dichiarati degli ``strumenti''; includendolo nel nostro codice possiamo usare gli strumenti della libreria\footnote{Nel capitolo \ref{lib}, vedremo  che per usare le librerie scritte da noi dovremo fare qualche passo in più.}.
+
+Includere l'\emph{header} di una libreria vuol dire che il preprocessore va a cercare il file dove è contenuto, copia tutto il codice e lo incolla al posto della riga ``\#include \ldots'': ci risparmia un noiosissimo lavoro e ci evita di lavorare con file composti da migliaia di righe di codice, magari neanche scritte da noi. 
+
+Per le librerie standard del \verb|C++|, includere l'\emph{header} è tutto ciò che dobbiamo fare per poter usare la libreria per cui, d'ora in poi, con un abuso di linguaggio, dirò ``includere la libreria'' per rendere più chiaro il concetto.
+
+Iostream vuol dire ``in-out stream'', ovvero canale di ingresso e uscita. Lì dentro sono definite alcune funzioni per comunicare con l'utente, come quelle per stampare a video parole e numeri o quelle per leggere da tastiera degli input. 
+
+Anche se ancora non abbiamo parlato di in e out, includi sempre nei tuoi programmi \emph{iostream}.
+
+\item\textbf{using namespace std;} Te lo dico subito: questo codice ti rimarrà oscuro fino alla fine del corso. Spiegarti cosa significa vorrebbe dire immergersi in un argomento, il \emph{namespace}, che non userai mai in questo corso. Quindi evitiamo. Solo una cosa: ricordati di metterlo in ogni file dopo le inclusioni delle librerie. È importante!
+
+
+\item\textbf{int main()\{ \}} Eccoci qua: questo è il programma vero e proprio! Main() è una funzione (nei prossimi capitoli impareremo di più sulle funzioni), è l'``entità'' che viene lanciata dal sistema operativo (d'altronde, ``main'', significa ``principale''), è qui che inizia il programma vero e proprio!
+
+Il programma è tutto ciò che è racchiuso tra le due parentesi graffe, può essere scritto su file differenti, può svilupparsi in migliaia di righe di codice ma, sul piano logico, tutto è racchiuso tra queste due parentesi. 
+
+In poche parole, in ogni programma che scrivi deve esistere il \emph{main}: tutto si svolge tra quelle parentesi graffe. Senza \emph{main} non esiste il programma (e se per caso provi a compilare un file sorgente senza \emph{main}, il compilatore ti avvisa della sua mancanza e non compila).
+
+\item\textbf{//} Il doppio slash è il simbolo in \verb|C++| per inserire un commento. Cos'è un commento? \`E qualcosa che viene completamente ignorato dal compilatore, può quindi essere inserito nel codice per commentare quello che abbiamo scritto senza intaccare la funzionalità del programma. Ad esempio, può trattarsi di frasi per spiegare i vari passaggi del nostro codice ed aumentarne la comprensibilità. 
+
+I commenti in \verb|C++| sono tutto ciò che segue il doppio slash (rimanendo sulla stessa riga). Oppure tutto ciò che è contenuto tra ``/*'' e ``*/'': il primo simbolo dà inizio al commento, il secondo lo conclude; possono essere anche molte righe e non semplicemente una!
+
+\item\textbf{cout\ldots endl;} Cout è l'abbreviazione di ``console output'': è il codice per utilizzare il dispositivo di output primario, lo schermo (tramite il terminale, che tra poco introdurremo). Quando vogliamo stampare a video qualcosa, dobbiamo chiamare la funzione \emph{cout}. Questa parola va seguita da ``\verb|<<|'' che,	 simbolicamente, rappresenta un flusso in uscita. Dopo possiamo mettere ciò che vogliamo stampare: una stringa di lettere racchiusa tra virgolette, come il nostro ``Hello World!'', o una variabile (vedi il prossimo capitolo). 
+
+Alla fine dobbiamo ``mandare a capo'',  e per farlo inseriamo di nuovo il simbolo ``<<'' seguito dalla parola \emph{endl}, che significa ``end line'': appunto, ``vai a capo!''.
+	
+\item\textbf{return 0;} In tutte le chiacchiere che andremo a fare non ci occuperemo mai di sistemi operativi, di cosa fanno, di perché esistono e a cosa servono (puoi, però, trovare una brevissima introduzione all'uso di Linux in appendice \ref{linux}). 
+
+In ogni caso, in questa riga stiamo comunicando con il sistema operativo. Essenzialmente quando il programma arriva a questo punto si conclude. Nel finire, però, restituisce qualcosa al sistema operativo (un numero): ``0'' sta per ``va tutto bene''. Se tutto non va bene, puoi restituire al sistema operativo un altro numero, ma è una finezza\ldots
+
+\item\textbf{Il punto e virgola!}
+Puoi vedere il codice di un programma \verb|C++| come una serie di istruzioni e operazioni. Ogni istruzione va conclusa, bisogna dire al compilatore: ``l'istruzione finisce qua, quello che segue è un'altra cosa!''. Mandare a capo non ha questo significato (mandare a capo rende più leggibile il codice per il programmatore, e se tu non mandassi a capo compilerebbe lo stesso, ma per carità, non lo fare!): è il punto e virgola che conclude un'istruzione! Alla fine di ogni unità logica è necessario un punto e virgola. 
+
+Ci sono solo due situazioni del codice dove non ci vuole il punto e virgola, anche se viene conclusa un'unità logica: alla fine di una direttiva per il preprocessore e dopo la chiusura di una parentesi graffa (esistono delle eccezioni a quest'ultimo caso, le vedremo più avanti).
+
+Nel mio codice, come puoi vedere, dopo ``\verb|#include <iostream>|'' non c'è un punto e virgola. Non c'è nemmeno dopo la chiusura della graffa del \emph{main}.
+\end{itemize}
+Tutto chiaro?
+\subsection{Spazio di tab e leggibilità del codice}
+Mandare a capo non è l'unica cosa che rende il codice più leggibile: ce n'è una seconda che, purtroppo, all'inizio gli studenti sono davvero restii a fare, ma è importante!
+
+
+Ciò che è racchiuso tra due parentesi graffe è detto \emph{scope} (vedi il prossimo capitolo per una definizione migliore): ogni volta che apriamo una parentesi graffa stiamo scrivendo un piccolo ``capitolo'' del nostro codice (e alla fine di questo capitolo la parentesi va chiusa). \`E elegante, e rende il codice molto più agevole da leggere, dare uno spazio di tab in più (tasto della tastiera)  per gli elementi all'interno delle graffe, uno spazio in più rispetto al ``livello'' delle graffe. 
+
+Ti faccio un esempio di codice, ma non cercare di capire ciò che succede, semplicemente mi interessa che ti chiarisca le questioni grafiche.
+	
+	\begin{lstlisting}
+#include <iostream>
+using namespace std;
+int main(){ //apro graffa, tutto cio' che segue va preceduto da uno spazio di tab
+	int j=10;
+	for(int i=0; i<10; i++){//nuovo scope, ci vuole un ulteriore spazio di tab
+		cout << i << endl;
+		if(i==5){//nuovo scope, nuovo spazio!
+			cout << "Sono a meta'!" << endl;
+		} //chiudo al ``livello'' dell'apertura
+	} 
+	return 0;
+}
+	\end{lstlisting} 
+Questa tecnica aiuta a capire cosa è dentro cosa, con una sorta di matriosca di graffe. Aiuta a distinguere graficamente i vari ``capitoli'' del nostro codice. Dà un impatto grafico agli scopes\footnote{In alcuni linguaggi, come il Python, non esistono le parentesi graffe che delimitano gli scopes, ma sono proprio gli spazi di tab a definirli. Prendere l'abitudine ad usare gli spazi di tab ti faciliterà la vita se vorrai imparare un linguaggio di quel tipo (e a Fisica, in alcuni corsi, il Python ti sarà richiesto).}. 
+
+Ti assicuro che rende il tuo codice molto più leggibile, per te e per gli altri. Inoltre, mancare di questa accortezza ti fa togliere punti all'esame.
+\\
+
+La leggibilità del codice non è da sottovalutare, e un'altra cosa che aiuta a renderlo più leggibile sono i commenti. Commentare tanto (spiegando quello che fai) rende tutto più chiaro, non solo a chi deve leggere quello che hai scritto, ma anche a te stesso! Se dopo mesi riprendi in mano un tuo programma e lo devi modificare, ti posso assicurare che non ti ricorderai niente di quello che hai scritto: avere tanti bei commenti ti risparmierà ore a cercare di capire cosa ti era passato per la testa mesi prima. Se poi stai scrivendo codice con altri, commentare è davvero importantissimo: non tutti sono nella tua testa! (Neanche il prof all'esame\ldots)
+
+\section{Il file sorgente, il terminal e il compilatore}
+Ho parlato di codice e te ne ho introdotto uno molto semplice, ma credo che ancora non ti sia chiaro dove va fisicamente scritto, come va compilato e, una volta fatto ciò, come si usa il programma.
+
+\subsection{Quale sistema operativo?}
+Ho promesso che non mi sarei dilungato a parlare di sistemi operativi, ma un piccolo accenno, puramente pratico, conviene farlo. 
+
+L'ambiente di programmazione ideale è il sistema operativo Linux. Linux è completamente free (open source) ed è altamente performante, tanto che si adatta perfettamente ai centri di calcolo, server di Google, supercomputer, ecc\ldots 
+
+Se non disponi di Linux, te lo puoi procurare installandolo su un tuo computer, in una partizione dedicata o in virtual machine. Consiglio, tra le tante distribuzioni, Ubuntu o una sua derivata (Kubuntu o, se hai un computer non molto prestante, le più leggere Xubuntu o Lubuntu): in università molti hanno questa distribuzione e puoi trovare colleghi disposti ad aiutarti, sia nell'istallazione che nell'uso. Ubuntu è user-friendly, comodo e bello da usare, ma ovviamente non è l'unica distro possibile: ce ne sono tante (altre molto valide: Fedora, Manjaro, \ldots), scegli tu quella che più ti aggrada!
+
+Non sei obbligato ad installarti Linux, puoi lavorare usando le macchine del laboratorio in remoto anche da Windows (ovviamente con una lentezza esasperante): se sei interessato consulta la sezione ``materiale didattico'' del sito del laboratorio, dove è spiegato tutto: \url{http://www.l30-informatica.di.unimi.it/}. 
+
+Se sei un Mac user, tienti stretto il tuo computer: va benissimo per programmare, sempre su quel sito ci sono istruzioni su come puoi fare.\\
+
+Io uso Linux e in queste note mi baserò, nei rarissimi casi dove è necessario differenziare, su questo sistema operativo. La programmazione in \verb|C++| è uguale (al nostro livello) dappertutto: a seconda del sistema operativo cambia solo il programma con cui scrivere, come compilare e come far girare il programma stesso. 
+
+Nell'appendice \ref{linux} ho raccolto qualche nota sull'uso di Linux, i comandi base che ti servono per lavorare a casa o in remoto, collegato al laboratorio dell'università.
+\subsection{I file sorgente}
+Dove si scrive il codice? Sono dei semplici file, molto simili a dei file di testo. I file di codice \verb|C++|, però, hanno un'estensione riservata: ``.cpp'' (sono estensioni del \verb|C++| anche ``.cxx'' e ``.C'', scegli tu quale preferisci\ldots). Per modificare il file sorgente hai bisogno di un editor di testo qualsiasi. I più user friendly su Linux sono Gedit e Kate. 
+
+Apri l'editor e salva il file con l'estensione richiesta, ad esempio ``helloworld.cpp''; ora puoi scrivere il tuo codice! 
+
+Se hai installato Lubuntu, l'editor di testo è il più sfortunato Leafpad. Non è un gran che e ti consiglio di rimuoverlo e installare Gedit. 
+\\Per farlo apri il terminale (ctrl+alt+T, oppure cercalo tra i programmi) e scrivi:
+	\begin{shaded}
+		\begin{minipage}{\textwidth}
+			\begin{verbatim}
+sudo apt-get remove leafpad
+			\end{verbatim}%
+		\end{minipage}
+	\end{shaded}
+	Ti verrà chiesta la tua password e poi di confermare. 
+	
+	Una volta completata la disinstallazione, installa Gedit e, sempre nel terminale, scrivi:
+	
+	\begin{shaded}
+		\begin{minipage}{\textwidth}
+			\begin{verbatim}
+sudo apt-get install gedit
+			\end{verbatim}%
+		\end{minipage}
+	\end{shaded}
+Conferma tutto e installa. Bene, ora sei pronto!
+\\
+
+Una volta scritto il tuo file sorgente e salvatolo con l'estensione giusta (prima salvalo, poi scrivi: così facendo Gedit capisce che è codice \verb|C++| e ti colora le parole del linguaggio), è arrivato il momento di compilare!
+
+Due parole per i Mac users: usate Xcode. Lì scrivete il vostro codice e salvate (sempre con estensione ``.cpp''); non usate Xcode per compilare, ma il terminal: questo è per essere in un ambiente più simile a quello che userete all'esame!
+
+\subsection{Il terminale e il compilatore}
+Abbiamo detto che, una volta scritto il codice sorgente, bisogna compilarlo; il programma che effettua questa operazione è il compilatore. Per lanciare quest'ultimo abbiamo bisogno del terminal. Il terminale è una versione elementare di un computer, è come i computer degli anni '80: un cursore lampeggiante, uno sfondo inerte e la possibilità di interagire solo tramite la tastiera. 
+
+Inoltre, su Linux, il terminale è forse lo strumento più potente che dà accesso al controllo totale del nostro sistema operativo. 
+
+Per poter compilare il file dobbiamo ``spostarci'' con il terminal nella cartella del codice sorgente. Per capire di più sull'uso del terminale, prova a leggere l'appendice \ref{linux}.
+
+%Se sei su Mac, il terminal non è particolarmente diverso!\\
+%TODO e compilatore su mac? FARE
+Una volta posizionatici nella cartella del file sorgente, possiamo avviare il compilatore. Il codice da scrivere nel terminale è il seguente: 
+		\begin{shaded}
+			\begin{minipage}{\textwidth}
+				\begin{verbatim}
+g++ nomefilesorgente.cpp -o nomeprogramma
+				\end{verbatim}%
+			\end{minipage}
+		\end{shaded}
+	Analizziamolo.
+	
+	\verb|g++| è il nome del compilatore, e scrivendo così lo stiamo ``chiamando''. Il compilatore vuole degli argomenti, per sapere cosa fare. Il primo è il nome del file sorgente (che deve terminare, come detto, con le estensioni citate); poi abbiamo il ``-o'', un'opzione che essenzialmente dice al compilatore di creare un file eseguibile con il nome che segue; infine il nome del file eseguibile: puoi mettere un'estensione (ad esempio in Informatica 1 usano spesso ``.x''), o puoi evitarla. 
+	\\
+	
+	Il compilatore viene avviato e inizia a controllare, prima di tutto, che il codice abbia senso. Se trova errori, non prova neanche a compilare, in compenso ti avvisa degli errori che ha trovato. Lentamente imparerai a capire gli strani messaggi che ti invia anche se, probabilmente, all'inizio lo odierai terribilmente.
+	
+	Scherzi a parte, un piccolo consiglio su come interpretare i suoi messaggi: inizia sempre dal primo messaggio d'errore, mai dall'ultimo o dal centro. Perché? Magari il primo messaggio è l'unico vero errore, i successivi potrebbero esserci solo perché, a causa del pezzo di codice sbagliato, tutto il resto perde di senso. Ad esempio: se ti dimentichi un punto e virgola in alcuni luoghi del codice, il compilatore ti avvisa, ma siccome anche il codice che segue perde di senso, ti dà altri errori che in realtà non ci sono. 
+	
+	Per cui: parti sempre dal primo errore, correggi quello che hai scritto e poi prova a compilare di nuovo. Se ci sono altri errori, continua cosi: correggi un errore alla volta (il primo) e ricompila. \\
+	
+	Se il compilatore ritiene che il codice sia sensato, lo compila e produce il file eseguibile. Come lo lanciamo? Se ci fai ``doppio click'' sopra non succede niente: lo devi avviare sempre dal terminal. 
+	
+	Per lanciare un file eseguibile devi usare questo codice:
+	\begin{shaded}
+		\begin{minipage}{\textwidth}
+			\begin{verbatim}
+./nomefilesegubile
+			\end{verbatim}%
+		\end{minipage}
+	\end{shaded}
+	
+	Niente di complicato, quindi! 
+	
+	Che dire? Prova a scrivere il programma ``Hello World!'', compilalo e fallo partire; così vedi se ti è tutto chiaro.
+	
+	\begin{small}
+	\subsection{La catena di compilazione: preprocessore, compilatore, assembler e linker.}\label{catena}
+	Iniziamo con il primo ``fuori programma'': ciò che segue non è essenziale per superare l'esame ma, nella tua carriera da programmatore, è sicuramente utile conoscerlo. 
+	
+	Quando scriviamo ``\verb|g++ filesorgente.cpp -o programma|'', quello che succede è una conversione tra codice \verb|C++| a linguaggio macchina. Questo processo non è eseguito solo dal compilatore e, soprattutto, non avviene ``tutto di un botto''. 
+	
+	Supponiamo che ``\verb|hello.cpp|'' contenga il nostro programma ``Hello World!''; quando scriviamo ``\verb|g++|  \verb|hello.cpp| \verb|-o hello|'', vengono chiamati in sequenza quattro personaggi: il preprocessore, il compilatore, l'assembler e il linker.
+	
+	Il preprocessore è il signore più ``stupido'' della nostra catena. È in grado, semplicemente, di sostituire delle parole (dette ``macro'', che studieremo più avanti) con dei pezzi di codice. Non sa né leggere né scrivere: semplicemente sostituisce parole, ma non è in grado di valutare se queste sono corrette (e, infatti, abusare del preprocessore, è pericoloso\footnote{Il C++, infatti, ha introdotto diverse nuove funzionalità che sostituiscono strutture del C precedentemente gestite solo dal preprocessore.}). 
+	
+	Il compilatore, invece, è il protagonista del processo; se non altro è colui con cui ti interfaccerai di più: conosce perfettamente il \verb|C++| e, ogni volta che fai un errore di sintassi, ti avviserà con messaggi adeguati a caso. Le funzioni del compilatore sono due: controllare il codice alla ricerca di errori (e di comunicarti quali sono) e, se non ne trova, di tradurre il codice \verb|C++| in \emph{assembly} (il linguaggio a basso livello per antonomasia)\footnote{Se sei curioso di vedere il codice assembly prodotto dal tuo programma puoi dire a g++ di fermarsi prima di chiamare l'assembler scrivendo ``g++ file.cpp -S''.}.
+	
+	Ora entra in gioco l'assembler: è colui che traduce il codice assembly nel vero e proprio linguaggio macchina (00100011100\ldots). C'è poco altro da dire: l'assembler, per qualsiasi programmatore che non scriva in assembly, è un fantasma silenzioso ed efficiente che lavora senza farsi vedere.
+	
+	Il codice prodotto dall'assembler non è ``completo''. Il nostro programma si articola in diverse parti, ognuna delle quali viene compilata e assemblata individualmente (per esempio le chiamate al sistema operativo non sono dentro il nostro codice). In queste piccole porzioni individuali di linguaggio macchina, vi sono delle ``referenze'' a pezzi esterni: vere e proprie parole da sostituire con codice eseguibile. Il linker si occupa di prendere i diversi mattoncini, metterli insieme e costruire il programma finale da essere eseguito. 
+	
+	Il linker agisce sempre ma, in molti casi (ad esempio quando abbiamo un solo file sorgente), risulta  invisibile (però agisce: il nostro eseguibile viene sempre linkato con eseguibili del sistema operativo). Invece, lo incontreremo come parte attiva nel capitolo sulle librerie.
+	\end{small}

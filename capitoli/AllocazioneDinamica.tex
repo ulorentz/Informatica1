@@ -1,0 +1,264 @@
+\chapter{Allocazione Dinamica} \label{ardin}
+ Ci sono situazioni in cui, a priori, non è possibile conoscere la quantità di dati che dobbiamo immagazzinare. Per esempio: il nostro programma prende in ingresso numeri da tastiera ed effettua operazioni, ma non sappiamo quanti numeri l'utente vorrà inserire; oppure abbiamo un file pieno di dati di un esperimento, conosciamo che tipo di dati sono, ma non sappiamo \emph{quanti} sono; e così via\ldots
+ 
+ La maniera na{\"i}ve di affrontare il problema consiste nel dire ``sicuramente avrò meno dati di\ldots'', quindi alloco un \emph{array} (o matrice) statico molto molto grande, così da poterlo riempire quanto mi serve. Insomma: abbondo per stare sicuro. 
+ 
+ È evidente che questo approccio ha diversi problemi. In primis il discorso dell'efficienza: è chiaro che se ``per star sicuro'' alloco un \emph{array} di un milione di elementi (quando alla fine dei conti ne andrò ad usare poco più di mille) non è una grande idea (oltre al fatto che la memoria è limitata). Mi ritrovo un programma molto più ``pesante'' di quanto avrei bisogno che fosse. In ultima analisi, questa soluzione del problema è ben poco elegante\footnote{A dirla tutta, ci sono situazioni in cui questa soluzione è assai funzionale. Per esempio, sappiamo che al massimo avremo 10 dati, forse 9, forse 8, forse 2, probabilmente cambieranno durante il programma, magari raggiungendo i 10 elementi, magari no. Ecco, in quel caso, con pochi dati, di quantità variabile durante l'esecuzione, può essere conveniente allocare un vettore di grandezza tot che al più verrà usata.}\ldots \\
+ 
+ L'altra soluzione, molto più elegante e performante, è di creare a ``\emph{run-time}'' un \emph{array} della dimensione necessaria. 
+ 
+ Vediamo di capire come!
+\section{Gli operatori \emph{new} e \emph{delete}}
+Quando dichiariamo ``\lstinline|int a|'', il compilatore riserva quattro byte per la variabile \verb|a|. Per poter trattare vettori di dimensione definita a run-time, abbiamo bisogno di rendere questo passaggio, implicitamente eseguito dal compilatore, esplicito e controllato da noi. L'operatore che permette di farlo è ``\textbf{new}''\footnote{Ho mentito: anche \emph{new} e \emph{delete} sono solo del C++, ma a differenza degli stream, dove nel C non c'è nulla di equivalente, il C ha due funzioni molto simili: malloc() e free().}. \emph{New} alloca la memoria necessaria per il tipo di dato che gli segue e restituisce un puntatore  che punta il primo byte di memoria allocata. Vediamo un esempio per chiarirci le idee:
+
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+int main(){
+	int* ptr;
+	ptr=new int;
+	*ptr=2;
+	cout << "Indirizzo dell'intero allocato dinamicamente: " << ptr << endl;
+	cout << "Contenuto di ptr: " << *ptr << endl;
+	return 0;
+}
+\end{lstlisting}\label{din1}
+
+ La riga ``\lstinline|ptr=new int|'' mostra esplicitamente ciò che ho detto: \textbf{new} alloca lo spazio necessario ad un \textbf{int} e restituisce l'indirizzo di memoria di quest'ultimo.
+ 
+ Questo esempio è estremamente simile all'esempio \ref{pt1}, ma c'è un'enorme differenza: là usavamo il puntatore per leggere una variabile statica, qui invece usiamo il puntatore per puntare ad un'area di memoria allocata ad hoc. Stai molto attento; se perdi traccia di quest'indirizzo di memoria non hai modo di recuperarlo. Se assegni a \verb|ptr| un nuovo indirizzo, l'area di memoria che contiene 2 è persa per sempre (confrontando con l'esempio \ref{pt1}, là la memoria era ``legata'' alla variabile statica, non vi era modo di perderla).\\
+ 
+ Per rendere più leggera l'esposizione, l'esempio \ref{din1} è scritto in maniera profondamente scorretta: cerchiamo di capire cosa c'è di sbagliato. Abbiamo detto che con \textbf{new} ci occupiamo noi di allocare la memoria al posto del compilatore. Ma chi la dealloca? Il compilatore? No! Sempre noi. Cosa vuol dire? Deallocare significa ``liberare'' la memoria, significa dire al sistema operativo: ``Non mi serve più, è di nuovo tua''. Se non viene deallocata, quella memoria rimane riservata e non può essere utilizata da altri. Non liberare la memoria che non utilizziamo più è una pessima abitudine: riempiamo la ram di sporcizia\footnote{E si rischia di andare incontro ad un \emph{memory leak}, ovvero esaurire la memoria per non averla liberata quando non ci serviva più.}!
+ 
+ Per deallocare la memoria dobbiamo usare l'operatore \textbf{delete}. Delete libera la memoria puntata dal puntatore che gli segue. Riscrivo il codice dell'esempio \ref{din1} con quest'ultimo passaggio:
+ \begin{lstlisting}
+#include <iostream>
+using namespace std;
+ 
+int main(){
+	int* ptr;
+	ptr=new int;
+	...
+	...
+	delete ptr; //libero la memoria puntata da ptr!
+	return 0;
+}
+ \end{lstlisting}
+ Non dimenticarti mai di \textbf{delete}: oltre a farti perdere punti all'esame, dimenticarti di lui è davvero una pessima abitudine e perfino pericolosa (nella prossima sezione nomino qualche pericolo).
+ 
+
+ \section{Intermezzo: di più su Stack e Heap}
+ In questa sezione cercherò di accennare qualcosa di più sui due tipi di memoria esistenti, la \emph{stack} e la \emph{heap}. È un argomento interessante ma, diciamo, non strettamente necessario (le basi, tra l'altro, le ho già accennate nella sezione \ref{stackheap}). Salta alla prossima sezione se preferisci!\\
+ 
+ \begin{small}
+ Abbiamo visto che i programmi vivono nella RAM, abbiamo studiato la questione degli indirizzi di memoria, e come gestirli. Nella sezione precedente hai visto che le variabili possono essere allocate dinamicamente; nell'astrazione attuata dal sistema operativo, in un programma, la memoria statica e la memoria dinamica sono ben distinte e divise in aree diverse: la prima vive nella \emph{stack}, la seconda nella \emph{heap}.
+
+ 
+ 
+ \paragraph{Stack} La \emph{stack} è la memoria statica, è una memoria ordinata, composta un po' come una pila di fogli (ti ricordi? è una memoria ``deframmentata'', le variabili sono contigue\ldots). Ogni elemento sta sopra l'altro, al suo posto, senza muoversi e senza buchi tra una variabile e l'altra. La \emph{stack} viene organizzata a ``compile-time'': quando il programma inizia l'esecuzione le variabili esistono già, ogni \emph{scope} ha il suo spazio. Essendo ordinata, e ``statica'' il sistema operativo sa benissimo dove si trovano tutte le variabili e le raggiunge rapidamente, quando chiediamo di scriverci o di leggerle (addirittura, se questo ti dice qualcosa, spesso viene mappata nella cache della CPU, diventando così rapidissima). Ha però due grossi difetti. primo: come ripetuto mille volte, è statica, quindi non possiamo ingrandire vettori, creare vettori non definiti precedentemente, ecc ecc\ldots È il motivo per cui la dimensione dell'\emph{array} statico deve essere nota a priori (con una macro, un numero o una variabile \textbf{const}): la sua dimensione deve essere già ``scritta'' prima dell'avvio del programma. Il secondo difetto è che la \emph{stack} è limitata: in diverse distribuzioni di Linux la sua dimensione è intorno agli 8 mega byte\footnote{Nei sistemi unix --Linux, MacOS, etc\ldots-- il limite della \emph{stack} è imposto dal sistema operativo. È un limite dell'ambiente, non definito nel programma. In Windows, invece, la questione è diversa: è il compilatore che definisce il limite all'interno del programma --di default dovrebbe essere sui 2mb, ma non sono ferrato--, il sistema operativo non pone limiti. } (puoi chiedere al sistema quanto è grande scrivendo sul terminale ``\verb|ulimit -a|''). Questo ci pone delle problematiche: non possiamo definire \emph{array} statici troppo grandi o finiremo per esaurire la memoria\footnote{In realtà ogni \emph{thread} ha la propria \emph{stack} --altro suo pregio e motivo di velocità--, quindi un programma può avere più di 8 mb, ma sto decisamente divagando\ldots}: se provi a definire un ``\lstinline|double vector[2000000]|'' in un programma (circa 16mb) e ad eseguirlo, prima che succeda qualsiasi altra cosa, esso andrà in ``\verb|segmentation fault|'' e verrà ucciso dal sistema operativo (in quanto sta cercando di rompere le regole dell'OS).
+ 
+ \paragraph{Heap} La \emph{heap} è la memoria dinamica. È virtualmente illimitata (in questo senso: il limite è fisico, cioè la dimensione della RAM, non è a livello di software\footnote{Questo non è vero su Windows, dal momento che di default la RAM utilizzabile da un programma è limitata a 2GB, e tale è la \emph{heap}.}); la sua dimensione cambia a ``run-time'', ed è completamente gestita dal programmatore\footnote{Questo è vero nel C/C++, in altri linguaggi, come Java, è gestita anche lei in maniera automatica.}. È una memoria disordinata, un po' come un mare di di sassolini: ogni elemento è in posti casuali (dove c'è spazio), è frammentata\footnote{Mentre la \emph{stack} è riservata per ogni \emph{thread}, ogni funzione ha il suo spazio e così via, la \emph{heap} è la stessa condivisa da tutti.}; per questo motivo il sistema operativo non riesce a tenerla sotto controllo (cambia in continuazione) e mapparla sarebbe estremamente difficile. Questa caratteristica la rende più lenta della \emph{stack}: per accedere ad ogni elemento la CPU lo deve, in qualche modo, cercare, non sa già dove si trova. Ovviamente, però, ha anche dei vantaggi: è molto più grande ed è dinamica, per cui possiamo creare \emph{array} enormi a ``run-time'' (con un paio di giga byte di RAM possiamo definire un vettore dinamico di \textbf{double}  di due ordini di grandezza più grande di uno della \emph{stack}), cancellarli, crearne di nuovi ecc ecc\ldots 
+ 
+ Il fatto di essere gestita dal programmatore è un'arma a doppio taglio: ci dà più libertà, ma dobbiamo comportarci bene. Quando allochiamo qualcosa, poi dobbiamo deallocarlo, pulire la memoria; se non lo facciamo rimane occupata e inutilizzata. Continuare ad allocare memoria senza deallocarla può portare a \emph{memory leak}: finiamo per esaurire tutta la memoria senza che la stiamo effettivamente usando!
+ 
+ Altro problema, già accennato, è che siamo noi a tenere traccia della memoria (e non la CPU), grazie ai puntatori; se però ne perdiamo le tracce, quell'elemento di memoria è perso per sempre. Stai attento!
+ 
+ Ora, non spaventarti, questi discorsi sono validi finché il programma ``vive'', ma nel momento in cui si interrompe, sia \emph{stack} che \emph{heap} vengono liberate, per cui la memoria che abbiamo indebitamente sporcato e occupato ritorna libera. Oltre al fatto che Linux è piuttosto ``cattivo'' nella gestione della memoria: se facciamo sporcizie troppo grosse, nella \emph{heap}, ci uccide malamente (ad esempio, se proviamo a scrivere nello spazio non nostro\footnote{Purtroppo Linux uccide il processo solo se ``sgarriamo troppo'', non sempre (e questo può portare ad errori gravi): analizzare esattamente quando, però, è un discorso un po' troppo tecnico}).  
+ \end{small}
+ \section{Array dinamici}
+ Certo, allocare una singola variabile in modo dinamico, a questo livello, ha ben poca utilità\footnote{Imparerai nel corso di Trattamento Numerico dei Dati Sperimentali, che allocare una singola variabile, nel mondo degli ``oggetti'', può essere invece estremamente utile per sfruttare una funzione del C++: il polimorfismo.}: a noi interessa molto di più la questione dei vettori. Vediamo come si alloca un \emph{array} dinamico:
+ 
+ \begin{lstlisting}
+ #include <iostream>
+ using namespace std;
+ 
+ int main(){
+ 	int *v;
+ 	int n=15; //n non e' ne una macro ne una variabile const
+ 	v=new int[n];
+ 	for(int i=0; i<n; ++i)
+ 		v[i]=i;
+ 	...
+ 	...
+ 	delete[] v;
+ 	return 0;
+ }
+ \end{lstlisting}
+ 
+ Quali sono le principali differenze rispetto all'allocazione di una singola variabile? Come puoi notare, dopo l'operatore \textbf{new}, al tipo di dato segue una doppia parentesi quadra contente la dimensione dell'\emph{array} che vogliamo allocare. Essenzialmente, diciamo a \textbf{new} di riservare nella \emph{heap} una striscia contigua di \emph{n} interi, quindi \textbf{new} ci restituisce un puntatore al primo byte di questi interi. 
+ 
+ 
+Ora capisci perché nel capitolo \ref{array} ho insistito tanto nel farti capire che un \emph{array} è un puntatore: per costruire un \emph{array} dinamico usiamo proprio questo tipo di dato. Una volta allocato il vettore dinamico lo usiamo esattamente come avremmo fatto con un vettore statico (accedendo agli elementi usando le parentesi quadre), e ci dimentichiamo del fatto che, in realtà, è un puntatore (in soldoni: una volta allocato, un \emph{array} dinamico si usa esattamente come uno statico). 
+
+Quando liberiamo la memoria, però, dobbiamo ricordarci che è un \emph{array} e non un singolo elemento: \lstinline|delete[] v|, le parentesi quadre indicano all'operatore \textbf{delete} di cancellare tutta la memoria legata al puntatore \verb|v| e non semplicemente il primo elemento (se ci dimentichiamo le parentesi, viene liberato il primo elemento e gli altri rimangono allocati). 
+
+È implicito che possiamo allocare un \emph{array} di qualsiasi tipo, ci basta avere un puntatore a quel tipo di dato ed esplicitare a \textbf{new} che memoria vogliamo: ad esempio, per un vettore di \textbf{double} scriveremo \lstinline|v=new double[n]| e così via.
+
+\subsection{Ingrandire e rimpicciolire vettori}\label{ingrimp}
+Potremmo essere interessati a cambiare la dimensione del nostro vettore durante l'esecuzione del programma. Ipotizziamo di voler ingrandire l'\emph{array}: purtroppo non esiste alcun modo per farlo. Il motivo è alquanto semplice: abbiamo visto che la \emph{heap} è deframmentata, l'operatore \textbf{new} trova un pezzo di memoria contigua in cui allocare l'\emph{array}, ma nessuno ci dice che dopo questa memoria ci sia ancora spazio libero; magari l'ha ``incastrato'' in mezzo a qualcos'altro. Se vogliamo ingrandire il nostro vettore, l'unico modo è allocarne uno nuovo della dimensione desiderata, copiare tutti gli elementi del vecchio vettore e deallocare quest'ultimo. 
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+int main{
+	int *v=new int[10];
+	//uso il vettore
+	...
+	//ora lo voglio ingrandire in un vettore di 100 elementi
+	int *big_v=new int[100];
+	for(int i=0; i<100; ++i){
+		if(i<=10)
+			big_v[i]=v[i];
+		else //inizializzo a zero gli elementi successivi del vettore
+			big_v[i]=0;
+	}
+	delete[] v; //libero la memoria di v
+	//ora posso usare big_v
+	...
+	...
+	delete[]big_v;
+	return 0;
+}
+\end{lstlisting}
+
+Nell'esempio precedente, oltre ad aver copiato il primo vettore nel secondo, ho inizializzato a zero gli elementi che seguono. Anche i vettori, se non li riempi subito, è buona norma inizializzarli! \\
+
+Il \verb|C++| non prevede uno strumento per rimpicciolire un \emph{array} dinamico.  Anche per rimpicciolire un \emph{array} devi crearne uno nuovo più piccolo e copiarci gli elementi del vecchio, ma a volte è un po' una fatica sprecata: se hai un \emph{array} di 100 elementi e, ad un certo punto, ne usi solo 70, niente di grave, semplicemente ignori gli ultimi 30. Allocarne uno nuovo, probabilmente, ti costa molto di più. Se invece hai un vettore da diversi megabyte e, ad un certo punto, hai bisogno di una decina di elementi, il discorso è diverso.
+\subsection{Alcuni errori}
+\begin{itemize}
+
+\item La prima cosa da evitare è riallocare il puntatore:
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+int main(){
+	int *p=new int[10];
+	for(int i=0; i<10;++i)
+		p[i]=i;
+	p=new int[5]; //alloco nuovamente p
+	for(int i=0; i<5; ++i)
+		cout << p[i] << endl;
+	delete[]p;
+	return 0;
+}
+\end{lstlisting}
+
+Cosa viene stampato? I valori inizialmente assegnati al vettore di dieci elementi? No, ``sporcizia'': viene stampato il vettore di cinque elementi non inizializzato. Ricorda: \textbf{new} alloca la memoria richiesta alla sua destra e restituisce l'indirizzo del primo byte; in poche parole, \verb|p| punta alla nuova memoria e il primo vettore viene perso per sempre, rimanendo irraggiungibile nel limbo della \emph{heap}.
+
+\item Un altro errore è cercare di liberare della memoria già liberata:
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+int main(){
+	int* v=new int[10];
+	int* p;
+	p=v; //ora p punta alla memoria di v, posso usare p come vettore
+	//ad esempio riempio il vettore di dati
+	for(int i=0; i<10; ++i)
+		p[i]=i;
+	...
+	...
+	delete[]p; //rimuovo la memoria puntata da p
+	delete[]v; //rimuovo la memoria puntata da v, ma attento: e' la stessa puntata da p, che succede?
+	return 0;
+}
+\end{lstlisting}
+
+È un errore comune che ho visto commettere più volte: essenzialmente si alloca un vettore dinamico, quindi si fa puntare un secondo puntatore alla sua area di memoria (potrebbe essere utile dentro una funzione, lo vedremo più avanti). Arrivato il momento di utilizzare \textbf{delete}, si libera la memoria del secondo puntatore, infine, dimenticandosi che il primo punta alla stessa memoria, si libera anche questo. 
+
+La conseguenza è nefasta: \emph{core dumped}, il sistema operativo ci uccide malamente. 
+Il messaggio di errore che riceverai è simile al seguente (non leggerlo tutto, te lo riporto semplicemente perché, se ti capiterà, avrai un'idea di cosa è successo):
+\begin{tiny}
+\begin{shaded}
+
+\begin{verbatim}
+*** Error in `./mem': double free or corruption (fasttop): 0x0000000001f71060 ***
+======= Backtrace: =========
+/usr/lib/libc.so.6(+0x70c4b)[0x7f0a4acabc4b]
+/usr/lib/libc.so.6(+0x76fe6)[0x7f0a4acb1fe6]
+/usr/lib/libc.so.6(+0x777de)[0x7f0a4acb27de]
+./mem[0x400b75]
+/usr/lib/libc.so.6(__libc_start_main+0xf1)[0x7f0a4ac5b291]
+./mem[0x4009da]
+======= Memory map: ========
+00400000-00401000 r-xp 00000000 08:02 9175556                            /home/lorenzo/esempi/mem
+00601000-00602000 r--p 00001000 08:02 9175556                            /home/lorenzo/esempi/mem
+00602000-00603000 rw-p 00002000 08:02 9175556                            /home/lorenzo/esempi/mem
+01f5f000-01f91000 rw-p 00000000 00:00 0                                  [heap]
+7f0a44000000-7f0a44021000 rw-p 00000000 00:00 0 
+7f0a44021000-7f0a48000000 ---p 00000000 00:00 0 
+7f0a4ac3b000-7f0a4add0000 r-xp 00000000 08:02 2234468                    /usr/lib/libc-2.24.so
+7f0a4add0000-7f0a4afcf000 ---p 00195000 08:02 2234468                    /usr/lib/libc-2.24.so
+7f0a4afcf000-7f0a4afd3000 r--p 00194000 08:02 2234468                    /usr/lib/libc-2.24.so
+7f0a4afd3000-7f0a4afd5000 rw-p 00198000 08:02 2234468                    /usr/lib/libc-2.24.so
+7f0a4afd5000-7f0a4afd9000 rw-p 00000000 00:00 0 
+7f0a4afd9000-7f0a4afef000 r-xp 00000000 08:02 2236025                    /usr/lib/libgcc_s.so.1
+7f0a4afef000-7f0a4b1ee000 ---p 00016000 08:02 2236025                    /usr/lib/libgcc_s.so.1
+7f0a4b1ee000-7f0a4b1ef000 r--p 00015000 08:02 2236025                    /usr/lib/libgcc_s.so.1
+7f0a4b1ef000-7f0a4b1f0000 rw-p 00016000 08:02 2236025                    /usr/lib/libgcc_s.so.1
+7f0a4b1f0000-7f0a4b2f3000 r-xp 00000000 08:02 2234551                    /usr/lib/libm-2.24.so
+7f0a4b2f3000-7f0a4b4f2000 ---p 00103000 08:02 2234551                    /usr/lib/libm-2.24.so
+7f0a4b4f2000-7f0a4b4f3000 r--p 00102000 08:02 2234551                    /usr/lib/libm-2.24.so
+7f0a4b4f3000-7f0a4b4f4000 rw-p 00103000 08:02 2234551                    /usr/lib/libm-2.24.so
+7f0a4b4f4000-7f0a4b66c000 r-xp 00000000 08:02 2230235                    /usr/lib/libstdc++.so.6.0.22
+7f0a4b66c000-7f0a4b86c000 ---p 00178000 08:02 2230235                    /usr/lib/libstdc++.so.6.0.22
+7f0a4b86c000-7f0a4b876000 r--p 00178000 08:02 2230235                    /usr/lib/libstdc++.so.6.0.22
+7f0a4b876000-7f0a4b878000 rw-p 00182000 08:02 2230235                    /usr/lib/libstdc++.so.6.0.22
+7f0a4b878000-7f0a4b87c000 rw-p 00000000 00:00 0 
+7f0a4b87c000-7f0a4b89f000 r-xp 00000000 08:02 2234467                    /usr/lib/ld-2.24.so
+7f0a4ba55000-7f0a4ba5b000 rw-p 00000000 00:00 0 
+7f0a4ba9d000-7f0a4ba9e000 rw-p 00000000 00:00 0 
+7f0a4ba9e000-7f0a4ba9f000 r--p 00022000 08:02 2234467                    /usr/lib/ld-2.24.so
+7f0a4ba9f000-7f0a4baa0000 rw-p 00023000 08:02 2234467                    /usr/lib/ld-2.24.so
+7f0a4baa0000-7f0a4baa1000 rw-p 00000000 00:00 0 
+7ffd58191000-7ffd581b2000 rw-p 00000000 00:00 0                          [stack]
+7ffd581ee000-7ffd581f0000 r--p 00000000 00:00 0                          [vvar]
+7ffd581f0000-7ffd581f2000 r-xp 00000000 00:00 0                          [vdso]
+ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]
+Aborted (core dumped)
+
+\end{verbatim}
+\end{shaded}
+\end{tiny}
+
+La prima riga riporta un ``double free or corruption'', è un piccolo \emph{hint} di Linux: probabilmente hai liberato la memoria due volte. L'ultima riga è un \emph{core dumped}, la memoria è stata completamente liberata e il processo terminato. Come vedi sono molte righe di errore, che riportano gli indirizzi di memoria in cui qualcosa è andato storto. Insomma, non andare nel panico: il problema potrebbe essere semplice!
+
+\item L'ultimo errore che può capitare è il \emph{bad alloc}. A priori non è un errore di programmazione, e la causa è semplice. Ad esempio:
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+int main(){
+	double *v=new double[10000000000000000]; //memoria spropositata, quanti giga sono?
+	delete[]v;
+	return 0;
+}
+\end{lstlisting}
+
+Eseguendo il programma sul mio pc ricevo il seguente messaggio di errore:
+\begin{shaded}
+	\begin{verbatim}
+terminate called after throwing an instance of 'std::bad_alloc'
+what():  std::bad_alloc
+Aborted (core dumped)
+	\end{verbatim}
+\end{shaded}
+
+Stiamo richiedendo più memoria di quella disponibile in RAM (oppure non c'è abbastanza memoria contigua: ricordati che la \emph{heap} è deframmentata). Viene quindi sollevata un'eccezione\footnote{Le eccezioni sono uno degli strumenti più belli e potenti del C++ che lo distinguono dal C. Permettono di gestire situazioni non note a priori, errori che non dipendono dal programmatore ma, ad esempio, dall'ambiente ed imprevedibili (come l'insufficienza di memoria). La gestione delle eccezioni permette di evitare che i programmi ``muoiano'' quando qualcosa va storto; essa è fondamentale, ad esempio, in ambito di sistemi embedded. Un'eccezione non gestita, invece, porta alla fine del programma (come nel nostro caso). Purtroppo le eccezioni esulano dagli scopi del corso di Informatica 1\ldots}e il programma viene terminato. Ora, nell'esempio precedente ho richiesto una quantità di memoria impensabile, ma potrebbe capitarti di dover allocare un paio di giga di memoria (niente di assurdo!) e non averla a disposizione: in quel caso non hai scritto nulla di male, semplicemente\ldots cambia pc!
+\end{itemize}
+ \section{Matrici dinamiche} 
+ Per allocare dinamicamente una matrice possiamo fare due cose. La prima è linearizzare la matrice: ridurla ad un vettore di dimensione \emph{n} per \emph{m} e rinunciare alla comodità del doppio indice. La seconda è utilizzare un artificio per ``costruire'' in memoria una matrice e poter utilizzare il doppio indice. Quando nel corso di Informatica 1 si parla di matrici dinamiche, ci si riferisce alla seconda situazione.\\
+ 
+ Se ti ricordi, nel capitolo sugli \emph{array}, ho accennato al fatto che una matrice può essere vista come un vettore di vettori. Ecco! È esattamente questa la strada da seguire: dobbiamo costruire un \emph{array} di \emph{array}. 
+ 
+ Usando un puntatore a puntatore, allochiamo un \emph{array} di puntatori (per esempio di dimensione \emph{n}) Fatto ciò, per ogni puntatore, allochiamo un vettore di dati (ad esempio di dimensione \emph{m}). Abbiamo costruito, così, un \emph{array} di \emph{n} \emph{array} grandi \emph{m}: una matrice \emph{n} per \emph{m}! 
+ \lstinputlisting{codice/alloc/matr.cpp}
+ 
+ Analizziamo il codice: tutto parte da \lstinline|int **matr|, un puntatore a puntatore. La riga più strana è, probabilmente \lstinline|matr= new int*[n]|: stiamo allocando un vettore di puntatori ad interi; tale \emph{array} può essere puntato solo da un puntatore a puntatore. Ti è chiaro il perché, vero? A \textbf{new} segue il tipo di dato da allocare, quindi \lstinline|int*|. 
+ 
+ Nel ciclo \textbf{for} che segue, allochiamo, per ogni puntatore dell'\emph{array}, un vettore di interi di dimensione \emph{m}. Successivamente riempiamo e leggiamo la matrice: come vedi si utilizza esattamente come una matrice statica, nulla di nuovo.
+ 
+ Infine, dobbiamo liberare la memoria. Il processo si esegue al contrario: prima deallochiamo i vettori di interi e, per ultima cosa, il vettore di puntatori. \\
+ 
+ 
+ Per quanto riguarda l'ingrandire e il rimpicciolire matrici, valgono gli stessi discorsi fatti in \ref{ingrimp}; per esercizio, però, prova a scrivere tu il codice per ingrandire (e rimpicciolire) una matrice!
+ 

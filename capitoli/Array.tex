@@ -1,0 +1,336 @@
+\chapter{Array e Matrici}\label{array}
+Dobbiamo scrivere un programma per analizzare i dati di un esperimento: stiamo misurando una grandezza e per questioni di statistica vogliamo ripetere la misura mille volte, quindi procedere all'analisi dati. Il nostro programma dovrà gestire mille dati. Con le conoscenze informatiche acquisite finora dovremmo scrivere qualcosa di questo tipo:
+
+\begin{lstlisting}[label=esdati]
+#include <iostream>
+using namespace std;
+
+int main(){
+	float a, b, c,...; //Mille float
+	//Per non parlare poi del riempimento dei dati:
+	a=2.1;
+	b=5.3;
+	...
+	...
+	
+	//Fosse necessaria la media avremmo bisogno di:
+	float media=a+b+c+.......;
+	media/=1000.;
+
+	return 0;
+}
+\end{lstlisting}
+
+In poche parole qualcosa di impossibile, o se non altro completamente inutile (allora tanto vale usare carta e penna\ldots).
+
+Se cerchiamo sul dizionario la parola ``array'' troviamo traduzioni del tipo: ``schieramento'', ``insieme'', ``disposizione''. Un insieme? Schieramento? I nostri mille dati, tutti dello stesso tipo, cos'altro sono se non proprio questo?
+	
+
+Ecco, un \emph{array} è uno ``schieramento'' di dati tutti dello stesso tipo: in poche parole, un ``vettore''. Nel capitolo sulla rappresentazione in memoria (capitolo \ref{mem}) ho presentato una breve introduzione, orientata alla loro struttura nella memoria; in ogni caso, facciamo un breve riassunto dei concetti presentati. 
+
+Un \emph{array} è un insieme contiguo in memoria di elementi dello stesso tipo. Cosa vuol dire ``contiguo''? Nella memoria gli elementi sono ``uno dopo l'altro'', non sparsi ma ben ordinati. Se abbiamo un \emph{array} di dieci interi, il compilatore ci assicura che essi occuperanno un blocco di memoria unitario, in cui il secondo elemento segue immediatamente il primo e così via.
+
+\section{Array statici}
+Il primo tipo di \emph{array} che incontriamo è l'\emph{array statico}. Un \emph{array} statico è una collezione di elementi dello stesso tipo, la cui dimensione è definita a priori nel codice e che non può cambiare a ``run-time'' (ovvero durante l'esecuzione del programma).
+
+Come al solito, partendo da un esempio di codice, cerchiamo di capire come funzionano gli \emph{array} statici. Il programma \ref{esdati} potrebbe assumere la seguente forma con gli \emph{array}:
+
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+int main(){
+	float dati[1000]; //Dichiaro un array di float di 1000 elementi
+	
+	
+	for(int i=0; i<1000; ++i){
+		dati[i]=... //un qualche codice che riempie i dati. Nel capitolo su In/out impareremo a leggere da file, i dati dell'esperimento potrebbero essere in un file
+	}
+	
+	float media=0;
+	for(int i=0; i<1000; ++i)
+		media+=dati[i];
+	
+	media/=1000;
+	cout << "Media: " << media << endl;
+	
+	return 0;
+}
+\end{lstlisting}
+
+Prendendo spunto da questo codice, vediamo le caratteristiche principali degli \emph{array}.
+\subsection{Dichiarare array}
+
+Nella prima riga del \emph{main} vi è ``\lstinline|float dati[1000]|'': stiamo dichiarando un \emph{array} di \textbf{float} di mille elementi. Il nome della variabile \emph{array} di \textbf{float} è ``\verb|dati|''. 
+	
+Un array può essere di qualsiasi tipo di dato: \textbf{float}, \textbf{double}, \textbf{char}, \textbf{bool}, \textbf{int}, ecc\ldots Il numero di elementi è racchiuso nelle parentesi quadre che seguono il nome dell'\emph{array}; è importantissimo notare che questo numero deve essere definito a ``compile-time'': il compilatore deve sapere quanto sarà grande l'\emph{array}, per cui tra le quadre non possiamo mettere variabili che vengono modificate durante l'esecuzione del programma. Sono ammessi, invece: macro, variabili \textbf{const} (entrambi non si modificano durante l'esecuzione) o semplicemente numeri. Perché dovremmo usare una macro o una variabile \textbf{const}? Per comodità: poniamo di sapere che il nostro programma lo compileremo più volte, cambiando sempre il numero di dati che vogliamo analizzare. Se ogni volta dobbiamo modificare il ``1000'' in tutti i punti del codice in cui compare, diventa assai laborioso. Definendo una macro o una variabile \textbf{const} la questione si semplifica:
+	\begin{lstlisting}
+#include <iostream>
+//definisco una macro
+#define N 100
+using namespace std;
+//Alla riga della macro e' equivalente la seguente
+//const int N=100; e, come spiegato nel relativo capitolo, ha i suoi vantaggi
+
+int main(){
+	float dati[N]; //N non cambiera' mai nell'esecuzione del programma, sia che si usi la macro sia che si usi il const int, quindi e' accettabile per un array statico
+	
+	for(int i=0; i<N; ++i)
+		...
+	...
+	...
+	return 0;
+}
+	\end{lstlisting}
+	
+Ogni volta che vogliamo ricompilare il nostro programma cambiando la dimensione dell'\emph{array}, ci basta cambiare la macro (o variabile \textbf{const}): di conseguenza cambierà la dimensione dell'\emph{array}, i cicli \textbf{for}, e tutti i punti in cui N ci serve, senza dover modificare ulteriormente il codice.
+
+Riassumendo:
+\begin{lstlisting}
+#include <iostream>
+#define N 10
+int main(){
+	const int n=25;
+	bool b[n]; 	//array di 25 elementi di bool
+	float f[N]; 	//array di 10 float
+	double d[50];	//array di 50 double
+	int dim=...	//codice che a run time determina il valore di dim
+	int array[dim];	//ERRORE! La dimensione non puo' essere determinata a run time
+	return 0;
+}
+\end{lstlisting}
+\paragraph{Gli array vanno inizializzati!} Quando dichiariamo un \emph{array} il compilatore ci assicura soltanto di riservare un'area contigua di memoria. Quest'ultima, però, non è inizializzata. Ti ricordi? C'è dentro ``sporcizia'', valori a caso. Per cui, quando dichiari un \emph{array}, ricordati di inizializzarlo: riempilo dei valori che ti servono, o utilizza un ciclo \textbf{for} per, ad esempio, inizializzare tutti gli elementi a zero. 
+\subsection{Indici e\ldots out of range!}
+Scrivendo \textbf{dati[i]=...} stiamo richiamando l'i-esimo elemento del nostro \emph{array}. Nota una cosa e imprimitela benissimo in testa: negli esempi di codice, l'indice del ciclo \textbf{for} parte da zero. Questo non è un caso: l'indicizzazzione degli \emph{array} parte proprio da zero! Il primo elemento è ``\verb|dati[0]|'', il secondo è ``\verb|dati[1]|'  e, se N è la dimensione dell'\emph{array}, l'ultimo elemento è ``\verb|dati[N-1]|. E se scrivo ``\verb|dati[N]|''? Semplicemente ``esco dall'\emph{array}''. Stai molto attento: nel \verb|C++| non vi è alcun controllo sui limiti degli indici, né a run-time, né tanto meno a compile-time. Per cui cosa accade? L'\emph{array} è un'area contigua di elementi di memoria, e scrivere ``\verb|array[x]|'' mi fa accedere ad un elemento, ma se sforo l'indice il programma si sposta oltre: accede alle aree di memoria successive. C'è un problema: queste aree di memoria non sono dell'\emph{array} e, spesso, non sono neanche del programma. Sforare i limiti dell'\emph{array} ti fa leggere dati senza alcun senso, o ti fa scrivere in zone non tue: se non sono neanche del programma il sistema operativo ti ``uccide''\footnote{Almeno per quanto riguarda i sistemi Unix.}, cioè molto semplicemente non ti lascia scrivere nella memoria che non ti appartiene e il programma va in ``segmentation fault''. In lettura, invece, il sistema operativo è più tollerante, e questo è un problema: vai a leggere dati assolutamente senza senso, e i risultati saranno ancora meno sensati (e non ti accorgerai dell'errore perché nulla ti fermerà o ti avviserà!). 
+
+
+In conclusione stai molto attento agli indici, perché puoi scrivere stupidaggini immense e il compilatore non si lamenterò, ma i risultati non saranno piacevoli.
+
+\subsection{Puntatori e Array}
+ Quando dichiariamo un \emph{array} scriviamo ``\lstinline|float dati[N]|'' e diciamo che dati è un \emph{array} di N \textbf{float}. Ma quindi la variabile ``\verb|dati|'' cos'è? Finora tutte le variabili potevamo stamparle a video; siamo curiosi e vogliamo provare a farlo anche con una variabile di ``tipo \emph{array}''. Verrà stampato tutto il contenuto? Cosa succederà? Presi dall'interesse scriviamo questo codice:
+\lstinputlisting{codice/array/a1.cpp}
+Eseguiamo e\ldots
+\begin{shaded}
+	\verb|Contenuto dell'array?: 0x7ffc3cb3e290|
+\end{shaded}
+Un indirizzo di memoria? Ma quindi un \emph{array} è un puntatore? Ecco: essenzialmente si\footnote{In realtà è un puntatore in ``sola lettura'': a differenza di un puntatore normale non puoi modificarlo (cambiare l'indirizzo di memoria a cui punta).}.
+
+Dunque, cerchiamo di rimettere assieme i pezzi. Un puntatore ad \textbf{int} è una variabile che contiene un indirizzo di memoria; se lo dereferenziamo il computer va a quell'indirizzo di memoria e legge quattro byte (il contenuto della celletta puntata e delle tre successive) perché sa che un \textbf{int} ha quella dimensione.  
+
+Infine, sappiamo che un \emph{array} è un insieme di elementi dello stesso tipo, rappresentati in memoria da celle contigue. 
+
+Se abbiamo un \emph{array} di 10 \textbf{int} ci basta sapere l'indirizzo di memoria del byte iniziale del primo dato; individuato questo, per accedere agli elementi successivi basta spostarsi di 4 byte per il secondo dato, di altri 4 byte per il terzo e così via. È esattamente quello che fa il computer: di un \emph{array} conosce solo l'indirizzo di memoria del primo byte, ma sapendo il tipo di dato, sa esattamente come leggere il primo elemento e i successivi.
+
+Riassumendo, per accedere al N-esimo dato dell'\emph{array} (con N che parte da zero), se $X$ è la dimensione in byte del tipo di dato, il meccanismo è il seguente: partendo dal primo byte dell'\emph{array} (puntato dal puntatore) mi  sposto di $N\cdot X$ byte e leggo $X$ byte.\\
+
+Per convincerti del concetto guarda questo codice:
+\lstinputlisting{codice/array/a2.cpp}
+Da cui si ottiene il seguente output:
+\begin{shaded}
+\begin{verbatim}
+Array:                          0x7ffc8a1a7b40                                                                                                                          
+Indirizzo 1-esimo elemento:     0x7ffc8a1a7b40                                                                                                                          
+Indirizzo 2-esimo elemento:     0x7ffc8a1a7b44                                                                                                                          
+Indirizzo 3-esimo elemento:     0x7ffc8a1a7b48                                                                                                                          
+Indirizzo 4-esimo elemento:     0x7ffc8a1a7b4c                                                                                                                          
+Indirizzo 5-esimo elemento:     0x7ffc8a1a7b50      
+\end{verbatim}
+\end{shaded}
+Se parti dal primo indirizzo e sommi quattro byte ottieni il secondo e così via. \\
+
+Concludendo, dunque, possiamo dire che la scrittura ``\lstinline|int array[N]|'' istruisce il compilatore a riservare una zona di memoria contigua di N \textbf{int} (o del tipo di dato in questione), e ad allocare un puntatore ad \textbf{int} (la variabile \emph{array}) riempiendolo con l'indirizzo del primo byte dell'area di memoria. Quando nel codice usiamo le parentesi quadre, tipo ``\lstinline|array[2]|'' queste fungono da operatore di dereferenziazione del puntatore ``array+2'' (parti dal puntatore iniziale e spostati di due puntatori ad \textbf{int}, quindi di otto byte): leggi il contenuto del puntatore ``array+2''. Scrivere ``\lstinline|*array|'' e ``\lstinline|array[0]|'' a rigore è equivalente. Se sei curioso prova: esiste anche un'aritmetica dei puntatori, per cui puoi scrivere cose come ``\lstinline|*(array+3)|'' che equivale a ``\lstinline|array[3]|'' (accedi al quarto elemento dell'array), ma ovviamente la seconda scrittura è estremamente più chiara e comoda\ldots
+
+
+Per capire meglio la questione, ti propongo un esercizio: alloca un \emph{array} statico, riempilo e poi usa dei puntatori per accedere agli elementi. Prova anche ad utilizzare le parentesi quadre con i puntatori normali, insomma, giocaci un po'!
+
+%TODO Lo inserisco io l'esempio o diventa troppo?
+\section{Matrici: array di array}
+Una matrice è un oggetto che ti viene presentato in maniera formale nel corso di Geometria. 
+
+Nei termini più banali possibili è una tabella di numeri. Ecco una generica matrice M di dimensione \emph{m} x \emph{n}:
+\[
+M = 
+\begin{bmatrix}
+	x_{11} & x_{12} & x_{13} & \dots  & x_{1n} \\
+	x_{21} & x_{22} & x_{23} & \dots  & x_{2n} \\
+	\vdots & \vdots & \vdots & \ddots & \vdots \\
+	x_{m1} & x_{m2} & x_{m3} & \dots  & x_{mn}
+	\end{bmatrix}
+\]
+Dove i vari $x_{mn}$ sono numeri. Un esempio più pratico potrebbe essere la seguente matrice di interi di dimensioni 2x3:
+\[
+A = 
+\begin{bmatrix}
+	1 & 5 & -2 \\
+	-5& 0&1 
+\end{bmatrix}
+\]
+
+Vedere le matrici come ``tabelle'', per i nostri scopi può essere piuttosto scomodo. È più conveniente immaginarle come ``\emph{array} di \emph{array}'' (\emph{array} bidimensionali). La matrice A, ad esempio, può essere vista come due \emph{array} di tre \textbf{int} ciascuno, oppure come tre \emph{array} di due \textbf{int} ciascuno.
+
+Ma a cosa può servire un ``\emph{array} di \emph{array}''? In Fisica, ad esempio, ci sono miriadi di situazioni potenzialmente interessate. Pensiamo un insieme di \emph{n} particelle, ognuna delle quali descritta da \emph{m} parametri. Bene, per rappresentare in memoria questo sistema è conveniente utilizzare \emph{n} \emph{array} di \emph{m} \textbf{float} (o \textbf{double}, o \textbf{int}, o quello che serve). 
+
+Dovremmo, quindi, scrivere qualcosa di questo tipo:
+
+\begin{lstlisting}[label=mat1]
+#include <iostream>
+using namespace std;
+
+const int n=100;
+int main(){
+	float v1[n];
+	float v2[n];
+	float v3[n];
+	...
+	...
+	float vm[n]; //dobbiamo dichiarare m array di float
+	
+	return 0;
+}
+\end{lstlisting}
+Se \emph{m} diventa molto grande il nostro codice perde di funzionalità: è una situazione molto simile a quella dell'esempio \ref{esdati} che ci ha portato a definire l'\emph{array}.
+
+L'esempio \ref{mat1} può essere risolto così:
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+int main(){
+	const int n=100;
+	const int m=50;
+	
+	float matrix[m][n];
+	
+	return 0;
+}
+\end{lstlisting}
+
+Cos'è ``\lstinline|float matrix[m][n]|''? Un \emph{array} di \emph{m} elementi, ognuno dei quali è un \emph{array} di \emph{n} float. Altro modo per vederlo, è intenderlo come una matrice \emph{m} x \emph{n} di \textbf{float}.\\
+
+Come accediamo agli elementi? Come si modificano? Cicli \textbf{for} alla mano, cerchiamo di fare ordine mentale (in realtà non è nulla di nuovo rispetto a quanto già visto, solo che abbiamo due dimensioni al posto di una):
+\lstinputlisting{codice/array/m1.cpp}
+
+L'output di questo programma è seguente:
+\begin{shaded}
+\begin{verbatim}
+0       1       2       3
+4       5       6       7
+8       9       10      11
+\end{verbatim}
+\end{shaded}
+ Come vedi, una volta che si pensa la matrice come un \emph{array} di \emph{array}, non cambia molto da quanto abbiamo già visto: bisogna solo tenere presente che vi sono due indici, ricordarsi cosa rappresenta ciascun indice e stare attenti a non confondere le variabili iterative dei cicli \textbf{for} incapsulati.
+\subsection{Rappresentazione della matrice in memoria}
+Ma in memoria, la nostra matrice come è fatta? Abbiamo visto che la memoria è una sorta di ``striscia'' continua di bit. Alla linearità della memoria non si scappa, e anche la matrice, sebbene abbia più dimensioni, è immagazzinata in una striscia continua e lineare di bit. 
+
+Dovrebbe essere chiaro, quindi, che l'uso dell'\emph{array} multidimensionale è semplicemente un'astrazione per il programmatore ma, in memoria, una matrice è un semplice \emph{array} di lunghezza \mbox{$n\cdot m$}. 
+
+Se abbiamo \lstinline|int matrix[10][50]|, il computer riserva una striscia di memoria di 500 interi; scrivendo \lstinline|matrix[3][0]| il compilatore sa che deve spostarsi di $50\cdot4\cdot4$ byte (50 è la dimensione di ogni ``colonna'', quindi stiamo chiedendo di accedere alla quarta riga e ogni elemento occupa quattro byte,  perché è un \textbf{int}). Potenzialmente potremmo usare solo vettori e farci noi il ragionamento di ``spostarci'' di \textbf{m} elementi quando vogliamo passare da una riga all'altra, ma sicuramente quest'astrazione è comoda. Vedrai che per le matrici dinamiche il discorso cambia un po'. 
+\subsection{Un esempio concreto sui pericoli dell'out of range}
+Come ho accennato, non sempre quando si esce dai limiti degli \emph{array} il sistema operativo uccide il programma; a volte, semplicemente, si va a scrivere in aree di memoria che appartengono al programma (ma non all'\emph{array}!), il sistema operativo lo lascia fare e accadono cose poco piacevoli. 
+
+Ti propongo un esempio concreto, per capire bene l'importanza di questo argomento.
+
+Il programma che segue è composto in questo modo: ho un \emph{array} di ``$n+1$'' dati, su questi vengono eseguiti dei conti (matematici, di fisica, non ci importa: nel codice che ho scritto non ci sono) per poi riempire una matrice ``n $x$ n'' di risultati. Lanciando il programma ci accorgiamo che i risultati non hanno alcun senso; per cercare di capire perché decidiamo di stampare a video il contenuto del vettore di dati.
+\lstinputlisting{codice/array/patol.cpp}
+L'output con il contenuto di ``v'' è il seguente:
+\begin{shaded}\begin{verbatim}
+0
+0
+0
+0
+0
+0
+0
+\end{verbatim}
+\end{shaded}
+
+Com'è possibile? Dovrebbe essere pieno di 0,1,2\ldots Che è successo?
+
+Dopo aver sbattuto la testa a lungo, senza venirne a capo, ci accorgiamo che la matrice è di dimensione \emph{n} x \emph{n}  mentre noi nel ciclo \textbf{for} stiamo riempiendo fino all'``n+1'' esimo elemento. Possibile che questa sia la causa di tutto? Ci viene un enorme sospetto: andando a scrivere nell'n+1 esimo vettore della matrice, stiamo uscendo dalla sua area di memoria. Forse abbiamo scritto nell'area di memoria di \verb|v|? 
+
+Per rispondere alla domanda inseriamo il seguente codice nel programma:
+\lstinputlisting{codice/array/patol2.cpp}
+L'output, sul mio computer, è il seguente:
+\begin{shaded}
+\begin{verbatim}
+Indirizzo v:            0x7fff65f443a0
+Indirizzo matr[n-1]:    0x7fff65f44388
+Indirizzo matr[n]:      0x7fff65f443a0
+\end{verbatim}
+\end{shaded}
+
+Cos'è successo? Come vedi, ``\verb|matr[n]|'' (su cui andiamo a scrivere per errore: non appartiene alla matrice!) ha lo stesso indirizzo di memoria di \verb|v|. È chiaro, quindi, che nel ciclo \textbf{for} in cui inizializziamo a zero la matrice, stiamo erroneamente scrivendo sul vettore v, cancellando i dati originali. Abbiamo commesso un errore con gli indici ma, ``sfortunatamente'', non usciamo dalla memoria del programma e il sistema operativo non si lamenta. 
+
+In un programma grande, in cui la dichiarazione delle variabili e la loro inizializzazione è molto lontana nel codice, accorgersi dell'errore degli indici potrebbe essere difficile, lungo ed estenuante (apparentemente sembra che la scrittura nel vettore \verb|v| non abbia funzionato). Stai sempre molto attento: possono succedere cose davvero spiacevoli.
+
+\section{Operazioni su array: qualche algoritmo}
+È arrivato il momento di addentrarci (o meglio: di sfiorare!) in quella parte dell'informatica che si occupa di algoritmi. In questa sezione non impareremo nessuno strumento del linguaggio \verb|C++|, ma solo alcune applicazioni. Se vogliamo svolgere un'operazione, un algoritmo non è altro che l'``istruzione'' da dare al computer per eseguirla; il linguaggio, invece, è solo una possibile lingua con cui scrivere quest'istruzione. Vediamo alcuni casi interessanti che riguardano gli \emph{array}.
+
+Un \emph{array} è un insieme di elementi e, su questi, possiamo essere interessati a svolgere calcoli e operazioni. Se abbiamo \emph{array} di numeri, ad esempio, possiamo voler trovare la media, la deviazione standard, la varianza, ecc\ldots Queste problematiche non hanno nulla di particolarmente complesso sul piano dell'informatica, sono formule che hai imparato nei vari corsi di statistica e laboratorio, per cui li lascio a te.
+
+Ci sono alcune operazioni, invece, proprie di un vettore: pensaci, hai un insieme di numeri, cosa può venirti voglia di fare? Ordinare il vettore può essere molto utile!
+
+Il riordino di un \emph{array} di dati è un argomento molto più complesso di quello che sembra: esistono tantissimi algoritmi e noi cercheremo di capirne uno molto semplice. Prima, però, partiamo dalle basi: come si trova l'elemento massimo (o il minimo) di un \emph{array}?
+
+\subsection{Elemento massimo e minimo}
+Il nostro vettore ha \emph{n} elementi, disposti casualmente. Prendiamo il primo elemento, ce lo ``appuntiamo'' e lo confrontiamo con i successivi; se ne troviamo uno maggiore, lasciamo perdere il primo elemento, ci salviamo quest'altro elemento e lo confrontiamo con quelli che seguono. Procediamo così fino alla fine del vettore. Arrivati all'ultimo elemento saremo certi che quello che ci siamo salvati sarà maggiore di tutti. 
+
+Il codice è semplice,  ``\lstinline|int array[n]|'' è un vettore di \emph{n} elementi interi disposti casualmente:
+\begin{lstlisting}
+	int array[n];
+	int tmp=0; //variabile temporanea di appoggio
+	...
+	...
+	tmp=array[0]; //salvo il primo elemento per confrontarlo con i successivi
+	for(int i=1; i<n; ++i){//nota: i parte da 1, perche'?
+		if(array[i]>tmp)
+			tmp=array[i];	
+	}
+	
+\end{lstlisting}
+Alla fine, la variabile ``\verb|tmp|'' conterrà l'elemento massimo.
+
+Prova a scrivere il codice per trovare l'elemento minimo, a questo punto dovrebbe essere estremamente facile.\\
+
+Ti invito a notare una cosa (che tornerà utile quando parleremo di \textbf{struct}): affinché abbia senso parlare di elementi minimi e massimi è necessario che sul tipo di dato dell'\emph{array} sia definito il concetto di ordinamento, sia a livello astratto (cosa vuol dire ordinare pere e banane?) sia a livello concreto (quando scriviamo ``\lstinline|array[i]>tmp|'' il computer \emph{sa} cosa significa?). 
+\subsection{Ordinamento}
+Il problema dell'ordinamento di un vettore è estremamente importante in moltissimi campi dell'informatica applicata: Fisica, Matematica, economia, database di vario tipo, social network, ecc\ldots 
+
+Per quanto sembri banale, ordinare un vettore è computazionalmente pesante: un cattivo algoritmo può essere molto più lento di uno buono, e costare secondi di esecuzione in più. 
+
+L'algoritmo che andremo ad analizzare è un algoritmo abbastanza cattivo, ma è molto semplice da capire e da implementare: il \emph{selection sort}. Il numero di operazioni da effettuare, per ordinare completamente un vettore, è asintotico ad $N^2$, dove $N$ è il numero di elementi. Ci sono algoritmi, come il \emph{quick sort}, che nelle situazioni migliori sono asintotici a $N \ln(n)$. Nel corso viene riportato il codice del \emph{quick sort}, ma è complicato da implementare e non è richiesto per superare l'esame, per cui in queste note lo tralasciamo.
+\subsubsection{Selection Sort}
+Ho voluto introdurre la ricerca di elementi massimi e minimi perché il \emph{selection sort} si basa esattamente su questo procedimento. Si cerca l'elemento minimo e lo si mette al primo posto, quindi si parte dalla seconda posizione dell'\emph{array} e da lì si cerca di nuovo l'elemento minimo e lo si sposta al secondo posto, quindi si passa alla terza posizione, ecc\ldots
+
+Come vedi è molto semplice, ma il numero di operazioni è notevole (per ogni posizione bisogna scorrere il vettore fino alla fine). 
+Vediamo il codice: al solito, ``\lstinline|int array[n]|'' è un \emph{array} di \emph{n} \textbf{int} casuali. L'unica vera ``difficoltà'' sta nel non perdersi per strada gli elementi del vettore durante gli scambi.
+
+\begin{lstlisting}
+	int array[n];
+	int tmp=0; //variabile di appoggio
+	int index_min=0; //variabile di appoggio per gli indici del vettore
+	
+	...
+	...
+	
+	for(int i=0; i<n-1; ++i) { //perche' minore di n-1?
+		min = array[i]; 
+		index_min=i; //index_min tiene traccia della posizione del minimo
+		for(int j=i+1; j<n; ++i){ //perche' j=i+1? (ricorda il codice della ricerca del minimo)
+			if(array[j] < min) {
+				index_min=j; //index_min tiene traccia del nuovo minimo
+				min=array[j]; //min e' uguale al nuovo minimo
+			}
+		} //uscito da questo for ho trovato il minimo da mettere nella i-esima posizione
+		//ora devo scambiare l'elemento minimo con quello all'i-esima posizione
+		tmp=array[i]; //mi salvo l'elemento contenuto nell'i-esima posizione
+		array[i]=array[index_min]; //sposto nell'i-esima posizione il minimo
+		array[index_min]]=tmp; 
+		
+	} //passo alla posizione successiva
+	
+\end{lstlisting}
+
+Domanda: se il mio \emph{array} è un \emph{array} di \textbf{float} (o un altro tipo di dato) chi tra \verb|min|, \verb|index_min| e \verb|tmp| deve essere dichiarato come \textbf{float}? E chi no?
+
+Come esercizio scrivi il codice per ordinare \textbf{float} e \textbf{double}, quindi riscrivi tutto per ordinare in modo decrescente.

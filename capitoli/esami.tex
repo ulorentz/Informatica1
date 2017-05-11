@@ -1,0 +1,26 @@
+\chapter{Alcuni esami risolti}
+\section{Scritti}
+\newpage
+\section{Laboratorio}
+
+Il concetto è, quindi, dare un'idea di come andrebbe scritto un codice in linea con le richieste di Informatica 1. Ho cercato di usare lo stile e gli strumenti più semplici possibili: il minimo richiesto per superare l'esame a pieni voti, se sai scrivere un codice così e fai tutto giusto il 30 è tuo! 
+Volendo si possono usare tanti altri strumenti: classi, template, ecc ecc... Ma se sai queste cose guardare questo svolgimento probabilmente per te è inutile!
+A proposito del "tutto giusto": mi sono concentrato sul codice, per quanto riguarda la correttezza dei risultati... non assicuro nulla!
+
+
+Cosa e' apprezzato nell'esame di Informatica 1, ovvero cosa devi fare per prendere un BEL VOTO?
+- I risultati devono essere corretti (ma questo e' ovvio...);
+- Il codice deve essere comprensibile e leggibile, potra' sembrarti una cavolata, ma ad ogni parentesi graffa dopo dai i dovuti spazi di tab per renderlo ordinato.
+- Il codice deve essere ben strutturato: devi scrivere il meno possibile nel main, dove invece dovresti limitarti a poco piu' di semplici chiamate a funzione. Ogni volta che puoi, e che ha senso farlo, scrivi una funzione che esegua un'insieme di operazioni. 
+- Dividi il codice in librerie: le funzioni non tenerle nello stesso file del main, ma crea una, o piu', librerie. Una libreria e' composta da un file ''qualcosa.h'' e un file ''qualcosa.cpp''. Nel .h devono esserci le dichiarazioni delle funzioni, nel .cpp le definizioni. 
+- Scrivi un makefile ben fatto e funzionante: compila i file oggetto (compilazione parziale) delle librerie e del main e quindi fai il linking (vedi il file del makefile: li' e' spiegato meglio).
+- Stai attento a quelli che possono sembrarti dettagli ma che sono importanti in un buon codice: ogni volta che apri uno stream ad un file controlla che non sia corrotto ma che sia funzionante; quando non ti serve piu' lo stream ricordati di chiuderlo e di non lasciarne nessuno in sospeso; dopo che hai allocato la memoria, quando non e' piu' utile liberala! Non farlo ti penalizzera'! 
+- Non fondamentale, ma sicuramente apprezzato: nei passaggi oscuri commenta un minimo il codice per semplificarne la lettura, potrebbe aiutare il prof a capire cosa avevi in mente.
+- Non tralasciare ROOT: le prime volte puo' sembrarti arabo, ma e' davvero semplice da usare. Devi solo capire come si usa un istogramma e un plot, di solito sono le uniche due cose che ti vengono richieste. 
+
+
+Un consiglio: se non sei molto pratico, durante l'esame ogni volta che scrivi un pezzo di codice compilalo e provalo. Non scrivere tutto e alla fine provare a compilare: e' praticamente impossibile scrivere tanto codice senza fare neanche un piccolo errore. Trovare un errore in un pezzetto di codice e' piu' facile che capire perche' un intero programma non funziona. 
+Procedi per piccoli passi: scrivi una funzione (tipo carica da file) e testala, se sei sicuro che funziona salva tutto e vai avanti. Se ad un certo punto si rompera' tutto, ci saranno segmentation fault o cose strane, saprai che al passo prima funzionava tutto e sara' facile tornare indietro o aggiustare il nuovo pezzo di codice. 
+Non c'e' nulla di peggio di scrivere l'intero programma, testarlo per la prima volta dieci minuti prima della consegna e ritrovarsi come output un segmentation violation.
+E, soprattutto, meglio un programma non completo ma che compila di uno che credi essere finito ma che non compila (per Tamascelli, non compila = bocciato)!
+\subsection{title}

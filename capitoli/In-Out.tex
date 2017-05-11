@@ -1,0 +1,129 @@
+\chapter{In/Out: i file}\label{inout}
+Abbiamo visto nel primo capitolo che un computer è dotato di dispositivi di input e output. Una possibilità che ci è garantita dal sistema operativo è di comunicare con essi.
+
+Prova ad immaginare il dispositivo di input, ad esempio, come un tuo amico lontano con cui comunicare; per farlo hai bisogno di aprire un canale di comunicazione, come telefono, mail, chat, qualcos'altro. Un programma fa la stessa cosa: per comunicare con un dispositivo di in/out deve aprire un canale di comunicazione, uno \emph{stream}.
+
+Uno \emph{stream} è un \emph{oggetto}\footnote{L'essenza di questo concetto, per essere compresa appieno, avrebbe bisogno di strumenti che vanno oltre il contenuto di queste note. Quando l'anno prossimo studierai le \emph{classi}, diversi strumenti di questo capitolo ti appariranno molto più chiari.} piuttosto complicato, con tante belle proprietà e caratteristiche; ne vedremo giusto le funzioni base. Una piccola nota: questo è l'unico capitolo in cui useremo strumenti propri del \verb|C++|. Nel \verb|C|, infatti, non esiste un'entità assimilabile allo \emph{stream} (la comunicazione con i dispositivi di in/out avviene sfruttando direttamente le librerie di sistema).\\
+
+Un canale deve essere dichiarato, ``costruito'', ``testato'' e quindi usato (lo impareremo nella sezione \ref{file}). Esistono, però, alcuni canali che sono già aperti e testati, pronti ad essere usati. Li abbiamo già ampiamente  sfruttati, per cui facciamo giusto un breve ripasso; quindi, affronteremo la comunicazione con i file, che è il vero obiettivo di questo capitolo.
+
+\section{Canali standard}
+Ci sono due cose che in un computer non possono mancare: la tastiera e lo schermo (o dei loro sostituiti: quando mi connetto via \emph{ssh} cosa uso\ldots?). Includendo la libreria ``\emph{iostream}'', tre canali ci vengono automaticamente aperti e dati a disposizione: \emph{cout}, \emph{cin} e \emph{cerr}. I primi due sono stati rapidamente analizzati in \ref{coutcin}. 
+
+\emph{Cerr}, invece, sta per ``console error''. È un canale di output che stampa sempre su terminale. L'unica differenza rispetto a \emph{cout} è che non è bufferizzato. Per dirla in soldoni: usandolo per piccole stringhe, il sistema garantisce che, quando tutto si inchioda, lui dovrebbe continuare a funzionare (dovrebbe\ldots dipende da quanto sei bravo a mandare in crisi il computer!); in poche parole è da usare per stampare messaggi d'errore. Ma puoi anche usare \emph{cout}, l'uso di \emph{cerr} è una finezza. Si adopera allo stesso modo: \lstinline|cerr << stringa << endl;|.\\
+
+Bisogna sottolineare una problematica dei canali di input, a cui \emph{cin} non si sottrae. Se \verb|a| è un intero e noi scriviamo \lstinline|cin >> a;| il contenuto di \emph{cin} viene ``buttato'' in \verb|a|. Ma se il contenuto di \emph{cin} non c'entra molto con il tipo di dato di \verb|a| (ad esempio scrivi ``sadckjasndjcnd'' e premi invio), cosa accade? Succede una cosa poco piacevole: lo \emph{stream} si ``rompe''. %TODOPer la gestione dello stream di input rotto si rimanda ai complementi di questo capitolo (\ref{cfail}), se la cosa non ti interessa ti basta stare attento a quello che scrivi! 
+
+%TODONei complementi è anche presente una sezione sulle ``string'', un tipo di dato del \verb|C++| utilissimo per la gestione delle parole o delle frasi.\\
+
+Un'ultima avvertenza, questa volta su \emph{cout}: per quanto il discorso delle performance vada oltre lo scopo di queste note, sappi che \emph{cout} ha un costo computazionale non indifferente. Se in un ciclo \textbf{for} stampi a video tutto quello che succede, il tempo di esecuzione crescerà inutilmente. Per provare, ho appena eseguito un programma che semplicemente incrementa una variabile in un ciclo \textbf{for} dieci milioni di volte: senza stampare a video il valore della variabile ad ogni ciclo, il tempo di esecuzione è stato di 0.03 secondi; stampando ``Il valore di j è: \verb|valore|'' il tempo è risultato essere di 32.23 secondi. Tempo buttato via!
+
+\section{Comunicazione con i file}\label{file}
+Cos'è un file? Un file non è altro che un insieme di dati che, però, vive sull'hard disk e non sulla RAM: i file sono permanenti, non muoiono dopo un riavvio. 
+
+Il canale che è in grado di comunicare con un file è ``\emph{fstream}'' (file stream). Costui, poi, ha due ``figli'': ``\emph{ifstream}'' (per leggere file: input file stream) e ``\emph{ofstream}'' (per scrivere su file: output file stream). Per disporre di questi strumenti dobbiamo includere la libreria che li contiene con ``\lstinline|#include <fstream>|''.
+
+\subsection{Scrivere su file}
+
+Partiamo da un esempio concreto; nel codice che segue \lstinline|int vec[10]| è un vettore di interi che vogliamo scrivere su un file di nome \verb|dati.txt|:
+
+\lstinputlisting{codice/inout/out.cpp}\label{esout1}
+
+Come vedi, per prima cosa dichiaro un oggetto di tipo ``\emph{ofstream}''. \emph{Ofstream} è un dato un po' particolare, dotato di membri che sono funzioni. Per accedere ai membri di un dato si scrive \verb|nomedato.membro|. Ad esempio, \verb|open()| è una funzione\footnote{Affronteremo il discorso delle funzioni approfonditamente nel capitolo \ref{funzioni}} che, come argomento (ciò che è tra le parentesi) vuole una stringa\footnote{Fino al C++98 questa funzione voleva una stringa del C, ovvero puntatore a char. Se devi pass,are con una variabile il nome del file, usa questo tipo di dato.}: il nome del file verso cui aprire il canale di comunicazione\footnote{Se il file non si trova nella cartella corrente devi inserire il percorso completo, per chiarimenti vedi \ref{linux}}. Volendo, puoi fare un passaggio in meno ed esplicitare il file verso cui aprire il canale direttamente nella dichiarazione della variabile: \lstinline|ofstream out("dati.txt")|. 
+
+Nella riga successiva segue un \textbf{if}. Questo if-statement viene trascurato da buona parte degli studenti, ma è fondamentale! L'apertura di un canale verso un file non sempre ha successo, vi sono molte ragioni per cui potrebbe fallire. È buona norma, prima di usare un canale, controllare che sia funzionante; il metodo \verb|fail()| (\lstinline|out.fail()|) restituisce una variabile booleana: \textbf{true} se il canale è ``rotto'', \textbf{false} se è funzionante. Se il canale è ``rotto'' entriamo nell'\textbf{if}: qui ho stampato, usando \emph{cerr}, un messaggio di errore per avvisare l'utente di ciò che è avvenuto. Quindi, tramite la funzione \verb|exit(1)|, interrompo il programma. Exit è contenuta nella \emph{C standard library} (\lstinline|#include <cstdlib>|); vuole tra le parentesi un numero da restituire al sistema operativo (puoi metterne uno qualsiasi, ora come ora\ldots), allo stesso modo del ``return 0'' del \emph{main}. La differenza tra exit e return è che la prima interrompe il programma in qualsiasi punto essa venga chiamata; return, invece, ritorna al blocco di codice precedente: nel \emph{main} ``uccide'' il programma ma, all'interno di una funzione (lo vedremo\ldots), no.
+
+A questo punto, se tutto è andato a buon fine, possiamo usare il canale di output; niente di strano: si usa esattamente come useresti \emph{cout}, semplicemente scrivendo al suo posto il nome del nuovo \emph{stream}. 
+
+Ultimo step, anch'esso trascurato dagli studenti ma importantissimo: una volta che  lo \emph{stream} non serve più va chiuso (un esempio: se non chiudi lo \emph{stream} in scrittura su un file e, successivamente, provi ad aprire uno \emph{stream} in lettura su quel file l'operazione fallirà sempre, ci può essere un solo \emph{stream} per volta)! Il codice è \verb|nomestream.close()|. \\
+
+Stai attento ad una cosa: uno \emph{stream} aperto in questo modo ha questo ``difetto'': se il file esiste già ed è pieno, lo sovrascrive in maniera irreversibile (meglio saperlo: sono sicuro che non vuoi aprire un \emph{ofstream} sulla tua tesi\ldots). 
+
+Puoi dire ad \emph{ofstream} di aprirsi in ``append mode'', ovvero di scrivere alla fine del file senza cancellare ciò che esiste già; è necessario questo codice:
+\begin{lstlisting}
+	ofstream out;
+	out.open("dati.txt", std::ofstream::app);
+\end{lstlisting}
+\subsection{Leggere da file}
+Poniamo di avere un file ``\verb|dati.dat|'' e di sapere che vi sono 10 \textbf{float} che vogliamo caricare su un vettore. Noterai che che il codice che segue è estremamente simile all'esempio \ref{esout1}.
+\lstinputlisting{codice/inout/in.cpp}
+
+Per prima cosa dichiaro uno \emph{stream} di input \emph{ifstream}, quindi lo apro verso il file di destinazione. A questo punto controllo che tutto sia andato bene; negli \emph{ifstream} è ancora più importante: ti basta scrivere il file con una lettera sbagliata e l'apertura del canale fallisce (non posso aprire uno \emph{stream} in lettura verso un file inesistente!). Senza l'if-statement potresti passare ore a cercare di capire perché il tuo programma non funziona (quando, invece, compila senza problemi!) senza venirne a capo, mentre l'errore era banalissimo\ldots \\
+
+Per capire come un file viene letto, è utile immaginarsi una sorta di vecchio giradischi, in cui vi è la testina che si muove sul file: ogni volta che leggiamo una variabile la testina avanza, e prima o poi arriva alla fine del file. Se in un vecchio giradischi, una volta arrivato alla fine, lasciavi girare il disco, non ripartiva la prima canzone, semplicemente ``girava a vuoto''. Con i file accade qualcosa di simile: se, una volta arrivato alla fine, continui a leggere dal file, non riprendi dalla prima variabile, bensì\ldots che succede? Prova!
+
+Ma come faccio a capire di essere arrivato alla fine di un file? E a ``spostare la testina indietro''?
+
+Alla fine di ogni file vi è un carattere speciale, detto ``\emph{end of file}'' (abbreviato in EOF); uno \emph{stream} di input è in grado di leggere questo carattere (che aprendo un file con un editor di testo non vediamo) e di comunicarci se è arrivato alla fine del file. Ecco il codice:
+\begin{lstlisting}
+	ifstream in("input.txt");
+	...
+	if(in.eof()){
+		//do something
+	}
+	...
+\end{lstlisting}
+
+Semplicemente il metodo ``\verb|eof()|'' restituisce \textbf{true} se abbiamo raggiunto la fine del file, \textbf{false} in caso contrario.
+
+Potremmo essere interessati, dopo aver letto una prima volta il file, a tornare all'inizio per leggerlo di nuovo (nel capitolo \ref{ardin} ne vedremo un importante esempio). Ecco il comando per ``riportare indietro la testina''. 
+\begin{lstlisting}
+	ifstream in("input.txt");
+	...
+	in.clear(); 
+	in.seekg(0);
+	...
+\end{lstlisting}
+
+Il metodo ``\verb|clear()|'' resetta tutte le \emph{flag} (eof, ad esempio è un \emph{flag}, che si era settata su \textbf{true}, con ``\verb|clear()|'' l'azzeriamo). Il metodo ``\verb|seekg()|'' cerca la posizione tra le parentesi e vi sposta la ``testina''; nel nostro caso la posizione 0, ovvero il primo bit del file.
+
+Ti scrivo un piccolo esempio di codice in cui leggo due volte il file: la prima per trovare l'elemento minimo, la seconda  per trovare l'elemento massimo (è un esempio stupido, anche perché potrebbe essere più intelligente caricare i dati in un vettore e poi lavorarci sopra, oppure cercare massimo e minimo nello stesso ciclo \textbf{while}\footnote{L'unico caso che mi viene in mente in cui questo codice è sensato è quando dobbiamo elaborare un set di dati ben più grande della RAM. In quel caso, caricare i dati in un \emph{array} è infattibile. È ancora inutile trovare massimo e minimo in due letture successive del file, ma potrebbe capitare di dover fare due elaborazioni dei dati che non possono avvenire simultaneamente.}; nel capitolo \ref{ardin} vedremo un utilizzo molto più importante). 
+\begin{lstlisting}
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+int main(){
+	ifstream in; 
+	int tmp=0, max=0, min=0;
+	in.open("dati.dat");
+	if(in.fail()){
+		cerr << "Errore apertura file di input." << endl;
+		return 1;
+	}   
+	in >> min;
+	while(!in.eof()){
+		in >> tmp;
+		if(tmp < min)
+			min=tmp;
+	}   
+	in.clear();     //pulisco le flag
+	in.seekg(0);    //porto la testina a zero per leggere dall'inizio       
+	in >> max;
+	while(!in.eof()){
+		in >> tmp;
+		if(tmp > max)
+			max=tmp;
+	}   
+	cout << "Min:\t" << min << "\nMax:\t" << max << endl;
+	return 0;
+}    
+
+\end{lstlisting}
+
+\begin{small}
+\subsection{Opzionale: una versione generalizzata}
+Come ti ho detto all'inizio \emph{ofstream} e \emph{ifstream} sono figli del tipo di dato \emph{fstream}; possiamo evitare di usarli separatamente ma utilizzare \emph{fstream} dicendogli di specializzarsi durante l'apertura. Può essere comodo se, in un programma, dobbiamo sia scrivere su un file che leggerlo: in questo modo dichiariamo una sola variabile e rischiamo di perderci meno cose per strada. Ecco un esempio:
+\lstinputlisting{codice/inout/inout.cpp}
+
+L'unica cosa in più da dire è che le diverse opzioni da passare a ``\verb|open()|'' si concatenano con una o più ``pipe'': il carattere ``|''.
+\end{small}
+
+%\begin{subappendices}
+%	\section*{COMPLEMENTI}
+%	\addcontentsline{toc}{section}{Complementi}
+%	\subsection{Le estensioni dei file e Linux}
+%	\subsection{Cin fail!}\label{cfail}
+%	\subsection{La classe string: parole e non solo lettere!}
+%	\subsection{Linux: tutto è un file, e gli stream?}
+%\end{subappendices}

@@ -1,0 +1,59 @@
+\documentclass[A4paper, 11pt]{book}
+\usepackage{Informatica}
+\usepackage{listings}
+
+
+\title{\Huge \bfseries \scshape Informatica 1}
+\author{\Large \bfseries \scshape Lorenzo Uboldi}
+%\title{}
+%\author{}
+\date{}
+%\titlepic{\includegraphics[width=\textwidth]{copertina.png}}
+\makeindex
+
+\begin{document}
+
+	\frontmatter
+	\maketitle
+	
+	% Colophon
+	\null % Bisogna inserire qualcosa prima di \vfill, altrimenti non funziona
+	\vfill % Riempie lo spazio verticale della pagina
+	\hspace*{-1.5em}\includegraphics[scale=.7]{Immagini/by-nc-sa-eu.eps}
+	\begin{flushleft}
+		Quest'opera è stata rilasciata con licenza \emph{Creative Commons} Attribuzione - Non commerciale - Condividi allo stesso modo 4.0 Internazionale. Per leggere una copia della licenza visita il sito web \url{http://creativecommons.org/licenses/by-nc-sa/4.0/}.\\[1cm]
+		Versione aggiornata al \today,\\
+		Lorenzo Uboldi (\href{mailto:lorenzo.uboldi@studenti.unimi.it}{\ttfamily lorenzo.uboldi@studenti.unimi.it}), Milano.
+	
+	\end{flushleft}
+
+	\cleardoublepage
+	\pdfbookmark[1]{Indice}{tableofcontents}
+	\tableofcontents %metto all'inizio l'indice
+	
+	%Prefazione, dopo l'indice o prima?
+	\include{capitoli/prefazione}
+	\include{capitoli/disclaimer}
+	\mainmatter
+	%Capitoli
+	\input{capitoli/IntroduzioneAllaProgrammazione}
+	\input{capitoli/TipiDiDatoStandard}
+	\input{capitoli/RappresentazioneInMemoria}
+	\input{capitoli/StruttureDiControlloCicli}
+	\input{capitoli/Puntatori}
+	\input{capitoli/Array}
+	\input{capitoli/In-Out}
+	\input{capitoli/AllocazioneDinamica}
+	\input{capitoli/Struct}
+	\input{capitoli/Funzioni}
+	\input{capitoli/Librerie}
+	\input{capitoli/Contenitori}
+	\input{capitoli/ROOT}
+	\appendix
+	\input{capitoli/linux}
+	\input{capitoli/reference}
+	\input{capitoli/instroot}
+%	\input{capitoli/esamiScritti}
+	\input{capitoli/esamiLaboratorio}
+	
+\end{document}
