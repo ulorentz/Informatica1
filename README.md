@@ -5,7 +5,7 @@ Queste "dispense" le ho scritte anni dopo che ho seguito il corso: in questo per
 Te lo dico per metterti in guardia: le lezioni potrebbero differire, confrontati sempre con quest'ultime!
 
 ### Utilizzo
-Per leggere le dispense, puoi scaricare direttamente il file `Informatica1.pdf`. Altrimenti, se sei curioso o se vuoi contribuire, puoi scaricare l'intero codice e compilarlo con LaTex.
+Per leggere le dispense, puoi scaricare direttamente il file `Informatica1.pdf` (<https://github.com/ulorentz/Informatica1/raw/master/Informatica1.pdf>). Altrimenti, se sei curioso o se vuoi contribuire, puoi scaricare l'intero codice e compilarlo con LaTex.
 
 ### Autore 
 Informatica 1 è stato scritto da Lorenzo Uboldi. Per segnalare errori, suggerimenti o qualsiasi cosa, scrivi a <lorenzo.uboldi@studenti.unimi.it>. 
