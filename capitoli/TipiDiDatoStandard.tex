@@ -275,11 +275,13 @@ int main(){
 	
 	In macchina i numeri \textbf{float} sono composti da due parti: l'esponente e la mantissa. La mantissa contiene le cifre vere e proprie del numero; l'esponente, invece, indica dove è posizionata la virgola (da qui, virgola mobile). L'esponente può essere molto grande: i \textbf{float}, oltre a rappresentare numeri decimali possono rappresentare numeri alla potenza di dieci notevole.  
 	
+	Si tratta di una rappresentazione a cui siamo già abituati: pensa a come rappresentiamo i numeri reali in notazione scientifica. Qui, un numero $a$ viene scritto come $a = M \times 10^E$, dove $M$ rappresenta la mantissa e $E$ l'esponente. La differenza in informatica è che si lavora in base 2 anziché base 10. 
+	
 	I limiti dei \textbf{float} sono principalmente due. Vediamo il primo.
 	
 	Dal momento che occupano solo 4 byte, le cifre che il dato \textbf{float} può contenere sono limitate, così come è limitato l'esponente. In particolare, un \textbf{float} ha una precisione di 6 cifre decimali (può contenere fino a 6 cifre), mentre il numero può avere un esponente minimo pari a $10^{-37}$ e massimo pari a $10^{38}$.
 	
-	Ora, il fatto di contenere al massimo sei cifre ci porta subito ad introdurre l'errore di troncamento. Pensiamo a 1234567.89. Le cifre di questo numero sono ben più di sei, sono nove. In macchina questo numero viene rappresentato così: $1.23456\cdotp10^6$. Cosa succede? Perdiamo le cifre successive alla sesta, semplicemente non ci stanno!
+	Ora, il fatto di contenere al massimo sei cifre ci porta subito ad introdurre l'errore di troncamento. Pensiamo a 1234567.89. Le cifre di questo numero sono ben più di sei, sono nove. In notazione a virgola mobile questo numero viene rappresentato così: $1.23456\cdotp10^6$. Cosa succede? Perdiamo le cifre successive alla sesta, semplicemente non ci stanno!
 	
 	Un altro esempio notevole (dove questo errore può dare molto fastidio) è il seguente: 1.000000356. In macchina viene troncato: le ultime cifre eccedono le sei possibili. Se facciamo dei conti, ad esempio sottraendo a quel numero un altro simile, avremo risultati sbagliati! 
 	\\Esempio:
