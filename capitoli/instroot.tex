@@ -17,7 +17,7 @@ Salva il file, esci dal terminale, apri un nuovo terminale e scrivi ``\verb|root
 \subsection{Sei sfortunato\ldots}\label{distronotfound}
 Al CERN non hanno pensato di fare una versione precompilata di ROOT per la tua distribuzione di Linux, poco male\footnote{Se usi Arch Linux o una sua derivata puoi trovare ROOT precompilato nei repository AUR. Usa yaourt per cercarlo e potrai installarlo come un semplice pacchetto evitandoti tutto quello che segue.}! 
 
-Scarica, sotto ``source distribution'', il file compresso. Una volta scompattato devi scegliere una cartella in cui installare ROOT. Puoi installarlo nella tua Home, oppure, se non vuoi avere la sua cartella tra le scatole in /opt (in questo caso dovrai usare ``sudo'' prima dei comandi!). Sposta la cartella scompattata nella sua destinazione finale (``\verb|mv root-versione destinazione|'', o ``\verb|sudo mv root-versione /opt/.|''). 
+Scarica, sotto ``source distribution'', il file compresso. Una volta scompattato devi scegliere una cartella in cui installare ROOT. Puoi installarlo nella tua \emph{home}, oppure, se non vuoi avere la sua cartella tra le scatole in \emph{/opt} (in questo caso dovrai usare ``\emph{sudo}'' prima dei comandi!). Sposta la cartella scompattata nella sua destinazione finale (``\verb|mv root-versione destinazione|'', o ``\verb|sudo mv root-versione /opt/.|''). 
 
 Ora, bisogna compilare ROOT, ti avviso impiegherà un bel po' di tempo, e userà un sacco di risorse, per cui cerca di attaccare la presa del PC e dotarti di pazienza. Per la compilazione avrai bisogno di alcuni pacchetti, assicurati di avere tutto il necessario dando un'occhiata alla pagina \url{https://root.cern.ch/build-prerequisites}. 
 
@@ -25,10 +25,12 @@ Portati dentro la cartella di ROOT, quindi lancia ``\verb|./configure|'', se qua
 
 Quando avrà finito devi solo dire a Linux dove si trova ROOT. Per farlo apri con un editor il file ``\verb|~/.bashrc|'' (ad esempio: ``\verb|gedit ~/.bashrc''|''), quindi, in fondo al file, inserisci:
 
- ``\verb|. PERCORSO/root-versione/bin/thisroot.sh|'' (dove, al posto di ``root-versione'' metti il nome della cartella di ROOT). NOTA: il punto e lo spazio all'inizio sono voluti, non dimenticarli!
+``\emph{. PERCORSO/root-versione/bin/thisroot.sh}'' (dove, al posto di ``root-versione'' metti il nome della cartella di ROOT). NOTA: il punto e lo spazio all'inizio sono voluti, non dimenticarli!
 
 Salva il file, esci dal terminale, apri un nuovo terminale e scrivi ``\verb|root|'', se il programma si apre ROOT è installato e hai finito!
 \section{Installare su Mac}\label{instmac}
 Per prima cosa vai a questo indirizzo \url{https://root.cern.ch/downloading-root}, quindi seleziona, sotto le ``Lastest ROOT releases'' la ``PRO Release''. Nella pagina che ti si aprirà, sotto ``binary distributions'', cerca il nome la versione del tuo \emph{OsX} (es. 10.10), e del tuo compilatore \emph{clang}. Quindi, scarica il file \emph{.tar.gz} relativo ad essi. 
 
-A questo punto, scompatta l'archivio e posiziona la cartella di ROOT dove preferisci. Apri un terminale e spostati al suo interno, quindi scrivi \verb|cd bin|, e poi \verb|pwd|. Copia il percorso che ti viene restituito e, con un editor di testo, apri il file \emph{.bash\_profile} che si trova nella tua \emph{home} (se non esiste crealo). In fondo al file scrivi ``\emph{. percorso\_copiato\_precedentemente/thisroot.sh}.'', salva ed esci dal terminale. Ora, se ne apri uno nuovo, avrai ROOT perfettamente istallato e funzionante (prova a scrivere \verb|root| per controllare).
+A questo punto, scompatta l'archivio e posiziona la cartella di ROOT dove preferisci. Apri un terminale e spostati al suo interno, quindi scrivi \verb|cd bin|, e poi \verb|pwd|. Copia il percorso che ti viene restituito e, con un editor di testo, apri il file \emph{.bash\_profile} che si trova nella tua \emph{home} (se non esiste crealo). In fondo al file scrivi ``\emph{. percorso\_copiato\_precedentemente/thisroot.sh}.'', salva ed esci dal terminale.  NOTA: il punto e lo spazio all'inizio sono voluti, non dimenticarli!
+
+Ora, se ne apri uno nuovo, avrai ROOT perfettamente istallato e funzionante (prova a scrivere \verb|root| per controllare).
