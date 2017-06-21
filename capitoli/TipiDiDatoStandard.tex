@@ -485,16 +485,21 @@ int main(){
 \item	Il testo del primo esercizio è:
 
 \begin{shaded}
-	\begin{verbatim}
-Sia int matr un intero che contiene il vostro numero di matricola ed inoltre
-    float matr1, matr2, matr3;
+	
+Sia \textbf{int} \verb|matr| un intero che contiene il vostro numero di matricola ed inoltre
+
+\qquad\textbf{float} \verb|matr1, matr2, matr3;|\\
 se
-    matr1 =(int)(matr/(matr+1.));
-    matr2 = (matr+1)/matr;
-    matr3=((matr+1)/100)/(matr/100);
+
+\qquad\verb|matr1 =(int)(matr/(matr+1.));|
+
+\qquad\verb|matr2 = (matr+1)/matr;|
+
+\qquad\verb|matr3=((matr+1)/100)/(matr/100);|\\
 scrivere il valore di:
-    matr1________________matr2__________________matr3__________________
-	\end{verbatim}
+
+\qquad\verb|matr1________________matr2__________________matr3__________________|
+
 \end{shaded}
 	Dunque, poniamo che il mio numero di matricola sia 543987 (completamente inventato, ma di lunghezza giusta). \\
 	Vediamo cosa succede a \verb|matr1|. Non dobbiamo farci confondere da quell'\textbf{int}, che è posto prima della parentesi tonda: vuol dire che converte in intero il risultato che esce dalle parentesi. Nella parentesi abbiamo a numeratore un intero, mentre a denominatore un numero decimale (somma tra un \textbf{int} e un \textbf{float}, che abbiamo visto dare come risultato un \textbf{float}). Verrà fatta la divisione decimale e il risultato (che non ci interessa con precisione) sarà comunque minore di 1, uno 0.qualcosa che, convertito in \textbf{int}, diviene 0.
@@ -505,30 +510,35 @@ scrivere il valore di:
 	
 \item Il testo del secondo esercizio è:
 \begin{shaded}
-	\begin{verbatim}
-Sia int matr un intero che contiene il vostro numero di matricola 
-ed inoltre:
-    int a,b;
-    float x,y;
+
+Sia \textbf{int} \verb|matr| un intero che contiene il vostro numero di matricola ed inoltre:
+
+\qquad\textbf{int} \verb|a,b|;
+
+\qquad\textbf{float} \verb|x,y|;\\
 dopo:
-    a=matr/1000;
-    b=matr/0.1E4;
-    x=matr/1000;
-    y=matr/0.1E4;
+
+\qquad\verb|a=matr/1000;|
+    
+\qquad\verb|b=matr/0.1E4;|
+
+\qquad\verb|x=matr/1000;|
+
+\qquad\verb|y=matr/0.1E4;|\\
 avremo:
-    a=_____ b=_____ x=_____ y=_____
-	\end{verbatim}
+
+\qquad\verb|a=_____ b=_____ x=_____ y=_____|
 \end{shaded}
 
 Di nuovo, dobbiamo curarci solo di quello che è alla destra dell'uguale: prima viene effettuata l'operazione e solo dopo il risultato viene convertito al tipo di dato posto a sinistra! Ipotizzando che il nostro numero di matricola sia ancora 543987, la situazione tra \textbf{a} e \textbf{b}, e tra \textbf{x} e \textbf{y} è pefettamente simmetrica: nel primo caso (\verb|matr/1000|) il risultato è 543 (le ultime tre cifre vengono troncate: divisione tra interi); nel secondo caso (\verb|matr/0.1E4|) il risultato è 543.987 (divisione tra un intero e un float). A questo punto avviene la conversione al tipo di dato a sinistra dell'uguale, e avremo quindi i seguenti risultati: \verb|a=543; b=543; x=543; y=543.987|.
 \item Un esercizio un po' più fine è il seguente:
 \begin{shaded}
-Sia \verb|expr| un'espressione che convolge \verb|int| e \verb|float|. Fare dei semplici esempi che giustifichino le seguenti affermazioni:\\
+Sia \verb|expr| un'espressione che convolge \textbf{int} e \textbf{float}. Fare dei semplici esempi che giustifichino le seguenti affermazioni:\\
 a) non vale la proprietà associativa;\\
 b) non vale la proprietà commutativa.
 \end{shaded}
 
-	Quello che il tema d'esame ci sta chiedendo è di trovare degli esempi in cui non valgono, effettuando operazioni tra \emph{int} e \emph{float}, la proprietà associativa  e la proprietà commutativa \footnote{Associativa: $(a+b)+c=a+(b+c)$ oppure, per la moltiplicazione, $(a\cdot b)\cdot c=a\cdot(b\cdot c)$. Commutativa: $a+b=b+a$ per l'addizione, oppure, $a\cdot b=b\cdot a$ per la moltiplicazione. Ah! non ho dubbi che tu sappia benissimo cosa sono, volevo solo fare il punto della situazione.}
+	Quello che il tema d'esame ci sta chiedendo è di trovare degli esempi in cui non valgono, effettuando operazioni tra \emph{int} e \emph{float}, la proprietà associativa  e la proprietà commutativa\footnote{Associativa: $(a+b)+c=a+(b+c)$ oppure, per la moltiplicazione, $(a\cdot b)\cdot c=a\cdot(b\cdot c)$. Commutativa: $a+b=b+a$ per l'addizione, oppure, $a\cdot b=b\cdot a$ per la moltiplicazione. Ah! non ho dubbi che tu sappia benissimo cosa sono, volevo solo fare il punto della situazione.}.
 	
 	Per quanto riguarda la proprietà associativa è abbastanza semplice: basta trovare casi patologici in cui, se effetuiamo prima un'operazione o l'altra, andiamo o non andiamo in \emph{overflow}. Ad esempio, nel caso della moltiplicazione, possiamo prendere due numeri molto grandi, \verb|a| e \verb|b|, e uno molto piccolo, chiamiamolo \verb|x|. Se calcoliamo $(x\cdot a)\cdot b$, normalmente non avremo problemi; $x\cdot (a\cdot b)$, invece, potrebbe andare in \emph{overflow} e i due risultati sarebbero diversi. 
 	

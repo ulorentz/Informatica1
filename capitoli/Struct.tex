@@ -281,18 +281,19 @@ Dove le dimensioni sono, come detto, in byte. L'unico commento che ci tengo a fa
 
 Una parte di un esercizio di un tema d'esame (25 febbraio del 2015) era:
 \begin{shaded}
-	\begin{verbatim}
-Dato questo codice:
+Dato questo codice:\\
 
-struct strumento{
-    char nome[5];
-    int tipo;
-    double fattore[2];
-};
+\textbf{struct} \verb|strumento{|
+    
+\qquad\textbf{char} \verb|nome[5];|
 
-Qual è la lunghezza complessiva in byte di un elemento di tipo strumento?
-\end{verbatim}
+\qquad\textbf{int} \verb|tipo;|
 
+\qquad\textbf{double} \verb|fattore[2];|
+
+\verb|};|\\
+
+Qual è la lunghezza complessiva in byte di un elemento di tipo \verb|strumento|?
 \end{shaded}
 
 Ovviamente, essendo uno scritto, non puoi usare \textbf{sizeof}. Prova a rispondere!
@@ -316,20 +317,18 @@ Se l'indirizzo di \verb|dato| è 0x7ffe14f62b10, per avere \verb|dato.a| ci spos
 Per esercitarti, prova a risolvere il seguente esercizio di un tema d'esame (Gennaio 2017): 
 \begin{shaded}
 Data la struttura:\\
-\begin{verbatim}
-struct punto{
-    double x;
-    double y;
-};
-\end{verbatim}
 
+\textbf{struct} \verb|punto{|
+    
+\qquad\textbf{double} \verb|x;|
 
+\qquad\textbf{double} \verb|y;|\\
+\verb|};|\\ \\
+dire che cosa significa la dichiarazione
 
-dire che cosa significa la dichiarazione\\
-punto v[10];\\
+\qquad\verb|punto v[10];|\\
 
-Se l'indirizzo di v[0] è un valore esadecimale che termina con a3cd, scrivere le parti finali degli indirizzi di:
-v[2] e v[4]
+Se l'indirizzo di \verb|v[0]| è un valore esadecimale che termina con \verb|a3cd|, scrivere le parti finali degli indirizzi di \verb|v[2]| e \verb|v[4]|.
 \end{shaded}
 \begin{small}
 \section{Il C++ e gli oggetti}
