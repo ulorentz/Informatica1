@@ -44,7 +44,7 @@ Puoi dire ad \emph{ofstream} di aprirsi in ``append mode'', ovvero di scrivere a
 	ofstream out;
 	out.open("dati.txt", std::ofstream::app);
 \end{lstlisting}
-\subsection{Leggere da file}
+\subsection{Leggere da file (dimensione nota e non)}
 Poniamo di avere un file ``\verb|dati.dat|'' e di sapere che vi sono 10 \textbf{float} che vogliamo caricare su un vettore. Noterai che che il codice che segue è estremamente simile all'esempio \ref{esout1}.
 \lstinputlisting{codice/inout/in.cpp}
 
@@ -77,7 +77,7 @@ Potremmo essere interessati, dopo aver letto una prima volta il file, a tornare 
 
 Il metodo ``\verb|clear()|'' resetta tutte le \emph{flag} (eof, ad esempio è un \emph{flag}, che si era settata su \textbf{true}, con ``\verb|clear()|'' l'azzeriamo). Il metodo ``\verb|seekg()|'' cerca la posizione tra le parentesi e vi sposta la ``testina''; nel nostro caso la posizione 0, ovvero il primo bit del file.
 
-Ti scrivo un piccolo esempio di codice in cui leggo due volte il file: la prima per trovare l'elemento minimo, la seconda  per trovare l'elemento massimo (è un esempio stupido, anche perché potrebbe essere più intelligente caricare i dati in un vettore e poi lavorarci sopra, oppure cercare massimo e minimo nello stesso ciclo \textbf{while}\footnote{L'unico caso che mi viene in mente in cui questo codice è sensato è quando dobbiamo elaborare un set di dati ben più grande della RAM. In quel caso, caricare i dati in un \emph{array} è infattibile. È ancora inutile trovare massimo e minimo in due letture successive del file, ma potrebbe capitare di dover fare due elaborazioni dei dati che non possono avvenire simultaneamente.}; nel capitolo \ref{ardin} vedremo un utilizzo molto più importante). 
+Ti scrivo un piccolo esempio di codice in cui leggo due volte il file: la prima per trovare l'elemento minimo e contare il numero di dati, la seconda  per trovare l'elemento massimo (è un esempio stupido, anche perché potrebbe essere più intelligente caricare i dati in un vettore e poi lavorarci sopra, oppure cercare massimo e minimo nello stesso ciclo \textbf{while}\footnote{L'unico caso che mi viene in mente in cui questo codice è sensato è quando dobbiamo elaborare un set di dati ben più grande della RAM. In quel caso, caricare i dati in un \emph{array} è infattibile. È ancora inutile trovare massimo e minimo in due letture successive del file, ma potrebbe capitare di dover fare due elaborazioni dei dati che non possono avvenire simultaneamente.}; nel capitolo \ref{ardin} vedremo un utilizzo molto più importante). 
 \begin{lstlisting}
 #include <iostream>
 #include <fstream>
@@ -85,22 +85,23 @@ using namespace std;
 
 int main(){
 	ifstream in; 
-	int tmp=0, max=0, min=0;
+	int tmp=0, max=0, min=0, dim=0;
 	in.open("dati.dat");
 	if(in.fail()){
 		cerr << "Errore apertura file di input." << endl;
 		return 1;
 	}   
-	in >> min;
+	in >> tmp; //perche' il primo lo leggo fuori? Leggi la descrizione dopo il codice
 	while(!in.eof()){
-		in >> tmp;
+		++dim; //ho letto un dato: incremento di uno il contatore dei dati
 		if(tmp < min)
 			min=tmp;
+		in >> tmp; //leggo il dato successivo, perche' lo faccio come ultima cosa dentro il ciclo while? Leggi la descrizione dopo il codice
+		
 	}   
 	in.clear();     //pulisco le flag
 	in.seekg(0);    //porto la testina a zero per leggere dall'inizio       
-	in >> max;
-	while(!in.eof()){
+	for(int i=0; i<dim;++i){ //conosco il numero di dati, posso usare un ciclo for
 		in >> tmp;
 		if(tmp > max)
 			max=tmp;
@@ -110,7 +111,12 @@ int main(){
 }    
 
 \end{lstlisting}
+Come ho sottolineato nel codice, prima di entrare nel ciclo \textbf{while} leggo un dato, quindi incremento il contatore e, prima della conclusione del ciclo, ne leggo un altro. Perché quest'ordine apparentemente insensato? Leggere un dato  prima di entrare nel ciclo serve per settare la flag \emph{eof}: leggiamo un dato e, se il file è vuoto (e quindi siamo alla fine), non entriamo neanche nel ciclo. Se invece il file non è vuoto, abbiamo già letto il primo dato, quindi entriamo nel ciclo e incrementiamo il contatore. A questo punto rimane da leggere il dato successivo: lo leggo e testo subito se sono alla fine del file o no (perché il ciclo \textbf{while} è concluso e viene testata nuovamente la condizione). È estremamente importante che la lettura venga fatta dopo l'incremento del contatore, in caso contrario ti ritroverai quest'ultimo maggiorato di un'unità: \emph{eof} non viene settato quando viene letto l'ultimo dato del file, bensì quando cerchi di leggere il dato successivo (che non esiste, il dato successivo è proprio il carattere \emph{end of file}). 
 
+\subsubsection{Array e quantità di dati non nota a priori}
+Con l'attuale conoscenza degli \emph{array}, l'unico modo in cui possiamo caricare un numero di dati non noto a priori è quello di creare un \emph{array} statico molto grande, sperando di dover trattare meno dati della sua dimensione. 
+
+Nel prossimo capitolo, studieremo uno strumento potentissimo che ci permetterà di creare a \emph{run-time} un vettore della dimensione desiderata. Successivamente (capitolo sulle funzioni, paragrafo \ref{dimnon}) ti presenterò un possibile codice per la lettura di dati da file di cui non sappiamo, a propri, la quantità (per la sua comprensione è utile, oltre a conoscere gli \emph{array dinamici} presentati nel prossimo capitolo, avere familiarità con le funzioni).
 \begin{small}
 \subsection{Opzionale: una versione generalizzata}
 Come ti ho detto all'inizio \emph{ofstream} e \emph{ifstream} sono figli del tipo di dato \emph{fstream}; possiamo evitare di usarli separatamente ma utilizzare \emph{fstream} dicendogli di specializzarsi durante l'apertura. Può essere comodo se, in un programma, dobbiamo sia scrivere su un file che leggerlo: in questo modo dichiariamo una sola variabile e rischiamo di perderci meno cose per strada. Ecco un esempio:
