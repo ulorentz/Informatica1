@@ -93,7 +93,7 @@ int main(){
 	//...
 	//...
 	for(int i=0; i<n_punti; ++i)
-		histo.fill(v[i]); //v e' un vettore contenente i nostri punti
+		histo.Fill(v[i]); //v e' un vettore contenente i nostri punti
 	canvas.cd(); //seleziono la canvas su cui disegnare
 	histo.Draw(); //disegno l'istogramma
 	app.Run(); //faccio partire ROOT
