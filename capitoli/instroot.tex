@@ -17,17 +17,19 @@ Salva il file, esci dal terminale, apri un nuovo terminale e scrivi ``\verb|root
 \subsection{Sei sfortunato\ldots}\label{distronotfound}
 Al CERN non hanno pensato di fare una versione precompilata di ROOT per la tua distribuzione di Linux, poco male\footnote{Se usi Arch Linux o una sua derivata puoi trovare ROOT precompilato nei repository AUR. Usa yaourt per cercarlo e potrai installarlo come un semplice pacchetto evitandoti tutto quello che segue.}! 
 
-Scarica, sotto ``source distribution'', il file compresso. Una volta scompattato devi scegliere una cartella in cui installare ROOT. Puoi installarlo nella tua \emph{home}, oppure, se non vuoi avere la sua cartella tra le scatole in \emph{/opt} (in questo caso dovrai usare ``\emph{sudo}'' prima dei comandi!). Sposta la cartella scompattata nella sua destinazione finale (``\verb|mv root-versione destinazione|'', o ``\verb|sudo mv root-versione /opt/.|''). 
+Scarica, sotto ``source distribution'', il file compresso; quindi scompattalo dove preferisci (la cartella con i file sorgente puoi eliminarla alla fine del procedimento). 
 
-Ora, bisogna compilare ROOT, ti avviso impiegherà un bel po' di tempo, e userà un sacco di risorse, per cui cerca di attaccare la presa del PC e dotarti di pazienza. Per la compilazione avrai bisogno di alcuni pacchetti, assicurati di avere tutto il necessario dando un'occhiata alla pagina \url{https://root.cern.ch/build-prerequisites}. 
+Ora bisogna compilare ROOT, ti avviso impiegherà un bel po' di tempo, e userà molte risorse, per cui cerca di attaccare la presa del PC e dotarti di pazienza.  Il metodo di compilazione consigliato utilizza \emph{cmake}, se sei su Ubuntu/Debian installa questo programma con \verb|sudo apt install cmake|. Per la compilazione avrai bisogno di alcuni pacchetti, assicurati di avere tutto il necessario dando un'occhiata alla pagina \url{https://root.cern.ch/build-prerequisites} (su Ubuntu/Debian, per procurarsi tutto, è sufficiente il comando \emph{sudo apt-get install git dpkg-dev cmake g++ gcc binutils libx11-dev libxpm-dev libxft-dev libxext-dev}). 
 
-Portati dentro la cartella di ROOT, quindi lancia ``\verb|./configure|'', se qualche pacchetto necessario manca ti verrà segnalato. Se tutto va a buon fine lancia ``\verb|make -j4|'' (il numero che segue la ``j'' è il numero di processori da usare, quattro è un buon numero).
+Ora devi scegliere una cartella in cui installare ROOT. Puoi installarlo nella tua \emph{home}, oppure, se non vuoi avere la sua cartella tra le scatole, in \emph{/opt} (in questo caso dovrai usare ``\emph{sudo}'' prima dei comandi!). Crea quindi la cartella di installazione (ad esempio con \verb|sudo mkdir /opt/root|), portati dentro quest'ultima  (\verb|cd /opt/root|) ed esegui \emph{cmake /path-file-sorgenti}; ad esempio se hai scompattato i file in \emph{/home/tuonome/Download/root} e la cartella di installazione è \emph{/opt/root}, il comando da dare è (dentro \emph{/opt/root}): \\ \verb|sudo cmake /home/tuonome/Download/root| (questo comando configura tutto per la compilazione). Se tutto va a buon fine, rimanendo nella cartella di installazione, compila con ``\emph{cmake - -build .}'' (o, se sei in \emph{/opt}, con ``\verb|sudo cmake --build .|''), il punto finale è necessario.
 
 Quando avrà finito devi solo dire a Linux dove si trova ROOT. Per farlo apri con un editor il file ``\verb|~/.bashrc|'' (ad esempio: ``\verb|gedit ~/.bashrc| ''), quindi, in fondo al file, inserisci:
 
 ``\emph{. PERCORSO/root-versione/bin/thisroot.sh}'' (dove, al posto di ``root-versione'' metti il nome della cartella di ROOT). NOTA: il punto e lo spazio all'inizio sono voluti, non dimenticarli!
 
 Salva il file, esci dal terminale, apri un nuovo terminale e scrivi ``\verb|root|'', se il programma si apre ROOT è installato e hai finito!
+
+Per concludere puoi eliminare la cartella con i file sorgente e l'archivio scaricato.
 \section{Installare su Mac}\label{instmac}
 Per prima cosa vai a questo indirizzo \url{https://root.cern.ch/downloading-root}, quindi seleziona, sotto le ``Lastest ROOT releases'' la ``PRO Release''. Nella pagina che ti si aprirà, sotto ``binary distributions'', cerca il nome la versione del tuo \emph{OsX} (es. 10.10), e del tuo compilatore \emph{clang}. Quindi, scarica il file \emph{.tar.gz} relativo ad essi. 
 
