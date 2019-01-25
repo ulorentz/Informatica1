@@ -112,12 +112,12 @@ int main(){
 
 //corpo della funzione
 double Max(double array[], unsigned int dim){ //variabili della funzione
-	double tmp=0; //variabili della funzione
+	double max=array[0]; //variabili della funzione
 	for(int i=1; i<dim; ++i){
 		if(array[i]>max)
-			tmp=array[i];	
+			max=array[i];	
 	}
-	return tmp;
+	return max;
 }
 \end{lstlisting}
 
@@ -157,12 +157,12 @@ using namespace std;
 
 //corpo della funzione
 double Max(double array[], unsigned int dim){ //variabili della funzione
-	double tmp=0; //variabili della funzione
+	double max=array[0]; //variabili della funzione
 	for(int i=1; i<dim; ++i){
 	if(array[i]>max)
-		tmp=array[i];	
+		max=array[i];	
 	}
-	return tmp;
+	return max;
 }
 
 int main(){
@@ -191,7 +191,7 @@ bool prime_number(unsigned long n){
 
 Come vedi, in questo esempio sono presenti due \textbf{return}: il primo ad essere incontrato viene eseguito. In poche parole, in una funzione posso avere \emph{n} \textbf{return} (ad esempio in diversi \textbf{if}, \textbf{switch\ldots case}, ecc\ldots), l'unica condizione è che questi devono restituire lo stesso tipo di dato: quello specificato nel prototipo della funzione.
 
-\subsection{\emph{void funcion}}
+\subsection{\emph{void function}}
 Non per forza una funzione deve restituire qualcosa, può anche essere il ``nulla'': \textbf{void}. 
 
 Un prototipo di una funzione che non restituisce niente potrebbe essere:

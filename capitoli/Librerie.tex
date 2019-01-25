@@ -119,7 +119,7 @@ In file included from main.cpp:1:0:
 ...
 #endif /*STATISTICA_H*/
 \end{lstlisting}
-dice, in poche parole: ``se non è definita la macro STATISTICA\_H (if not defined, \emph{ifndef}), allora definiscila (\emph{define})'', Alla fine del \emph{.h}, vi è la conclusione della definizione ``\emph{endif}'' (il /*...*/ è un commento per il programmatore: definizione di cosa?). Quando il preprocessore trova l'\emph{include}, cerca di copiare il \emph{.h} ma, se la macro STATISTICA\_H non è stata definita, allora procede (e la definisce), se invece è  stata già definita (quindi ha già incolato tutto altrove), salta alla fine del'\emph{endif} e va oltre (con il risultato di  non incollare tutto due volte). ``STATISTICA\_H'' è scritto maiuscolo per ricordare che è una macro preprocessore, come da convenzione del \verb|C++|.\\
+dice, in poche parole: ``se non è definita la macro STATISTICA\_H (if not defined, \emph{ifndef}), allora definiscila (\emph{define})'', Alla fine del \emph{.h}, vi è la conclusione della definizione ``\emph{endif}'' (il /*...*/ è un commento per il programmatore: definizione di cosa?). Quando il preprocessore trova l'\emph{include}, cerca di copiare il \emph{.h} ma, se la macro STATISTICA\_H non è stata definita, allora procede (e la definisce), se invece è  stata già definita (quindi ha già incollato tutto altrove), salta alla fine del'\emph{endif} e va oltre (con il risultato di  non incollare tutto due volte). ``STATISTICA\_H'' è scritto maiuscolo per ricordare che è una macro preprocessore, come da convenzione del \verb|C++|.\\
 
 Per esercizio, scriviti le tue librerie di statistica, di algoritmi su vettori, ecc\ldots
 
